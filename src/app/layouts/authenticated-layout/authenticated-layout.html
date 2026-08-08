@@ -18,11 +18,10 @@
   <section class="workspace">
     <header>
       @if (currentUser$ | async; as user) {
-        <a class="dashboard-link" [routerLink]="dashboardRouteForUser(user.role)">
-          <i class="pi pi-user"></i>
-          <span>{{ user.displayName || user.email }}</span>
+        <a class="dashboard-link" [routerLink]="ABSOLUTE_ROUTES.userDashboard">
+          <img [src]="user.profileImageUrl" [alt]="user.displayName" />
+          <span>{{ user.displayName }}</span>
         </a>
-        <p-tag [value]="user.role" />
       }
 
       <p-button label="Sign out" icon="pi pi-sign-out" severity="secondary" outlined (onClick)="signOut()" />

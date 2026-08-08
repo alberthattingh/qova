@@ -1,11 +1,7 @@
 import { ProfileImageSource } from '../constants/avatar';
 
-export interface UserProfile {
-  id: string;
+export interface PersistUserProfileUpdate {
   displayName: string;
-  email: string;
   profileImageUrl: string;
   profileImageSource: ProfileImageSource;
-  createdAt: Date;
-  updatedAt: Date;
 }

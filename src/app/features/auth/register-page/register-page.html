@@ -14,19 +14,7 @@
     @if (isSubmitting()) {
       <app-loading-state message="Creating account" />
     } @else {
-      <form [formGroup]="form" (ngSubmit)="submit()">
-        <label>
-          <span>Email</span>
-          <input pInputText type="email" formControlName="email" autocomplete="email" />
-        </label>
-
-        <label>
-          <span>Password</span>
-          <p-password formControlName="password" [toggleMask]="true" />
-        </label>
-
-        <p-button label="Create account" icon="pi pi-user-plus" type="submit" />
-      </form>
+      <app-register-form (submitted)="submit($event)" />
     }
 
     <a [routerLink]="loginRoute">Already have an account?</a>

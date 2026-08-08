@@ -14,7 +14,7 @@ export const guestGuard: CanActivateFn = () => {
     take(1),
     map((user) =>
       user
-        ? router.createUrlTree([dashboardRouting.dashboardForRole(user.role)])
+        ? router.createUrlTree([dashboardRouting.defaultDashboard()])
         : true,
     ),
   );

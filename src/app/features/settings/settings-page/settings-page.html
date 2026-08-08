@@ -4,9 +4,29 @@
     <h1>Account preferences</h1>
   </div>
 
-  <app-empty-state
-    icon="pi pi-cog"
-    title="Settings are ready"
-    message="Profile, notification, and workspace settings will live here."
-  />
+  <p-card>
+    <h2>Profile</h2>
+
+    @if (errorMessage()) {
+      <app-error-state
+        title="Unable to save profile"
+        [message]="errorMessage()!"
+        [showAction]="false"
+      />
+    }
+
+    @if (isSaving()) {
+      <app-loading-state message="Saving profile" />
+    }
+
+    @if (currentProfile$ | async; as profile) {
+      <app-profile-settings-form
+        [displayName]="profile.displayName"
+        [profileImageUrl]="profile.profileImageUrl"
+        (submitted)="updateProfile($event)"
+      />
+    } @else {
+      <app-loading-state message="Loading profile" />
+    }
+  </p-card>
 </section>

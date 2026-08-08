@@ -1,11 +1,9 @@
 import { ProfileImageSource } from '../constants/avatar';
 
-export interface UserProfile {
+export interface CreateUserProfile {
   id: string;
   displayName: string;
   email: string;
   profileImageUrl: string;
   profileImageSource: ProfileImageSource;
-  createdAt: Date;
-  updatedAt: Date;
 }

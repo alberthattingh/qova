@@ -1,0 +1,32 @@
+<form [formGroup]="form" (ngSubmit)="submit()">
+  <label>
+    <span>Display name</span>
+    <input pInputText type="text" formControlName="displayName" autocomplete="name" />
+  </label>
+
+  <label>
+    <span>Email</span>
+    <input pInputText type="email" formControlName="email" autocomplete="email" />
+  </label>
+
+  <label>
+    <span>Password</span>
+    <p-password formControlName="password" [toggleMask]="true" />
+  </label>
+
+  <label>
+    <span>Confirm password</span>
+    <p-password formControlName="confirmPassword" [feedback]="false" [toggleMask]="true" />
+  </label>
+
+  @if (form.hasError('passwordMismatch') && form.controls.confirmPassword.touched) {
+    <p class="field-error">Passwords must match.</p>
+  }
+
+  <label>
+    <span>Profile picture</span>
+    <input type="file" accept="image/*" (change)="selectProfileImage($event)" />
+  </label>
+
+  <p-button label="Create account" icon="pi pi-user-plus" type="submit" />
+</form>

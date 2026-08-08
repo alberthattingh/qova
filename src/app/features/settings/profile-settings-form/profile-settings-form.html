@@ -1,0 +1,17 @@
+<form [formGroup]="form" (ngSubmit)="submit()">
+  @if (profileImageUrl) {
+    <img class="profile-image" [src]="profileImageUrl" alt="" />
+  }
+
+  <label>
+    <span>Display name</span>
+    <input pInputText type="text" formControlName="displayName" autocomplete="name" />
+  </label>
+
+  <label>
+    <span>Profile picture</span>
+    <input type="file" accept="image/*" (change)="selectProfileImage($event)" />
+  </label>
+
+  <p-button label="Save profile" icon="pi pi-save" type="submit" />
+</form>

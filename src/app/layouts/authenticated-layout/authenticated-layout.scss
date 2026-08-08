@@ -76,6 +76,15 @@ header {
   color: var(--qova-text-secondary);
 }
 
+.dashboard-link img {
+  width: 2rem;
+  height: 2rem;
+  border: 1px solid var(--qova-border);
+  border-radius: 999px;
+  object-fit: cover;
+  background: var(--qova-primary-soft);
+}
+
 main {
   padding: clamp(1rem, 3vw, 2rem);
 }

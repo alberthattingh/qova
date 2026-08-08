@@ -1,0 +1,19 @@
+form {
+  display: grid;
+  gap: 1rem;
+  max-width: 32rem;
+}
+
+.profile-image {
+  width: 4rem;
+  height: 4rem;
+  border: 1px solid var(--qova-border);
+  border-radius: 999px;
+  object-fit: cover;
+  background: var(--qova-primary-soft);
+}
+
+label {
+  display: grid;
+  gap: 0.5rem;
+}

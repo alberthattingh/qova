@@ -1,62 +1,39 @@
 import { Component, inject, signal } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
-import { firstValueFrom } from 'rxjs';
-import { ButtonModule } from 'primeng/button';
+import { RouterLink } from '@angular/router';
 import { CardModule } from 'primeng/card';
-import { InputTextModule } from 'primeng/inputtext';
-import { PasswordModule } from 'primeng/password';
 
 import { ABSOLUTE_ROUTES } from '../../../constants/app-routes';
+import { LoginCredentials } from '../../../models/login-credentials.model';
+import { AuthFlowService } from '../../../services/auth/auth-flow.service';
+import { LoginForm } from '../login-form/login-form';
 import { ErrorState } from '../../../shared/components/error-state/error-state';
 import { LoadingState } from '../../../shared/components/loading-state/loading-state';
-import { AuthService } from '../../../services/auth/auth.service';
 
 @Component({
   selector: 'app-login-page',
   imports: [
-    ButtonModule,
     CardModule,
     ErrorState,
-    InputTextModule,
+    LoginForm,
     LoadingState,
-    PasswordModule,
-    ReactiveFormsModule,
     RouterLink,
   ],
   templateUrl: './login-page.html',
   styleUrl: './login-page.scss',
 })
 export class LoginPage {
-  private readonly authService = inject(AuthService);
-  private readonly formBuilder = inject(FormBuilder);
-  private readonly router = inject(Router);
+  private readonly authFlow = inject(AuthFlowService);
 
   protected readonly registerRoute = ABSOLUTE_ROUTES.register;
   protected readonly isSubmitting = signal(false);
   protected readonly errorMessage = signal<string | null>(null);
 
-  protected readonly form = this.formBuilder.nonNullable.group({
-    email: ['', [Validators.required, Validators.email]],
-    password: ['', [Validators.required]],
-  });
-
-  async submit(): Promise<void> {
-    if (this.form.invalid) {
-      this.form.markAllAsTouched();
-      return;
-    }
-
+  async submit(credentials: LoginCredentials): Promise<void> {
     this.isSubmitting.set(true);
     this.errorMessage.set(null);
 
     try {
-      const { email, password } = this.form.getRawValue();
-      await this.authService.signIn(email, password);
-      const dashboardRoute = await firstValueFrom(
-        this.authService.dashboardRouteForCurrentUser$(),
-      );
-      await this.router.navigateByUrl(dashboardRoute);
+      await this.authFlow.signInAndRedirect(credentials);
     } catch {
       this.errorMessage.set('Check your email and password, then try again.');
     } finally {
