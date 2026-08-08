@@ -22,6 +22,7 @@ import { CommitmentStatus } from '../../constants/commitment-statuses';
 import { FirebaseCollection } from '../../constants/firebase-collections';
 import { ManagerRelationshipStatus } from '../../constants/manager-relationship-statuses';
 import { CheckIn } from '../../models/check-in.model';
+import { CheckInScheduleInput } from '../../models/check-in-schedule-input.model';
 import { CommitmentDetailView } from '../../models/commitment-detail-view.model';
 import { CommitmentManager } from '../../models/commitment-manager.model';
 import { CommitmentTerms } from '../../models/commitment-terms.model';
@@ -32,12 +33,16 @@ import { CreateCommitmentRequest } from '../../models/create-commitment-request.
 import { ManagerRelationship } from '../../models/manager-relationship.model';
 import { UpdateCommitmentRequest } from '../../models/update-commitment-request.model';
 import { AuthService } from '../auth/auth.service';
+import { BrowserTimeZoneService } from '../check-ins/browser-time-zone.service';
+import { CheckInScheduleService } from '../check-ins/check-in-schedule.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class CommitmentService {
   private readonly auth = inject(AuthService);
+  private readonly checkInSchedules = inject(CheckInScheduleService);
+  private readonly browserTimeZone = inject(BrowserTimeZoneService);
   private readonly firestore = inject(Firestore);
 
   workspace$(): Observable<CommitmentWorkspace> {
@@ -98,6 +103,10 @@ export class CommitmentService {
                 commitment,
                 versions: [],
                 checkIns: [],
+                scheduleState: this.checkInSchedules.scheduleState(
+                  this.scheduleInput(commitment),
+                ),
+                currentCheckInState: null,
               });
             }
 
@@ -115,6 +124,14 @@ export class CommitmentService {
                 commitment,
                 versions,
                 checkIns,
+                scheduleState: this.checkInSchedules.scheduleState(
+                  this.scheduleInput(commitment),
+                ),
+                currentCheckInState:
+                  this.checkInSchedules.currentPeriodSubmissionState(
+                    this.scheduleInput(commitment),
+                    checkIns,
+                  ),
               })),
             );
           }),
@@ -367,6 +384,7 @@ export class CommitmentService {
       endDate: request.endDate,
       checkInFrequency: request.checkInFrequency,
       checkInTime: request.checkInTime,
+      timeZone: this.browserTimeZone.currentTimeZone(),
     };
   }
 
@@ -458,6 +476,7 @@ export class CommitmentService {
       endDate: terms.endDate ? Timestamp.fromDate(terms.endDate) : null,
       checkInFrequency: terms.checkInFrequency,
       checkInTime: terms.checkInTime,
+      timeZone: terms.timeZone,
     };
   }
 
@@ -473,6 +492,17 @@ export class CommitmentService {
       endDate: commitment.endDate,
       checkInFrequency: commitment.checkInFrequency,
       checkInTime: commitment.checkInTime,
+      timeZone: commitment.timeZone,
+    };
+  }
+
+  private scheduleInput(commitment: Commitment): CheckInScheduleInput {
+    return {
+      startDate: commitment.startDate,
+      endDate: commitment.endDate,
+      checkInFrequency: commitment.checkInFrequency,
+      checkInTime: commitment.checkInTime,
+      timeZone: commitment.timeZone,
     };
   }
 
@@ -546,6 +576,7 @@ export class CommitmentService {
       endDate: this.toNullableDate(value['endDate']),
       checkInFrequency: this.toCheckInFrequency(value['checkInFrequency']),
       checkInTime: this.toStringField(value, 'checkInTime'),
+      timeZone: this.toStringField(value, 'timeZone'),
       status: this.toCommitmentStatus(value['status']),
       currentVersionId: this.toNullableString(value['currentVersionId']),
       currentVersionNumber: this.toNumberField(value, 'currentVersionNumber'),
@@ -570,6 +601,7 @@ export class CommitmentService {
       endDate: this.toNullableDate(value['endDate']),
       checkInFrequency: this.toCheckInFrequency(value['checkInFrequency']),
       checkInTime: this.toStringField(value, 'checkInTime'),
+      timeZone: this.toStringField(value, 'timeZone'),
       createdAt: this.toDate(value['createdAt']),
       createdByUserId: this.toStringField(value, 'createdByUserId'),
     };

@@ -5,7 +5,7 @@
   </div>
   <div>
     <dt>Check-in time</dt>
-    <dd>{{ commitment.checkInTime }}</dd>
+    <dd>{{ commitment.checkInTime }} {{ commitment.timeZone }}</dd>
   </div>
   <div>
     <dt>Start date</dt>
@@ -14,5 +14,19 @@
   <div>
     <dt>End date</dt>
     <dd>{{ commitment.endDate ? (commitment.endDate | date: 'mediumDate') : 'Open ended' }}</dd>
+  </div>
+  <div>
+    <dt>Current deadline</dt>
+    <dd>
+      {{ currentPeriodDeadline ? (currentPeriodDeadline | date: 'medium') : 'Not in period' }}
+    </dd>
+  </div>
+  <div>
+    <dt>Next deadline</dt>
+    <dd>{{ nextCheckInDeadline ? (nextCheckInDeadline | date: 'medium') : 'None' }}</dd>
+  </div>
+  <div>
+    <dt>Period state</dt>
+    <dd>{{ isCurrentPeriodOverdue ? 'Overdue' : 'On track' }}</dd>
   </div>
 </dl>

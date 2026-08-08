@@ -12,4 +12,5 @@ export interface CommitmentTerms {
   endDate: Date | null;
   checkInFrequency: CheckInFrequency;
   checkInTime: string;
+  timeZone: string;
 }

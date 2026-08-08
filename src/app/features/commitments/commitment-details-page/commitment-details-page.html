@@ -85,7 +85,12 @@
 
     <p-card>
       <h2>Schedule</h2>
-      <app-commitment-schedule [commitment]="details.commitment" />
+      <app-commitment-schedule
+        [commitment]="details.commitment"
+        [currentPeriodDeadline]="details.scheduleState.currentPeriod?.deadline ?? null"
+        [nextCheckInDeadline]="details.scheduleState.nextCheckInDeadline"
+        [isCurrentPeriodOverdue]="details.currentCheckInState?.isOverdue ?? false"
+      />
     </p-card>
 
     <p-card>

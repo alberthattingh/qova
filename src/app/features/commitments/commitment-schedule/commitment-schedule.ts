@@ -12,4 +12,7 @@ import { CommitmentVersion } from '../../../models/commitment-version.model';
 })
 export class CommitmentSchedule {
   @Input({ required: true }) commitment!: Commitment | CommitmentVersion;
+  @Input() currentPeriodDeadline: Date | null = null;
+  @Input() nextCheckInDeadline: Date | null = null;
+  @Input() isCurrentPeriodOverdue = false;
 }

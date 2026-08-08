@@ -106,4 +106,5 @@ export class CommitmentForm implements OnChanges {
   private fromDateInputValue(value: string): Date {
     return new Date(`${value}T00:00:00`);
   }
+
 }

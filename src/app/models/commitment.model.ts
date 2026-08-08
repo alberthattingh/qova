@@ -15,6 +15,7 @@ export interface Commitment {
   endDate: Date | null;
   checkInFrequency: CheckInFrequency;
   checkInTime: string;
+  timeZone: string;
   status: CommitmentStatus;
   currentVersionId: string | null;
   currentVersionNumber: number;
