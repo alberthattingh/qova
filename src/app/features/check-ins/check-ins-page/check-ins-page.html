@@ -8,7 +8,16 @@
     <app-loading-state message="Submitting check-in" />
   }
 
-  @if (dashboard$ | async; as dashboard) {
+  @if (dashboardState$ | async; as state) {
+    @if (state.isLoading) {
+      <app-loading-state message="Loading check-ins" />
+    } @else if (state.error) {
+      <app-error-state
+        title="Unable to load check-ins"
+        [message]="state.error"
+        [showAction]="false"
+      />
+    } @else if (state.dashboard; as dashboard) {
     <section class="check-in-section">
       <div>
         <h2>Your due check-ins</h2>
@@ -39,7 +48,6 @@
         emptyMessage="Submitted and missed check-ins from people you manage will appear here."
       />
     </section>
-  } @else {
-    <app-loading-state message="Loading check-ins" />
+    }
   }
 </section>

@@ -3,6 +3,14 @@
     <section class="page">
       <app-loading-state message="Loading commitment" />
     </section>
+  } @else if (state.error) {
+    <section class="page">
+      <app-error-state
+        title="Unable to load commitment"
+        [message]="state.error"
+        [showAction]="false"
+      />
+    </section>
   } @else if (state.details; as details) {
     <section class="page">
     <div class="page-heading">

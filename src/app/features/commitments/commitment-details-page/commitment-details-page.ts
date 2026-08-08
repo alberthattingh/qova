@@ -5,7 +5,7 @@ import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 import { DividerModule } from 'primeng/divider';
 import { TagModule } from 'primeng/tag';
-import { map, startWith } from 'rxjs';
+import { catchError, map, of, startWith } from 'rxjs';
 
 import { RouteParam } from '../../../constants/app-routes';
 import { CommitmentStatus } from '../../../constants/commitment-statuses';
@@ -18,6 +18,7 @@ import { CommitmentService } from '../../../services/commitments/commitment.serv
 import { NotificationService } from '../../../services/notifications/notification.service';
 import { CheckInReviewService } from '../../../services/reviews/check-in-review.service';
 import { EmptyState } from '../../../shared/components/empty-state/empty-state';
+import { ErrorState } from '../../../shared/components/error-state/error-state';
 import { LoadingState } from '../../../shared/components/loading-state/loading-state';
 import { CheckInHistory } from '../check-in-history/check-in-history';
 import { CommitmentForm } from '../commitment-form/commitment-form';
@@ -35,6 +36,7 @@ import { CommitmentSchedule } from '../commitment-schedule/commitment-schedule';
     DatePipe,
     DividerModule,
     EmptyState,
+    ErrorState,
     LoadingState,
     TagModule,
     TitleCasePipe,
@@ -53,8 +55,18 @@ export class CommitmentDetailsPage {
     this.route.snapshot.paramMap.get(RouteParam.CommitmentId) ?? '';
   protected readonly detailsState$ =
     this.commitments.commitmentDetails$(this.commitmentId).pipe(
-      map((details) => ({ isLoading: false, details })),
-      startWith({ isLoading: true, details: null }),
+      map((details) => ({ isLoading: false, details, error: null })),
+      startWith({ isLoading: true, details: null, error: null }),
+      catchError((error) =>
+        of({
+          isLoading: false,
+          details: null,
+          error: this.errorMessage(
+            error,
+            'The commitment details could not be loaded.',
+          ),
+        }),
+      ),
     );
   protected readonly currentUserId$ = this.auth.currentAuthSession$.pipe(
     map((session) => session?.id ?? null),
@@ -165,5 +177,9 @@ export class CommitmentDetailsPage {
     } finally {
       this.isWorking.set(false);
     }
+  }
+
+  private errorMessage(error: unknown, fallback: string): string {
+    return error instanceof Error ? error.message : fallback;
   }
 }

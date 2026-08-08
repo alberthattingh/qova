@@ -4,17 +4,25 @@
     <h1>Manager reviews</h1>
   </div>
 
-  @if (queue$ | async; as queue) {
-    <div class="queue-summary">
-      <p-tag [value]="status" severity="warn" />
-      <span>
-        {{ queue.actionRequiredCount }} item{{ queue.actionRequiredCount === 1 ? '' : 's' }}
-        requiring manager action
-      </span>
-    </div>
-
-    <app-review-queue-list [items]="queue.items" />
-  } @else {
+  @if (queueState$ | async; as state) {
+    @if (state.isLoading) {
     <app-loading-state message="Loading review queue" />
+    } @else if (state.error) {
+      <app-error-state
+        title="Unable to load review queue"
+        [message]="state.error"
+        [showAction]="false"
+      />
+    } @else if (state.queue; as queue) {
+      <div class="queue-summary">
+        <p-tag [value]="status" severity="warn" />
+        <span>
+          {{ queue.actionRequiredCount }} item{{ queue.actionRequiredCount === 1 ? '' : 's' }}
+          requiring manager action
+        </span>
+      </div>
+
+      <app-review-queue-list [items]="queue.items" />
+    }
   }
 </section>
