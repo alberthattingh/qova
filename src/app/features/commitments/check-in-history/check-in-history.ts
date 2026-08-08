@@ -1,7 +1,10 @@
-import { DatePipe, TitleCasePipe } from '@angular/common';
+import { DatePipe } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { TagModule } from 'primeng/tag';
 
+import { CHECK_IN_REVIEW_DECISION_LABELS } from '../../../constants/check-in-review-decision-labels';
+import { CHECK_IN_STATUS_LABELS } from '../../../constants/check-in-status-labels';
+import { CheckInReviewDecision } from '../../../constants/check-in-review-decisions';
 import { CheckInStatus } from '../../../constants/check-in-statuses';
 import { CheckIn } from '../../../models/check-in.model';
 import { CheckInReviewFormValue } from '../../../models/check-in-review-form-value.model';
@@ -17,7 +20,6 @@ import { CheckInReviewForm } from '../check-in-review-form/check-in-review-form'
     DatePipe,
     EmptyState,
     TagModule,
-    TitleCasePipe,
   ],
   templateUrl: './check-in-history.html',
   styleUrl: './check-in-history.scss',
@@ -32,11 +34,22 @@ export class CheckInHistory {
     value: CheckInReviewFormValue;
   }>();
 
+  protected readonly reviewDecisionLabels = CHECK_IN_REVIEW_DECISION_LABELS;
+  protected readonly statusLabels = CHECK_IN_STATUS_LABELS;
+
   protected canReview(checkIn: CheckIn): boolean {
     return (
       checkIn.status === CheckInStatus.Submitted &&
       this.currentUserId !== null &&
       checkIn.managerUserIds.includes(this.currentUserId)
     );
+  }
+
+  protected statusLabel(checkIn: CheckIn): string {
+    return this.statusLabels[checkIn.status];
+  }
+
+  protected reviewDecisionLabel(decision: CheckInReviewDecision): string {
+    return this.reviewDecisionLabels[decision];
   }
 }

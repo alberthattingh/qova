@@ -12,6 +12,6 @@ export interface CheckInEvidence {
   size: number;
   storagePath: string;
   category: CheckInEvidenceFileCategory;
-  downloadUrl: string;
+  downloadUrl: string | null;
   createdAt: Date;
 }

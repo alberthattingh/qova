@@ -27,6 +27,14 @@ service firebase.storage {
         );
     }
 
+    function canReadCheckInEvidence(ownerUserId, checkInId) {
+      return signedIn() &&
+        (
+          request.auth.uid == ownerUserId ||
+          isCheckInParticipant(checkInId)
+        );
+    }
+
     match /users/{userId}/profile-pictures/{fileName} {
       allow read: if signedIn();
       allow write: if signedIn() &&
@@ -36,7 +44,7 @@ service firebase.storage {
     }
 
     match /check-in-evidence/{ownerUserId}/{checkInId}/{fileName} {
-      allow read: if isCheckInParticipant(checkInId);
+      allow read: if canReadCheckInEvidence(ownerUserId, checkInId);
 
       allow create: if signedIn() &&
         request.auth.uid == ownerUserId &&

@@ -9,7 +9,7 @@
     @for (checkIn of checkIns; track checkIn.id) {
       <div class="history-item">
         <div class="history-copy">
-          <strong>{{ checkIn.status | titlecase }}</strong>
+          <strong>{{ statusLabel(checkIn) }}</strong>
           @if (checkIn.isLate) {
             <span class="late-badge">Late submission</span>
           }
@@ -52,7 +52,7 @@
               @for (review of checkIn.reviews; track review.id) {
                 <article>
                   <div>
-                    <strong>{{ review.decision | titlecase }}</strong>
+                    <strong>{{ reviewDecisionLabel(review.decision) }}</strong>
                     <p>{{ review.createdAt | date: 'medium' }}</p>
                   </div>
                   @if (review.comment) {

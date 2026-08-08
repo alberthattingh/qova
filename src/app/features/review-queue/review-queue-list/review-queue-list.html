@@ -26,7 +26,7 @@
                 <p-tag value="Originally missed" severity="warn" />
               }
               <p-tag
-                [value]="item.checkIn.status | titlecase"
+                [value]="statusLabel(item.checkIn)"
                 [severity]="statusSeverity(item)"
               />
             </div>

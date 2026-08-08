@@ -21,6 +21,14 @@
   border-color: var(--qova-primary);
 }
 
+.evidence-item.unavailable {
+  color: var(--qova-text-secondary);
+}
+
+.evidence-item.unavailable:hover {
+  border-color: var(--qova-border);
+}
+
 .evidence-item img,
 .pdf-preview {
   width: 4rem;

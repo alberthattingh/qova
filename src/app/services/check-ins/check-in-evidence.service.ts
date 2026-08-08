@@ -66,25 +66,24 @@ export class CheckInEvidenceService {
           return of([]);
         }
 
-        return from(Promise.all(evidence.map((item) => this.withDownloadUrl(item)))).pipe(
-          map((items) =>
-            items.filter((item): item is CheckInEvidence => item !== null),
-          ),
-        );
+        return from(Promise.all(evidence.map((item) => this.withDownloadUrl(item))));
       }),
     );
   }
 
   private async withDownloadUrl(
     item: Omit<CheckInEvidence, 'downloadUrl'>,
-  ): Promise<CheckInEvidence | null> {
+  ): Promise<CheckInEvidence> {
     try {
       return {
         ...item,
         downloadUrl: await getDownloadURL(ref(this.storage, item.storagePath)),
       };
     } catch {
-      return null;
+      return {
+        ...item,
+        downloadUrl: null,
+      };
     }
   }
 

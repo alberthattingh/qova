@@ -1,4 +1,4 @@
-import { AsyncPipe, DatePipe, TitleCasePipe } from '@angular/common';
+import { AsyncPipe, DatePipe } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { CardModule } from 'primeng/card';
@@ -6,6 +6,9 @@ import { TagModule } from 'primeng/tag';
 import { catchError, map, of, startWith } from 'rxjs';
 
 import { ABSOLUTE_ROUTES, RouteParam } from '../../../constants/app-routes';
+import { CHECK_IN_REVIEW_DECISION_LABELS } from '../../../constants/check-in-review-decision-labels';
+import { CheckInReviewDecision } from '../../../constants/check-in-review-decisions';
+import { CHECK_IN_STATUS_LABELS } from '../../../constants/check-in-status-labels';
 import { CheckInStatus } from '../../../constants/check-in-statuses';
 import { CheckInReviewFormValue } from '../../../models/check-in-review-form-value.model';
 import { CheckIn } from '../../../models/check-in.model';
@@ -30,7 +33,6 @@ import { CheckInReviewForm } from '../../commitments/check-in-review-form/check-
     ErrorState,
     LoadingState,
     TagModule,
-    TitleCasePipe,
   ],
   templateUrl: './review-details-page.html',
   styleUrl: './review-details-page.scss',
@@ -42,6 +44,8 @@ export class ReviewDetailsPage {
   private readonly route = inject(ActivatedRoute);
 
   protected readonly ABSOLUTE_ROUTES = ABSOLUTE_ROUTES;
+  protected readonly reviewDecisionLabels = CHECK_IN_REVIEW_DECISION_LABELS;
+  protected readonly statusLabels = CHECK_IN_STATUS_LABELS;
   protected readonly checkInId =
     this.route.snapshot.paramMap.get(RouteParam.CheckInId) ?? '';
   protected readonly reviewState$ = this.reviewQueue
@@ -78,6 +82,14 @@ export class ReviewDetailsPage {
     }
 
     return 'secondary';
+  }
+
+  protected statusLabel(checkIn: CheckIn): string {
+    return this.statusLabels[checkIn.status];
+  }
+
+  protected reviewDecisionLabel(decision: CheckInReviewDecision): string {
+    return this.reviewDecisionLabels[decision];
   }
 
   protected async reviewCheckIn(

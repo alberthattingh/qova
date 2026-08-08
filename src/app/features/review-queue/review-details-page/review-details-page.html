@@ -27,7 +27,7 @@
             <p-tag value="Late submission" severity="warn" />
           }
           <p-tag
-            [value]="details.checkIn.status | titlecase"
+            [value]="statusLabel(details.checkIn)"
             [severity]="statusSeverity(details.checkIn)"
           />
         </div>
@@ -125,7 +125,7 @@
               @for (review of details.checkIn.reviews; track review.id) {
                 <article>
                   <div>
-                    <strong>{{ review.decision | titlecase }}</strong>
+                    <strong>{{ reviewDecisionLabel(review.decision) }}</strong>
                     <p>{{ review.createdAt | date: 'medium' }}</p>
                   </div>
                   @if (review.comment) {

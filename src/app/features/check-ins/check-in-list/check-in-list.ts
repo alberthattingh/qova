@@ -3,6 +3,7 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CardModule } from 'primeng/card';
 import { TagModule } from 'primeng/tag';
 
+import { CHECK_IN_STATUS_LABELS } from '../../../constants/check-in-status-labels';
 import { CheckInStatus } from '../../../constants/check-in-statuses';
 import { DueCheckInStatus } from '../../../constants/due-check-in-statuses';
 import { CheckInFormValue } from '../../../models/check-in-form-value.model';
@@ -37,6 +38,7 @@ export class CheckInList {
   }>();
 
   protected readonly checkInStatus = CheckInStatus;
+  protected readonly checkInStatusLabels = CHECK_IN_STATUS_LABELS;
 
   protected statusLabel(checkIn: DueCheckIn): string {
     if (checkIn.status === DueCheckInStatus.AwaitingSubmission) {
@@ -47,22 +49,6 @@ export class CheckInList {
       return 'Missed';
     }
 
-    if (checkIn.status === CheckInStatus.Submitted) {
-      return 'Submitted';
-    }
-
-    if (checkIn.status === CheckInStatus.Missed) {
-      return 'Missed';
-    }
-
-    if (checkIn.status === CheckInStatus.Passed) {
-      return 'Passed';
-    }
-
-    if (checkIn.status === CheckInStatus.NeedsMoreEvidence) {
-      return 'Needs more evidence';
-    }
-
-    return 'Failed';
+    return this.checkInStatusLabels[checkIn.status];
   }
 }
