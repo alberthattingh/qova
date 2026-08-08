@@ -1,0 +1,168 @@
+@if (reviewState$ | async; as state) {
+  @if (state.isLoading) {
+    <section class="page">
+      <app-loading-state message="Loading review" />
+    </section>
+  } @else if (state.error) {
+    <section class="page">
+      <app-error-state
+        title="Unable to load review"
+        [message]="state.error"
+        [showAction]="false"
+      />
+    </section>
+  } @else if (state.details; as details) {
+    <section class="page">
+      <div class="page-heading">
+        <div>
+          <p>Check-in review</p>
+          <h1>{{ details.commitment.title }}</h1>
+        </div>
+
+        <div class="heading-actions">
+          @if (details.checkIn.wasMissed) {
+            <p-tag value="Originally missed" severity="warn" />
+          }
+          @if (details.checkIn.isLate) {
+            <p-tag value="Late submission" severity="warn" />
+          }
+          <p-tag
+            [value]="details.checkIn.status | titlecase"
+            [severity]="statusSeverity(details.checkIn)"
+          />
+        </div>
+      </div>
+
+      <p-card>
+        <section class="review-summary">
+          <div class="person">
+            <img [src]="details.user.profileImageUrl" [alt]="details.user.displayName" />
+            <div>
+              <h2>{{ details.user.displayName }}</h2>
+              <p>{{ details.user.email }}</p>
+            </div>
+          </div>
+
+          <dl>
+            <div>
+              <dt>Reporting period</dt>
+              <dd>
+                {{ details.checkIn.periodStartsAt | date: 'mediumDate' }}
+                -
+                {{ details.checkIn.periodEndsAt | date: 'mediumDate' }}
+              </dd>
+            </div>
+            <div>
+              <dt>Due</dt>
+              <dd>{{ details.checkIn.dueAt | date: 'medium' }}</dd>
+            </div>
+            <div>
+              <dt>{{ details.checkIn.wasMissed ? 'Missed' : 'Submitted' }}</dt>
+              <dd>
+                {{
+                  (details.checkIn.wasMissed
+                    ? details.checkIn.missedAt
+                    : details.checkIn.submittedAt) | date: 'medium'
+                }}
+              </dd>
+            </div>
+            @if (details.checkIn.isLate) {
+              <div>
+                <dt>Late submission</dt>
+                <dd>{{ details.checkIn.submittedAt | date: 'medium' }}</dd>
+              </div>
+            }
+          </dl>
+        </section>
+      </p-card>
+
+      <p-card>
+        <section class="detail-section">
+          <h2>Submitted update</h2>
+          <div class="field">
+            <h3>Claimed result</h3>
+            <p class="multiline">
+              {{ details.checkIn.claimedResult || 'No result submitted' }}
+            </p>
+          </div>
+          @if (details.checkIn.comment) {
+            <div class="field">
+              <h3>Comment</h3>
+              <p class="multiline">{{ details.checkIn.comment }}</p>
+            </div>
+          }
+          <div class="field">
+            <h3>Evidence</h3>
+            <app-check-in-evidence-list
+              [evidence]="details.checkIn.evidence"
+              [showEmptyState]="true"
+            />
+          </div>
+        </section>
+      </p-card>
+
+      <p-card>
+        <section class="detail-section">
+          <h2>Commitment context</h2>
+          <div class="context-grid">
+            <div class="field">
+              <h3>Target</h3>
+              <p class="multiline">{{ details.commitment.targetDescription }}</p>
+            </div>
+            <div class="field">
+              <h3>Evidence instructions</h3>
+              <p class="multiline">{{ details.commitment.evidenceInstructions }}</p>
+            </div>
+          </div>
+        </section>
+      </p-card>
+
+      @if (details.checkIn.reviews.length > 0) {
+        <p-card>
+          <section class="detail-section">
+            <h2>Review history</h2>
+            <div class="review-history">
+              @for (review of details.checkIn.reviews; track review.id) {
+                <article>
+                  <div>
+                    <strong>{{ review.decision | titlecase }}</strong>
+                    <p>{{ review.createdAt | date: 'medium' }}</p>
+                  </div>
+                  @if (review.comment) {
+                    <p class="multiline">{{ review.comment }}</p>
+                  }
+                </article>
+              }
+            </div>
+          </section>
+        </p-card>
+      }
+
+      <p-card>
+        <section class="detail-section">
+          <h2>Manager action</h2>
+          @if (details.canReview) {
+            <app-check-in-review-form
+              [isSubmitting]="isReviewing()"
+              (reviewed)="reviewCheckIn(details.checkIn, $event)"
+            />
+          } @else {
+            <app-empty-state
+              icon="pi pi-check-circle"
+              title="No action required"
+              message="This check-in is not waiting for a manager review."
+            />
+          }
+        </section>
+      </p-card>
+    </section>
+  } @else {
+    <section class="page">
+      <app-empty-state
+        icon="pi pi-lock"
+        title="Review unavailable"
+        message="This check-in could not be found or is not assigned to you."
+      />
+    </section>
+  }
+}

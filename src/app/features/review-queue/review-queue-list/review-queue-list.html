@@ -51,11 +51,10 @@
           <div class="actions">
             <a
               class="review-link"
-              [routerLink]="ABSOLUTE_ROUTES.commitmentDetails(item.commitment.id)"
-              [queryParams]="{ checkInId: item.checkIn.id }"
+              [routerLink]="ABSOLUTE_ROUTES.reviewDetails(item.checkIn.id)"
             >
               <i class="pi pi-arrow-right"></i>
-              <span>Open full review</span>
+              <span>Open review</span>
             </a>
           </div>
         </article>

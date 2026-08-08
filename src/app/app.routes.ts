@@ -77,6 +77,13 @@ export const routes: Routes = [
           ),
       },
       {
+        path: AppRoutePath.ReviewDetails,
+        loadComponent: () =>
+          import(
+            './features/review-queue/review-details-page/review-details-page'
+          ).then((component) => component.ReviewDetailsPage),
+      },
+      {
         path: AppRoutePath.ReviewQueue,
         loadComponent: () =>
           import('./features/review-queue/review-queue-page/review-queue-page').then(

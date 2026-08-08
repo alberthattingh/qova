@@ -4,20 +4,25 @@ import {
   Timestamp,
   collection,
   collectionData,
+  doc,
+  docData,
   query,
   where,
 } from '@angular/fire/firestore';
 import { combineLatest, map, Observable, of, switchMap } from 'rxjs';
 
 import { ProfileImageSource } from '../../constants/avatar';
+import { CheckInReviewDecision } from '../../constants/check-in-review-decisions';
 import { CheckInFrequency } from '../../constants/check-in-frequency';
 import { CheckInStatus } from '../../constants/check-in-statuses';
 import { CommitmentStatus } from '../../constants/commitment-statuses';
 import { FirebaseCollection } from '../../constants/firebase-collections';
 import { CheckInEvidence } from '../../models/check-in-evidence.model';
+import { CheckInReview } from '../../models/check-in-review.model';
 import { CheckIn } from '../../models/check-in.model';
 import { CommitmentManager } from '../../models/commitment-manager.model';
 import { Commitment } from '../../models/commitment.model';
+import { ReviewDetails } from '../../models/review-details.model';
 import { ReviewQueueItem } from '../../models/review-queue-item.model';
 import { ReviewQueue } from '../../models/review-queue.model';
 import { UserProfile } from '../../models/user-profile.model';
@@ -56,6 +61,87 @@ export class ReviewQueueService {
     );
   }
 
+  reviewDetails$(checkInId: string): Observable<ReviewDetails | null> {
+    return this.auth.currentAuthSession$.pipe(
+      switchMap((session) => {
+        if (!session) {
+          return of(null);
+        }
+
+        return this.checkIn$(checkInId).pipe(
+          switchMap((checkIn) => {
+            if (!checkIn || !checkIn.managerUserIds.includes(session.id)) {
+              return of(null);
+            }
+
+            return combineLatest({
+              commitment: this.commitment$(checkIn.commitmentId),
+              evidence: this.evidence.evidenceForManager$(session.id),
+              reviews: this.reviewsForCommitmentForManager$(
+                checkIn.commitmentId,
+                session.id,
+              ),
+              user: this.userProfile$(checkIn.ownerUserId),
+            }).pipe(
+              map(({ commitment, evidence, reviews, user }) => {
+                if (!commitment || !user) {
+                  return null;
+                }
+
+                return {
+                  checkIn: {
+                    ...checkIn,
+                    evidence: evidence.filter(
+                      (item) => item.checkInId === checkIn.id,
+                    ),
+                    reviews: reviews.filter(
+                      (review) => review.checkInId === checkIn.id,
+                    ),
+                  },
+                  commitment,
+                  user,
+                  canReview: checkIn.status === CheckInStatus.Submitted,
+                };
+              }),
+            );
+          }),
+        );
+      }),
+    );
+  }
+
+  private checkIn$(checkInId: string): Observable<CheckIn | null> {
+    return docData(
+      doc(this.firestore, FirebaseCollection.CheckIns, checkInId),
+    ).pipe(
+      map((checkIn) =>
+        checkIn
+          ? this.toCheckIn(checkIn as Record<string, unknown>)
+          : null,
+      ),
+    );
+  }
+
+  private commitment$(commitmentId: string): Observable<Commitment | null> {
+    return docData(
+      doc(this.firestore, FirebaseCollection.Commitments, commitmentId),
+    ).pipe(
+      map((commitment) =>
+        commitment
+          ? this.toCommitment(commitment as Record<string, unknown>)
+          : null,
+      ),
+    );
+  }
+
+  private userProfile$(userId: string): Observable<UserProfile | null> {
+    return docData(doc(this.firestore, FirebaseCollection.Users, userId)).pipe(
+      map((user) =>
+        user ? this.toUserProfile(user as Record<string, unknown>) : null,
+      ),
+    );
+  }
+
   private managerCheckIns$(managerUserId: string): Observable<CheckIn[]> {
     const checkInsQuery = query(
       collection(this.firestore, FirebaseCollection.CheckIns),
@@ -90,6 +176,27 @@ export class ReviewQueueService {
     return collectionData(collection(this.firestore, FirebaseCollection.Users)).pipe(
       map((users) =>
         users.map((user) => this.toUserProfile(user as Record<string, unknown>)),
+      ),
+    );
+  }
+
+  private reviewsForCommitmentForManager$(
+    commitmentId: string,
+    managerUserId: string,
+  ): Observable<CheckInReview[]> {
+    const reviewsQuery = query(
+      collection(this.firestore, FirebaseCollection.Reviews),
+      where('commitmentId', '==', commitmentId),
+      where('managerUserIds', 'array-contains', managerUserId),
+    );
+
+    return collectionData(reviewsQuery).pipe(
+      map((reviews) =>
+        reviews
+          .map((review) =>
+            this.toCheckInReview(review as Record<string, unknown>),
+          )
+          .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime()),
       ),
     );
   }
@@ -216,6 +323,20 @@ export class ReviewQueueService {
     };
   }
 
+  private toCheckInReview(value: Record<string, unknown>): CheckInReview {
+    return {
+      id: this.toStringField(value, 'id'),
+      checkInId: this.toStringField(value, 'checkInId'),
+      commitmentId: this.toStringField(value, 'commitmentId'),
+      ownerUserId: this.toStringField(value, 'ownerUserId'),
+      managerUserIds: this.toStringArray(value['managerUserIds']),
+      reviewerUserId: this.toStringField(value, 'reviewerUserId'),
+      decision: this.toCheckInReviewDecision(value['decision']),
+      comment: this.toNullableString(value['comment']),
+      createdAt: this.toDate(value['createdAt']),
+    };
+  }
+
   private toManagers(value: unknown): CommitmentManager[] {
     if (!Array.isArray(value)) {
       throw new Error('Invalid commitment managers');
@@ -272,6 +393,18 @@ export class ReviewQueueService {
     }
 
     throw new Error('Invalid check-in status');
+  }
+
+  private toCheckInReviewDecision(value: unknown): CheckInReviewDecision {
+    if (
+      value === CheckInReviewDecision.Passed ||
+      value === CheckInReviewDecision.Failed ||
+      value === CheckInReviewDecision.NeedsMoreEvidence
+    ) {
+      return value;
+    }
+
+    throw new Error('Invalid check-in review decision');
   }
 
   private toProfileImageSource(value: unknown): ProfileImageSource {

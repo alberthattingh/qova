@@ -9,12 +9,14 @@ export enum AppRoutePath {
   CommitmentDetails = 'commitments/:commitmentId',
   CheckIns = 'check-ins',
   ReviewQueue = 'review-queue',
+  ReviewDetails = 'review-queue/:checkInId',
   Settings = 'settings',
   Wildcard = '**',
 }
 
 export enum RouteParam {
   CommitmentId = 'commitmentId',
+  CheckInId = 'checkInId',
 }
 
 export const ABSOLUTE_ROUTES = {
@@ -28,5 +30,7 @@ export const ABSOLUTE_ROUTES = {
     `/${AppRoutePath.Commitments}/${commitmentId}`,
   checkIns: `/${AppRoutePath.CheckIns}`,
   reviewQueue: `/${AppRoutePath.ReviewQueue}`,
+  reviewDetails: (checkInId: string) =>
+    `/${AppRoutePath.ReviewQueue}/${checkInId}`,
   settings: `/${AppRoutePath.Settings}`,
 } as const;
