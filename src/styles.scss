@@ -76,6 +76,18 @@ body {
   color: var(--qova-text-secondary);
 }
 
+.p-button.p-button-secondary.p-button-outlined {
+  border-color: var(--qova-border);
+  background: var(--qova-surface);
+  color: var(--qova-text-primary);
+}
+
+.p-button.p-button-secondary.p-button-outlined:not(:disabled):hover {
+  border-color: var(--qova-primary);
+  background: var(--qova-primary-soft);
+  color: var(--qova-text-primary);
+}
+
 @media (max-width: 640px) {
   .page-heading {
     align-items: flex-start;

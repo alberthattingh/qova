@@ -92,6 +92,10 @@ export class AuthService {
     distinctUntilChanged(),
   );
 
+  hasAuthenticatedSession(): boolean {
+    return this.auth.currentUser !== null;
+  }
+
   async signIn(credentials: LoginCredentials): Promise<void> {
     await this.withAuthStatus(async () => {
       await signInWithEmailAndPassword(

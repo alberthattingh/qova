@@ -3,4 +3,4 @@ export enum ProfileImageSource {
   Uploaded = 'uploaded',
 }
 
-export const DICEBEAR_AVATAR_BASE_URL = 'https://api.dicebear.com/9.x/initials/svg';
+export const DICEBEAR_AVATAR_BASE_URL = 'https://api.dicebear.com/10.x/thumbs/svg';

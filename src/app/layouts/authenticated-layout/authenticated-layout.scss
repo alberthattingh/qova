@@ -86,7 +86,19 @@ header {
 }
 
 main {
+  position: relative;
   padding: clamp(1rem, 3vw, 2rem);
+}
+
+.route-loading {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  align-items: start;
+  padding: clamp(1rem, 3vw, 2rem);
+  background: color-mix(in srgb, var(--qova-background) 88%, transparent);
+  backdrop-filter: blur(2px);
+  z-index: 1;
 }
 
 @media (max-width: 760px) {

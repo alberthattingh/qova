@@ -25,7 +25,7 @@ export class NavigationService {
     },
     {
       label: 'Check-ins',
-      icon: 'pi pi-calendar-check',
+      icon: 'pi pi-calendar-clock',
       route: ABSOLUTE_ROUTES.checkIns,
     },
     {

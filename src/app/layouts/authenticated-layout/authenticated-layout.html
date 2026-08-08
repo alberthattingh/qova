@@ -29,6 +29,12 @@
 
     <main>
       <router-outlet />
+
+      @if (isRouteLoading$ | async) {
+        <div class="route-loading">
+          <app-loading-state message="Loading page" />
+        </div>
+      }
     </main>
   </section>
 </div>

@@ -17,6 +17,10 @@ function canActivateAuthenticatedRoute() {
   const authService = inject(AuthService);
   const router = inject(Router);
 
+  if (authService.hasAuthenticatedSession()) {
+    return true;
+  }
+
   return authService.isAuthenticated$.pipe(
     take(1),
     map((isAuthenticated) =>
