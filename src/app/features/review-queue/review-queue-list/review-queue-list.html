@@ -34,57 +34,19 @@
 
           <div class="commitment-copy">
             <h3>{{ item.commitment.title }}</h3>
-            <p class="multiline">{{ item.commitment.targetDescription }}</p>
+            <p>
+              {{ item.checkIn.periodStartsAt | date: 'mediumDate' }}
+              -
+              {{ item.checkIn.periodEndsAt | date: 'mediumDate' }}
+            </p>
           </div>
 
-          <dl>
-            <div>
-              <dt>Reporting period</dt>
-              <dd>
-                {{ item.checkIn.periodStartsAt | date: 'mediumDate' }}
-                -
-                {{ item.checkIn.periodEndsAt | date: 'mediumDate' }}
-              </dd>
-            </div>
-            <div>
-              <dt>Due</dt>
-              <dd>{{ item.checkIn.dueAt | date: 'medium' }}</dd>
-            </div>
-            <div>
-              <dt>{{ item.checkIn.wasMissed ? 'Missed' : 'Submitted' }}</dt>
-              <dd>
-                {{
-                  (item.checkIn.wasMissed
-                    ? item.checkIn.missedAt
-                    : item.checkIn.submittedAt) | date: 'medium'
-                }}
-              </dd>
-            </div>
+          <div class="preview-meta">
             @if (item.checkIn.isLate) {
-              <div>
-                <dt>Late submission</dt>
-                <dd>{{ item.checkIn.submittedAt | date: 'medium' }}</dd>
-              </div>
+              <span>Late submission</span>
             }
-            <div>
-              <dt>Claimed result</dt>
-              <dd>{{ item.checkIn.claimedResult || 'No result submitted' }}</dd>
-            </div>
-            @if (item.checkIn.comment) {
-              <div>
-                <dt>Comment</dt>
-                <dd class="multiline">{{ item.checkIn.comment }}</dd>
-              </div>
-            }
-          </dl>
-
-          <section class="evidence-section">
-            <h3>Evidence</h3>
-            <app-check-in-evidence-list
-              [evidence]="item.checkIn.evidence"
-              [showEmptyState]="true"
-            />
-          </section>
+            <span>{{ evidenceLabel(item) }}</span>
+          </div>
 
           <div class="actions">
             <a

@@ -9,14 +9,12 @@ import { ABSOLUTE_ROUTES } from '../../../constants/app-routes';
 import { CheckInStatus } from '../../../constants/check-in-statuses';
 import { ReviewQueueItem } from '../../../models/review-queue-item.model';
 import { EmptyState } from '../../../shared/components/empty-state/empty-state';
-import { CheckInEvidenceList } from '../../check-ins/check-in-evidence-list/check-in-evidence-list';
 
 @Component({
   selector: 'app-review-queue-list',
   imports: [
     ButtonModule,
     CardModule,
-    CheckInEvidenceList,
     DatePipe,
     EmptyState,
     RouterLink,
@@ -39,5 +37,11 @@ export class ReviewQueueList {
     }
 
     return 'secondary';
+  }
+
+  protected evidenceLabel(item: ReviewQueueItem): string {
+    const evidenceCount = item.checkIn.evidence.length;
+
+    return `${evidenceCount} evidence file${evidenceCount === 1 ? '' : 's'}`;
   }
 }
