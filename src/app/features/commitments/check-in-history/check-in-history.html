@@ -46,6 +46,31 @@
               [showEmptyState]="true"
             />
           </section>
+          @if (checkIn.reviews.length > 0) {
+            <section class="review-history">
+              <h3>Review history</h3>
+              @for (review of checkIn.reviews; track review.id) {
+                <article>
+                  <div>
+                    <strong>{{ review.decision | titlecase }}</strong>
+                    <p>{{ review.createdAt | date: 'medium' }}</p>
+                  </div>
+                  @if (review.comment) {
+                    <p class="multiline">{{ review.comment }}</p>
+                  }
+                </article>
+              }
+            </section>
+          }
+          @if (canReview(checkIn)) {
+            <section class="review-section">
+              <h3>Manager review</h3>
+              <app-check-in-review-form
+                [isSubmitting]="isReviewing"
+                (reviewed)="reviewed.emit({ checkIn, value: $event })"
+              />
+            </section>
+          }
         </div>
         <p-tag [value]="checkIn.status" />
       </div>

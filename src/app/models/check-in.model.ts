@@ -1,5 +1,6 @@
 import { CheckInStatus } from '../constants/check-in-statuses';
 import { CheckInEvidence } from './check-in-evidence.model';
+import { CheckInReview } from './check-in-review.model';
 
 export interface CheckIn {
   id: string;
@@ -20,4 +21,5 @@ export interface CheckIn {
   missedAt: Date | null;
   status: CheckInStatus;
   submittedAt: Date | null;
+  reviews: CheckInReview[];
 }

@@ -36,6 +36,8 @@ export class CheckInList {
     value: CheckInFormValue;
   }>();
 
+  protected readonly checkInStatus = CheckInStatus;
+
   protected statusLabel(checkIn: DueCheckIn): string {
     if (checkIn.status === DueCheckInStatus.AwaitingSubmission) {
       return 'Awaiting submission';
@@ -55,6 +57,10 @@ export class CheckInList {
 
     if (checkIn.status === CheckInStatus.Passed) {
       return 'Passed';
+    }
+
+    if (checkIn.status === CheckInStatus.NeedsMoreEvidence) {
+      return 'Needs more evidence';
     }
 
     return 'Failed';

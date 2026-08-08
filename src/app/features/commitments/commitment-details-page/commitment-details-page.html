@@ -95,7 +95,12 @@
 
     <p-card>
       <h2>Check-in history</h2>
-      <app-check-in-history [checkIns]="details.checkIns" />
+      <app-check-in-history
+        [checkIns]="details.checkIns"
+        [currentUserId]="currentUserId$ | async"
+        [isReviewing]="isReviewing()"
+        (reviewed)="reviewCheckIn($event.checkIn, $event.value)"
+      />
     </p-card>
 
     <p-card>

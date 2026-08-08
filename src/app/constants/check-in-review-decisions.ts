@@ -1,6 +1,4 @@
-export enum CheckInStatus {
-  Submitted = 'submitted',
-  Missed = 'missed',
+export enum CheckInReviewDecision {
   Passed = 'passed',
   Failed = 'failed',
   NeedsMoreEvidence = 'needsMoreEvidence',

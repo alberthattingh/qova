@@ -26,6 +26,7 @@ import { CheckIn } from '../../models/check-in.model';
 import { CommitmentManager } from '../../models/commitment-manager.model';
 import { Commitment } from '../../models/commitment.model';
 import { DueCheckIn } from '../../models/due-check-in.model';
+import { ResubmitCheckInRequest } from '../../models/resubmit-check-in-request.model';
 import { SubmitCheckInRequest } from '../../models/submit-check-in-request.model';
 import { SubmitMissedCheckInRequest } from '../../models/submit-missed-check-in-request.model';
 import { UploadedCheckInEvidence } from '../../models/uploaded-check-in-evidence.model';
@@ -260,6 +261,82 @@ export class CheckInService {
     });
   }
 
+  async resubmitCheckIn(request: ResubmitCheckInRequest): Promise<void> {
+    const currentUserId = await this.auth.currentUserId();
+    const checkIn = await this.checkInSnapshot(request.checkInId);
+    const commitment = await this.commitmentSnapshot(checkIn.commitmentId);
+
+    if (checkIn.ownerUserId !== currentUserId) {
+      throw new Error('Only the commitment owner can resubmit this check-in');
+    }
+
+    if (checkIn.status !== CheckInStatus.NeedsMoreEvidence) {
+      throw new Error('Only check-ins needing more evidence can be resubmitted');
+    }
+
+    const claimedResult = request.claimedResult.trim();
+    const comment = request.comment?.trim() || null;
+
+    if (!claimedResult) {
+      throw new Error('Enter a claimed result before submitting');
+    }
+
+    const period = this.periodFromCheckIn(checkIn);
+    const evidenceUploads = await Promise.all(
+      request.evidenceFiles.map(async (file) => {
+        const evidenceReference = this.checkInEvidenceRef();
+        const upload = await this.evidenceStorage.uploadEvidenceFile(
+          currentUserId,
+          checkIn.id,
+          evidenceReference.id,
+          file,
+        );
+
+        return { evidenceReference, upload };
+      }),
+    );
+    const submittedAt = Timestamp.now();
+    const createdAt = Timestamp.now();
+
+    await runTransaction(this.firestore, async (transaction) => {
+      const checkInReference = this.checkInRef(checkIn.id);
+      const latestCheckInSnapshot = await transaction.get(checkInReference);
+
+      if (!latestCheckInSnapshot.exists()) {
+        throw new Error('Check-in not found');
+      }
+
+      const latestCheckIn = this.toCheckIn(
+        latestCheckInSnapshot.data() as Record<string, unknown>,
+      );
+
+      if (latestCheckIn.status !== CheckInStatus.NeedsMoreEvidence) {
+        throw new Error('This check-in is not waiting for more evidence');
+      }
+
+      transaction.update(checkInReference, {
+        claimedResult,
+        comment,
+        status: CheckInStatus.Submitted,
+        submittedAt,
+      });
+
+      evidenceUploads.forEach(({ evidenceReference, upload }) => {
+        transaction.set(
+          evidenceReference,
+          this.evidenceMetadata(
+            evidenceReference.id,
+            checkIn.id,
+            commitment,
+            period,
+            upload,
+            createdAt,
+          ),
+        );
+      });
+    });
+  }
+
   private activeOwnedCommitments$(ownerUserId: string): Observable<Commitment[]> {
     return this.commitmentsQuery$([where('ownerUserId', '==', ownerUserId)]).pipe(
       map((commitments) =>
@@ -409,7 +486,8 @@ export class CheckInService {
       .filter(
         (checkIn) =>
           checkIn.commitmentId === commitment.id &&
-          this.canSubmitMissedCheckInRetroactively(commitment, checkIn),
+          (this.canSubmitMissedCheckInRetroactively(commitment, checkIn) ||
+            checkIn.status === CheckInStatus.NeedsMoreEvidence),
       )
       .map((checkIn) => ({
         id: checkIn.id,
@@ -559,6 +637,7 @@ export class CheckInService {
       missedAt: this.toNullableDate(value['missedAt']),
       status: this.toCheckInStatus(value['status']),
       submittedAt: this.toNullableDate(value['submittedAt']),
+      reviews: [],
     };
   }
 
@@ -639,7 +718,8 @@ export class CheckInService {
       value === CheckInStatus.Submitted ||
       value === CheckInStatus.Missed ||
       value === CheckInStatus.Passed ||
-      value === CheckInStatus.Failed
+      value === CheckInStatus.Failed ||
+      value === CheckInStatus.NeedsMoreEvidence
     ) {
       return value;
     }

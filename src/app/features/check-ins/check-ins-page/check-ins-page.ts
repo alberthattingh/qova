@@ -37,6 +37,15 @@ export class CheckInsPage {
           comment: value.comment,
           evidenceFiles: value.evidenceFiles,
         });
+      } else if (
+        checkIn.persistedCheckIn?.status === CheckInStatus.NeedsMoreEvidence
+      ) {
+        await this.checkIns.resubmitCheckIn({
+          checkInId: checkIn.persistedCheckIn.id,
+          claimedResult: value.claimedResult,
+          comment: value.comment,
+          evidenceFiles: value.evidenceFiles,
+        });
       } else {
         await this.checkIns.submitCurrentCheckIn({
           commitmentId: checkIn.commitment.id,

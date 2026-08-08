@@ -26,6 +26,11 @@
               This check-in was missed and is being tracked as late.
             </p>
           }
+          @if (checkIn.persistedCheckIn?.status === checkInStatus.NeedsMoreEvidence) {
+            <p class="late-note">
+              Your manager requested more evidence for this check-in.
+            </p>
+          }
 
           <dl>
             <div>

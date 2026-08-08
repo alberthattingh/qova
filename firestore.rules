@@ -123,6 +123,46 @@ service cloud.firestore {
         request.resource.data.isLate == true &&
         request.resource.data.status == 'submitted';
 
+      allow update: if signedIn() &&
+        request.auth.uid == resource.data.ownerUserId &&
+        request.auth.uid == resource.data.userId &&
+        resource.data.status == 'needsMoreEvidence' &&
+        request.resource.data.id == resource.data.id &&
+        request.resource.data.commitmentId == resource.data.commitmentId &&
+        request.resource.data.ownerUserId == resource.data.ownerUserId &&
+        request.resource.data.managerUserIds == resource.data.managerUserIds &&
+        request.resource.data.userId == resource.data.userId &&
+        request.resource.data.periodIndex == resource.data.periodIndex &&
+        request.resource.data.periodStartsAt == resource.data.periodStartsAt &&
+        request.resource.data.periodEndsAt == resource.data.periodEndsAt &&
+        request.resource.data.deadline == resource.data.deadline &&
+        request.resource.data.wasMissed == resource.data.wasMissed &&
+        request.resource.data.dueAt == resource.data.dueAt &&
+        request.resource.data.missedAt == resource.data.missedAt &&
+        request.resource.data.isLate == resource.data.isLate &&
+        request.resource.data.status == 'submitted';
+
+      allow update: if signedIn() &&
+        request.auth.uid in resource.data.managerUserIds &&
+        resource.data.status == 'submitted' &&
+        request.resource.data.id == resource.data.id &&
+        request.resource.data.commitmentId == resource.data.commitmentId &&
+        request.resource.data.ownerUserId == resource.data.ownerUserId &&
+        request.resource.data.managerUserIds == resource.data.managerUserIds &&
+        request.resource.data.userId == resource.data.userId &&
+        request.resource.data.periodIndex == resource.data.periodIndex &&
+        request.resource.data.periodStartsAt == resource.data.periodStartsAt &&
+        request.resource.data.periodEndsAt == resource.data.periodEndsAt &&
+        request.resource.data.deadline == resource.data.deadline &&
+        request.resource.data.claimedResult == resource.data.claimedResult &&
+        request.resource.data.comment == resource.data.comment &&
+        request.resource.data.wasMissed == resource.data.wasMissed &&
+        request.resource.data.dueAt == resource.data.dueAt &&
+        request.resource.data.missedAt == resource.data.missedAt &&
+        request.resource.data.isLate == resource.data.isLate &&
+        request.resource.data.submittedAt == resource.data.submittedAt &&
+        request.resource.data.status in ['passed', 'failed', 'needsMoreEvidence'];
+
       allow delete: if false;
     }
 
@@ -138,6 +178,24 @@ service cloud.firestore {
         request.resource.data.commitmentId == getAfter(/databases/$(database)/documents/checkIns/$(request.resource.data.checkInId)).data.commitmentId &&
         request.resource.data.periodIndex == getAfter(/databases/$(database)/documents/checkIns/$(request.resource.data.checkInId)).data.periodIndex &&
         request.resource.data.managerUserIds == getAfter(/databases/$(database)/documents/checkIns/$(request.resource.data.checkInId)).data.managerUserIds;
+
+      allow update, delete: if false;
+    }
+
+    match /reviews/{reviewId} {
+      allow read: if isCommitmentParticipant(resource.data);
+
+      allow create: if signedIn() &&
+        request.auth.uid == request.resource.data.reviewerUserId &&
+        request.auth.uid in request.resource.data.managerUserIds &&
+        request.resource.data.id == reviewId &&
+        request.resource.data.checkInId is string &&
+        existsAfter(/databases/$(database)/documents/checkIns/$(request.resource.data.checkInId)) &&
+        getAfter(/databases/$(database)/documents/checkIns/$(request.resource.data.checkInId)).data.commitmentId == request.resource.data.commitmentId &&
+        getAfter(/databases/$(database)/documents/checkIns/$(request.resource.data.checkInId)).data.ownerUserId == request.resource.data.ownerUserId &&
+        getAfter(/databases/$(database)/documents/checkIns/$(request.resource.data.checkInId)).data.managerUserIds == request.resource.data.managerUserIds &&
+        getAfter(/databases/$(database)/documents/checkIns/$(request.resource.data.checkInId)).data.status in ['passed', 'failed', 'needsMoreEvidence'] &&
+        request.resource.data.decision in ['passed', 'failed', 'needsMoreEvidence'];
 
       allow update, delete: if false;
     }

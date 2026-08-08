@@ -17,11 +17,13 @@ import {
 import { combineLatest, map, Observable, of, switchMap } from 'rxjs';
 
 import { CheckInFrequency } from '../../constants/check-in-frequency';
+import { CheckInReviewDecision } from '../../constants/check-in-review-decisions';
 import { CheckInStatus } from '../../constants/check-in-statuses';
 import { CommitmentStatus } from '../../constants/commitment-statuses';
 import { FirebaseCollection } from '../../constants/firebase-collections';
 import { ManagerRelationshipStatus } from '../../constants/manager-relationship-statuses';
 import { CheckIn } from '../../models/check-in.model';
+import { CheckInReview } from '../../models/check-in-review.model';
 import { CheckInScheduleInput } from '../../models/check-in-schedule-input.model';
 import { CommitmentDetailView } from '../../models/commitment-detail-view.model';
 import { CommitmentManager } from '../../models/commitment-manager.model';
@@ -125,18 +127,28 @@ export class CommitmentService {
                 commitment,
                 session.id,
               ),
+              reviews: this.reviewsForCommitmentForViewer$(
+                commitment,
+                session.id,
+              ),
             }).pipe(
-              map(({ versions, checkIns, evidence }) => ({
+              map(({ versions, checkIns, evidence, reviews }) => ({
                 commitment,
                 versions,
-                checkIns: this.withEvidence(checkIns, evidence),
+                checkIns: this.withReviews(
+                  this.withEvidence(checkIns, evidence),
+                  reviews,
+                ),
                 scheduleState: this.checkInSchedules.scheduleState(
                   this.scheduleInput(commitment),
                 ),
                 currentCheckInState:
                   this.checkInSchedules.currentPeriodSubmissionState(
                     this.scheduleInput(commitment),
-                    this.withEvidence(checkIns, evidence),
+                    this.withReviews(
+                      this.withEvidence(checkIns, evidence),
+                      reviews,
+                    ),
                   ),
               })),
             );
@@ -342,6 +354,31 @@ export class CommitmentService {
               this.checkInSortDate(b).getTime() -
               this.checkInSortDate(a).getTime(),
           ),
+      ),
+    );
+  }
+
+  private reviewsForCommitmentForViewer$(
+    commitment: Commitment,
+    userId: string,
+  ): Observable<CheckInReview[]> {
+    const accessFilter =
+      commitment.ownerUserId === userId
+        ? where('ownerUserId', '==', userId)
+        : where('managerUserIds', 'array-contains', userId);
+    const reviewsQuery = query(
+      collection(this.firestore, FirebaseCollection.Reviews),
+      where('commitmentId', '==', commitment.id),
+      accessFilter,
+    );
+
+    return collectionData(reviewsQuery).pipe(
+      map((reviews) =>
+        reviews
+          .map((review) =>
+            this.toCheckInReview(review as Record<string, unknown>),
+          )
+          .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime()),
       ),
     );
   }
@@ -677,6 +714,7 @@ export class CommitmentService {
       missedAt: this.toNullableDate(value['missedAt']),
       status: this.toCheckInStatus(value['status']),
       submittedAt: this.toNullableDate(value['submittedAt']),
+      reviews: [],
     };
   }
 
@@ -692,6 +730,30 @@ export class CommitmentService {
       ...checkIn,
       evidence: evidence.filter((item) => item.checkInId === checkIn.id),
     }));
+  }
+
+  private withReviews(
+    checkIns: CheckIn[],
+    reviews: CheckInReview[],
+  ): CheckIn[] {
+    return checkIns.map((checkIn) => ({
+      ...checkIn,
+      reviews: reviews.filter((review) => review.checkInId === checkIn.id),
+    }));
+  }
+
+  private toCheckInReview(value: Record<string, unknown>): CheckInReview {
+    return {
+      id: this.toStringField(value, 'id'),
+      checkInId: this.toStringField(value, 'checkInId'),
+      commitmentId: this.toStringField(value, 'commitmentId'),
+      ownerUserId: this.toStringField(value, 'ownerUserId'),
+      managerUserIds: this.toStringArray(value['managerUserIds']),
+      reviewerUserId: this.toStringField(value, 'reviewerUserId'),
+      decision: this.toCheckInReviewDecision(value['decision']),
+      comment: this.toNullableString(value['comment']),
+      createdAt: this.toDate(value['createdAt']),
+    };
   }
 
   private toManagers(value: unknown): CommitmentManager[] {
@@ -743,7 +805,8 @@ export class CommitmentService {
       value === CheckInStatus.Submitted ||
       value === CheckInStatus.Missed ||
       value === CheckInStatus.Passed ||
-      value === CheckInStatus.Failed
+      value === CheckInStatus.Failed ||
+      value === CheckInStatus.NeedsMoreEvidence
     ) {
       return value;
     }
@@ -760,6 +823,18 @@ export class CommitmentService {
     }
 
     throw new Error('Invalid manager relationship status');
+  }
+
+  private toCheckInReviewDecision(value: unknown): CheckInReviewDecision {
+    if (
+      value === CheckInReviewDecision.Passed ||
+      value === CheckInReviewDecision.Failed ||
+      value === CheckInReviewDecision.NeedsMoreEvidence
+    ) {
+      return value;
+    }
+
+    throw new Error('Invalid check-in review decision');
   }
 
   private toStringField(value: Record<string, unknown>, fieldName: string): string {

@@ -67,8 +67,19 @@ dd {
   white-space: pre-wrap;
 }
 
-.evidence-section {
+.evidence-section,
+.review-section,
+.review-history {
   display: grid;
   gap: 0.75rem;
   margin-top: 0.75rem;
+}
+
+.review-history article {
+  display: grid;
+  gap: 0.35rem;
+  padding: 0.65rem;
+  border: 1px solid var(--qova-border);
+  border-radius: 8px;
+  background: var(--qova-surface-hover);
 }

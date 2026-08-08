@@ -55,6 +55,7 @@ describe('CheckInScheduleService', () => {
       missedAt: null,
       status: CheckInStatus.Submitted,
       submittedAt: new Date('2026-08-08T08:30:00.000Z'),
+      reviews: [],
     };
     const state = service.currentPeriodSubmissionState(
       scheduleInput(CheckInFrequency.Daily),

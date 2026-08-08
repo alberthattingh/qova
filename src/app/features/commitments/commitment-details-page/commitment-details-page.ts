@@ -9,11 +9,14 @@ import { map, startWith } from 'rxjs';
 
 import { RouteParam } from '../../../constants/app-routes';
 import { CommitmentStatus } from '../../../constants/commitment-statuses';
+import { CheckIn } from '../../../models/check-in.model';
+import { CheckInReviewFormValue } from '../../../models/check-in-review-form-value.model';
 import { Commitment } from '../../../models/commitment.model';
 import { CreateCommitmentRequest } from '../../../models/create-commitment-request.model';
-import { CommitmentService } from '../../../services/commitments/commitment.service';
 import { AuthService } from '../../../services/auth/auth.service';
+import { CommitmentService } from '../../../services/commitments/commitment.service';
 import { NotificationService } from '../../../services/notifications/notification.service';
+import { CheckInReviewService } from '../../../services/reviews/check-in-review.service';
 import { EmptyState } from '../../../shared/components/empty-state/empty-state';
 import { LoadingState } from '../../../shared/components/loading-state/loading-state';
 import { CheckInHistory } from '../check-in-history/check-in-history';
@@ -41,6 +44,7 @@ import { CommitmentSchedule } from '../commitment-schedule/commitment-schedule';
 })
 export class CommitmentDetailsPage {
   private readonly auth = inject(AuthService);
+  private readonly checkInReviews = inject(CheckInReviewService);
   private readonly commitments = inject(CommitmentService);
   private readonly notifications = inject(NotificationService);
   private readonly route = inject(ActivatedRoute);
@@ -59,6 +63,7 @@ export class CommitmentDetailsPage {
   protected readonly CommitmentStatus = CommitmentStatus;
   protected readonly isEditing = signal(false);
   protected readonly isWorking = signal(false);
+  protected readonly isReviewing = signal(false);
 
   showEditForm(): void {
     this.isEditing.set(true);
@@ -118,6 +123,29 @@ export class CommitmentDetailsPage {
       () => this.commitments.cancel(commitmentId),
       'Commitment cancelled',
     );
+  }
+
+  async reviewCheckIn(
+    checkIn: CheckIn,
+    value: CheckInReviewFormValue,
+  ): Promise<void> {
+    this.isReviewing.set(true);
+
+    try {
+      await this.checkInReviews.reviewCheckIn({
+        checkInId: checkIn.id,
+        decision: value.decision,
+        comment: value.comment,
+      });
+      this.notifications.success('Review saved', 'The check-in was reviewed.');
+    } catch (error) {
+      this.notifications.error(
+        'Review failed',
+        error instanceof Error ? error.message : 'The review could not be saved.',
+      );
+    } finally {
+      this.isReviewing.set(false);
+    }
   }
 
   private async runAction(

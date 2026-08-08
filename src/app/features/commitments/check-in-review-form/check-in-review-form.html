@@ -1,0 +1,34 @@
+<form [formGroup]="form">
+  <label>
+    <span>Review comment <small>Optional</small></span>
+    <textarea pTextarea rows="3" formControlName="comment"></textarea>
+  </label>
+
+  <div class="review-actions">
+    <p-button
+      type="button"
+      label="Pass"
+      icon="pi pi-check"
+      [loading]="isSubmitting"
+      (onClick)="submit(decision.Passed)"
+    />
+    <p-button
+      type="button"
+      label="Needs evidence"
+      icon="pi pi-paperclip"
+      severity="secondary"
+      outlined
+      [loading]="isSubmitting"
+      (onClick)="submit(decision.NeedsMoreEvidence)"
+    />
+    <p-button
+      type="button"
+      label="Fail"
+      icon="pi pi-times"
+      severity="danger"
+      outlined
+      [loading]="isSubmitting"
+      (onClick)="submit(decision.Failed)"
+    />
+  </div>
+</form>

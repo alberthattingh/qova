@@ -200,6 +200,7 @@ export class ReviewQueueService {
       missedAt: this.toNullableDate(value['missedAt']),
       status: this.toCheckInStatus(value['status']),
       submittedAt: this.toNullableDate(value['submittedAt']),
+      reviews: [],
     };
   }
 
@@ -264,7 +265,8 @@ export class ReviewQueueService {
       value === CheckInStatus.Submitted ||
       value === CheckInStatus.Missed ||
       value === CheckInStatus.Passed ||
-      value === CheckInStatus.Failed
+      value === CheckInStatus.Failed ||
+      value === CheckInStatus.NeedsMoreEvidence
     ) {
       return value;
     }
