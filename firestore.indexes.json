@@ -97,41 +97,11 @@
       "queryScope": "COLLECTION",
       "fields": [
         {
-          "fieldPath": "ownerUserId",
-          "order": "ASCENDING"
-        }
-      ]
-    },
-    {
-      "collectionGroup": "commitments",
-      "queryScope": "COLLECTION",
-      "fields": [
-        {
           "fieldPath": "managerUserIds",
           "arrayConfig": "CONTAINS"
         },
         {
           "fieldPath": "status",
-          "order": "ASCENDING"
-        }
-      ]
-    },
-    {
-      "collectionGroup": "commitmentVersions",
-      "queryScope": "COLLECTION",
-      "fields": [
-        {
-          "fieldPath": "commitmentId",
-          "order": "ASCENDING"
-        }
-      ]
-    },
-    {
-      "collectionGroup": "checkIns",
-      "queryScope": "COLLECTION",
-      "fields": [
-        {
-          "fieldPath": "commitmentId",
           "order": "ASCENDING"
         }
       ]
