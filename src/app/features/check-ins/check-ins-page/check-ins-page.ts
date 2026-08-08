@@ -33,6 +33,7 @@ export class CheckInsPage {
         commitmentId: checkIn.commitment.id,
         claimedResult: value.claimedResult,
         comment: value.comment,
+        evidenceFiles: value.evidenceFiles,
       });
       this.notifications.success(
         'Check-in submitted',

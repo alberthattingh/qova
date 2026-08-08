@@ -8,12 +8,14 @@ import { DueCheckInStatus } from '../../../constants/due-check-in-statuses';
 import { CheckInFormValue } from '../../../models/check-in-form-value.model';
 import { DueCheckIn } from '../../../models/due-check-in.model';
 import { EmptyState } from '../../../shared/components/empty-state/empty-state';
+import { CheckInEvidenceList } from '../check-in-evidence-list/check-in-evidence-list';
 import { CheckInSubmitForm } from '../check-in-submit-form/check-in-submit-form';
 
 @Component({
   selector: 'app-check-in-list',
   imports: [
     CardModule,
+    CheckInEvidenceList,
     CheckInSubmitForm,
     DatePipe,
     EmptyState,

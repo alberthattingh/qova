@@ -5,5 +5,6 @@ export enum FirebaseCollection {
   Commitments = 'commitments',
   CommitmentVersions = 'commitmentVersions',
   CheckIns = 'checkIns',
+  CheckInEvidence = 'checkInEvidence',
   Reviews = 'reviews',
 }

@@ -4,10 +4,11 @@ import { TagModule } from 'primeng/tag';
 
 import { CheckIn } from '../../../models/check-in.model';
 import { EmptyState } from '../../../shared/components/empty-state/empty-state';
+import { CheckInEvidenceList } from '../../check-ins/check-in-evidence-list/check-in-evidence-list';
 
 @Component({
   selector: 'app-check-in-history',
-  imports: [DatePipe, EmptyState, TagModule, TitleCasePipe],
+  imports: [CheckInEvidenceList, DatePipe, EmptyState, TagModule, TitleCasePipe],
   templateUrl: './check-in-history.html',
   styleUrl: './check-in-history.scss',
 })

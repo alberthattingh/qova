@@ -9,6 +9,48 @@
     <textarea pTextarea rows="3" formControlName="comment"></textarea>
   </label>
 
+  <label>
+    <span>Evidence <small>Images or PDF</small></span>
+    <input
+      #evidenceInput
+      type="file"
+      [accept]="evidenceAccept"
+      multiple
+      (change)="selectEvidence($event)"
+    />
+  </label>
+
+  @if (evidencePreviews().length > 0) {
+    <div class="evidence-preview-grid" aria-label="Selected evidence">
+      @for (preview of evidencePreviews(); track preview.id) {
+        <article class="evidence-preview">
+          @if (preview.category === fileCategory.Image) {
+            <img [src]="preview.previewUrl" [alt]="preview.fileName" />
+          } @else {
+            <div class="pdf-preview">
+              <i class="pi pi-file-pdf" aria-hidden="true"></i>
+            </div>
+          }
+
+          <div>
+            <strong>{{ preview.fileName }}</strong>
+            <span>{{ fileSizeLabel(preview.size) }}</span>
+          </div>
+
+          <p-button
+            type="button"
+            icon="pi pi-times"
+            severity="secondary"
+            [text]="true"
+            [rounded]="true"
+            [disabled]="isSubmitting"
+            (onClick)="removeEvidence(preview.id)"
+          />
+        </article>
+      }
+    </div>
+  }
+
   <p-button
     type="submit"
     label="Submit check-in"

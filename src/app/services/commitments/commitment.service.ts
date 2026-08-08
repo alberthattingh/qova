@@ -33,6 +33,7 @@ import { CreateCommitmentRequest } from '../../models/create-commitment-request.
 import { ManagerRelationship } from '../../models/manager-relationship.model';
 import { UpdateCommitmentRequest } from '../../models/update-commitment-request.model';
 import { AuthService } from '../auth/auth.service';
+import { CheckInEvidenceService } from '../check-ins/check-in-evidence.service';
 import { BrowserTimeZoneService } from '../check-ins/browser-time-zone.service';
 import { CheckInScheduleService } from '../check-ins/check-in-schedule.service';
 
@@ -41,6 +42,7 @@ import { CheckInScheduleService } from '../check-ins/check-in-schedule.service';
 })
 export class CommitmentService {
   private readonly auth = inject(AuthService);
+  private readonly evidence = inject(CheckInEvidenceService);
   private readonly checkInSchedules = inject(CheckInScheduleService);
   private readonly browserTimeZone = inject(BrowserTimeZoneService);
   private readonly firestore = inject(Firestore);
@@ -119,18 +121,22 @@ export class CommitmentService {
                 commitment,
                 session.id,
               ),
+              evidence: this.evidence.evidenceForCommitmentForViewer$(
+                commitment,
+                session.id,
+              ),
             }).pipe(
-              map(({ versions, checkIns }) => ({
+              map(({ versions, checkIns, evidence }) => ({
                 commitment,
                 versions,
-                checkIns,
+                checkIns: this.withEvidence(checkIns, evidence),
                 scheduleState: this.checkInSchedules.scheduleState(
                   this.scheduleInput(commitment),
                 ),
                 currentCheckInState:
                   this.checkInSchedules.currentPeriodSubmissionState(
                     this.scheduleInput(commitment),
-                    checkIns,
+                    this.withEvidence(checkIns, evidence),
                   ),
               })),
             );
@@ -644,9 +650,20 @@ export class CommitmentService {
       deadline: this.toDate(value['deadline']),
       claimedResult: this.toStringField(value, 'claimedResult'),
       comment: this.toNullableString(value['comment']),
+      evidence: [],
       status: this.toCheckInStatus(value['status']),
       submittedAt: this.toDate(value['submittedAt']),
     };
+  }
+
+  private withEvidence(
+    checkIns: CheckIn[],
+    evidence: CheckIn['evidence'],
+  ): CheckIn[] {
+    return checkIns.map((checkIn) => ({
+      ...checkIn,
+      evidence: evidence.filter((item) => item.checkInId === checkIn.id),
+    }));
   }
 
   private toManagers(value: unknown): CommitmentManager[] {

@@ -45,6 +45,16 @@
             }
           </dl>
 
+          @if (checkIn.persistedCheckIn) {
+            <section class="evidence-section">
+              <h3>Evidence</h3>
+              <app-check-in-evidence-list
+                [evidence]="checkIn.persistedCheckIn.evidence"
+                [showEmptyState]="true"
+              />
+            </section>
+          }
+
           @if (showSubmitForm && checkIn.canSubmit) {
             <app-check-in-submit-form
               [isSubmitting]="isSubmitting"

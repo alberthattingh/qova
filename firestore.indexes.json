@@ -161,6 +161,34 @@
           "arrayConfig": "CONTAINS"
         }
       ]
+    },
+    {
+      "collectionGroup": "checkInEvidence",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "commitmentId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "ownerUserId",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "checkInEvidence",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "commitmentId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "managerUserIds",
+          "arrayConfig": "CONTAINS"
+        }
+      ]
     }
   ],
   "fieldOverrides": []

@@ -2,8 +2,51 @@ rules_version = '2';
 
 service firebase.storage {
   match /b/{bucket}/o {
-    match /users/{userId}/{allPaths=**} {
-      allow read, write: if request.auth != null && request.auth.uid == userId;
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function checkInDocument(checkInId) {
+      return firestore.get(
+        /databases/(default)/documents/checkIns/$(checkInId)
+      );
+    }
+
+    function checkInExists(checkInId) {
+      return firestore.exists(
+        /databases/(default)/documents/checkIns/$(checkInId)
+      );
+    }
+
+    function isCheckInParticipant(checkInId) {
+      return signedIn() &&
+        checkInExists(checkInId) &&
+        (
+          request.auth.uid == checkInDocument(checkInId).data.ownerUserId ||
+          request.auth.uid in checkInDocument(checkInId).data.managerUserIds
+        );
+    }
+
+    match /users/{userId}/profile-pictures/{fileName} {
+      allow read: if signedIn();
+      allow write: if signedIn() &&
+        request.auth.uid == userId &&
+        request.resource.contentType.matches('image/.*') &&
+        request.resource.size < 10 * 1024 * 1024;
+    }
+
+    match /check-in-evidence/{ownerUserId}/{checkInId}/{fileName} {
+      allow read: if isCheckInParticipant(checkInId);
+
+      allow create: if signedIn() &&
+        request.auth.uid == ownerUserId &&
+        request.resource.size < 10 * 1024 * 1024 &&
+        (
+          request.resource.contentType.matches('image/.*') ||
+          request.resource.contentType == 'application/pdf'
+        );
+
+      allow update, delete: if false;
     }
 
     match /{allPaths=**} {

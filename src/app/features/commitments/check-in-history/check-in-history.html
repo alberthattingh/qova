@@ -31,6 +31,13 @@
               </div>
             }
           </dl>
+          <section class="evidence-section">
+            <h3>Evidence</h3>
+            <app-check-in-evidence-list
+              [evidence]="checkIn.evidence"
+              [showEmptyState]="true"
+            />
+          </section>
         </div>
         <p-tag [value]="checkIn.status" />
       </div>

@@ -5,6 +5,7 @@ import {
   collection,
   collectionData,
   doc,
+  DocumentReference,
   getDoc,
   query,
   runTransaction,
@@ -18,6 +19,7 @@ import { CommitmentStatus } from '../../constants/commitment-statuses';
 import { DueCheckInStatus } from '../../constants/due-check-in-statuses';
 import { FirebaseCollection } from '../../constants/firebase-collections';
 import { CheckInDashboard } from '../../models/check-in-dashboard.model';
+import { CheckInEvidence } from '../../models/check-in-evidence.model';
 import { CheckInPeriod } from '../../models/check-in-period.model';
 import { CheckInScheduleInput } from '../../models/check-in-schedule-input.model';
 import { CheckIn } from '../../models/check-in.model';
@@ -25,7 +27,10 @@ import { CommitmentManager } from '../../models/commitment-manager.model';
 import { Commitment } from '../../models/commitment.model';
 import { DueCheckIn } from '../../models/due-check-in.model';
 import { SubmitCheckInRequest } from '../../models/submit-check-in-request.model';
+import { UploadedCheckInEvidence } from '../../models/uploaded-check-in-evidence.model';
 import { AuthService } from '../auth/auth.service';
+import { CheckInEvidenceService } from './check-in-evidence.service';
+import { CheckInEvidenceStorageService } from './check-in-evidence-storage.service';
 import { CheckInScheduleService } from './check-in-schedule.service';
 
 @Injectable({
@@ -33,6 +38,8 @@ import { CheckInScheduleService } from './check-in-schedule.service';
 })
 export class CheckInService {
   private readonly auth = inject(AuthService);
+  private readonly evidence = inject(CheckInEvidenceService);
+  private readonly evidenceStorage = inject(CheckInEvidenceStorageService);
   private readonly firestore = inject(Firestore);
   private readonly schedules = inject(CheckInScheduleService);
 
@@ -48,16 +55,31 @@ export class CheckInService {
           managedCommitments: this.activeManagedCommitments$(session.id),
           ownedCheckIns: this.ownerCheckIns$(session.id),
           managedCheckIns: this.managerCheckIns$(session.id),
+          ownedEvidence: this.evidence.evidenceForOwner$(session.id),
+          managedEvidence: this.evidence.evidenceForManager$(session.id),
         }).pipe(
-          map(({ ownedCommitments, managedCommitments, ownedCheckIns, managedCheckIns }) => ({
+          map(({
+            ownedCommitments,
+            managedCommitments,
+            ownedCheckIns,
+            managedCheckIns,
+            ownedEvidence,
+            managedEvidence,
+          }) => ({
             dueCheckIns: ownedCommitments
               .map((commitment) =>
-                this.ownerDueCheckIn(commitment, ownedCheckIns),
+                this.ownerDueCheckIn(
+                  commitment,
+                  this.withEvidence(ownedCheckIns, ownedEvidence),
+                ),
               )
               .filter((checkIn): checkIn is DueCheckIn => checkIn !== null),
             managedCheckIns: managedCommitments
               .map((commitment) =>
-                this.managerVisibleCheckIn(commitment, managedCheckIns),
+                this.managerVisibleCheckIn(
+                  commitment,
+                  this.withEvidence(managedCheckIns, managedEvidence),
+                ),
               )
               .filter((checkIn): checkIn is DueCheckIn => checkIn !== null),
           })),
@@ -92,10 +114,25 @@ export class CheckInService {
     const checkInReference = this.checkInRef(checkInId);
     const claimedResult = request.claimedResult.trim();
     const comment = request.comment?.trim() || null;
+    const evidenceFiles = request.evidenceFiles;
 
     if (!claimedResult) {
       throw new Error('Enter a claimed result before submitting');
     }
+
+    const evidenceUploads = await Promise.all(
+      evidenceFiles.map(async (file) => {
+        const evidenceReference = this.checkInEvidenceRef();
+        const upload = await this.evidenceStorage.uploadEvidenceFile(
+          currentUserId,
+          checkInId,
+          evidenceReference.id,
+          file,
+        );
+
+        return { evidenceReference, upload };
+      }),
+    );
 
     await runTransaction(this.firestore, async (transaction) => {
       const existingCheckIn = await transaction.get(checkInReference);
@@ -118,6 +155,22 @@ export class CheckInService {
         comment,
         status: CheckInStatus.Submitted,
         submittedAt: Timestamp.now(),
+      });
+
+      const createdAt = Timestamp.now();
+
+      evidenceUploads.forEach(({ evidenceReference, upload }) => {
+        transaction.set(
+          evidenceReference,
+          this.evidenceMetadata(
+            evidenceReference.id,
+            checkInId,
+            commitment,
+            period,
+            upload,
+            createdAt,
+          ),
+        );
       });
     });
   }
@@ -273,6 +326,16 @@ export class CheckInService {
     );
   }
 
+  private withEvidence(
+    checkIns: CheckIn[],
+    evidence: CheckInEvidence[],
+  ): CheckIn[] {
+    return checkIns.map((checkIn) => ({
+      ...checkIn,
+      evidence: evidence.filter((item) => item.checkInId === checkIn.id),
+    }));
+  }
+
   private async commitmentSnapshot(commitmentId: string): Promise<Commitment> {
     const snapshot = await getDoc(this.commitmentRef(commitmentId));
 
@@ -289,6 +352,10 @@ export class CheckInService {
 
   private checkInRef(checkInId: string) {
     return doc(this.firestore, FirebaseCollection.CheckIns, checkInId);
+  }
+
+  private checkInEvidenceRef(): DocumentReference {
+    return doc(collection(this.firestore, FirebaseCollection.CheckInEvidence));
   }
 
   private checkInId(commitmentId: string, period: CheckInPeriod): string {
@@ -341,8 +408,33 @@ export class CheckInService {
       deadline: this.toDate(value['deadline']),
       claimedResult: this.toStringField(value, 'claimedResult'),
       comment: this.toNullableString(value['comment']),
+      evidence: [],
       status: this.toCheckInStatus(value['status']),
       submittedAt: this.toDate(value['submittedAt']),
+    };
+  }
+
+  private evidenceMetadata(
+    evidenceId: string,
+    checkInId: string,
+    commitment: Commitment,
+    period: CheckInPeriod,
+    upload: UploadedCheckInEvidence,
+    createdAt: Timestamp,
+  ) {
+    return {
+      id: evidenceId,
+      checkInId,
+      commitmentId: commitment.id,
+      ownerUserId: commitment.ownerUserId,
+      managerUserIds: commitment.managerUserIds,
+      periodIndex: period.index,
+      fileName: upload.fileName,
+      contentType: upload.contentType,
+      size: upload.size,
+      storagePath: upload.storagePath,
+      category: upload.category,
+      createdAt,
     };
   }
 

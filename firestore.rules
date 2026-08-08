@@ -106,6 +106,22 @@ service cloud.firestore {
       allow update, delete: if false;
     }
 
+    match /checkInEvidence/{evidenceId} {
+      allow read: if isCommitmentParticipant(resource.data);
+
+      allow create: if signedIn() &&
+        request.auth.uid == request.resource.data.ownerUserId &&
+        request.resource.data.id == evidenceId &&
+        request.resource.data.checkInId is string &&
+        existsAfter(/databases/$(database)/documents/checkIns/$(request.resource.data.checkInId)) &&
+        getAfter(/databases/$(database)/documents/checkIns/$(request.resource.data.checkInId)).data.ownerUserId == request.auth.uid &&
+        request.resource.data.commitmentId == getAfter(/databases/$(database)/documents/checkIns/$(request.resource.data.checkInId)).data.commitmentId &&
+        request.resource.data.periodIndex == getAfter(/databases/$(database)/documents/checkIns/$(request.resource.data.checkInId)).data.periodIndex &&
+        request.resource.data.managerUserIds == getAfter(/databases/$(database)/documents/checkIns/$(request.resource.data.checkInId)).data.managerUserIds;
+
+      allow update, delete: if false;
+    }
+
     match /{document=**} {
       allow read, write: if false;
     }

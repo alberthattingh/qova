@@ -14,7 +14,7 @@ export class FirebaseStorageService {
   }
 
   commitmentEvidencePath(commitmentId: string, fileName: string): string {
-    return `${FirebaseStoragePath.CommitmentEvidence}/${commitmentId}/${fileName}`;
+    return `${FirebaseStoragePath.CheckInEvidence}/${commitmentId}/${fileName}`;
   }
 
   storageRef(path: string) {

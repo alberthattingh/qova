@@ -1,0 +1,31 @@
+@if (evidence.length === 0 && showEmptyState) {
+  <app-empty-state
+    icon="pi pi-paperclip"
+    title="No evidence attached"
+    message="Submitted evidence files will appear here."
+  />
+} @else if (evidence.length > 0) {
+  <div class="evidence-grid" aria-label="Submitted evidence">
+    @for (item of evidence; track item.id) {
+      <a
+        class="evidence-item"
+        [href]="item.downloadUrl"
+        target="_blank"
+        rel="noreferrer"
+      >
+        @if (item.category === fileCategory.Image) {
+          <img [src]="item.downloadUrl" [alt]="item.fileName" />
+        } @else {
+          <div class="pdf-preview">
+            <i class="pi pi-file-pdf" aria-hidden="true"></i>
+          </div>
+        }
+
+        <span>
+          <strong>{{ item.fileName }}</strong>
+          <small>{{ fileSizeLabel(item.size) }}</small>
+        </span>
+      </a>
+    }
+  </div>
+}

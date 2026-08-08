@@ -1,4 +1,5 @@
 import { CheckInStatus } from '../constants/check-in-statuses';
+import { CheckInEvidence } from './check-in-evidence.model';
 
 export interface CheckIn {
   id: string;
@@ -12,6 +13,7 @@ export interface CheckIn {
   deadline: Date;
   claimedResult: string;
   comment: string | null;
+  evidence: CheckInEvidence[];
   status: CheckInStatus;
   submittedAt: Date;
 }
