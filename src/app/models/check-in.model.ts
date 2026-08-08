@@ -15,6 +15,7 @@ export interface CheckIn {
   comment: string | null;
   evidence: CheckInEvidence[];
   wasMissed: boolean;
+  isLate: boolean;
   dueAt: Date;
   missedAt: Date | null;
   status: CheckInStatus;

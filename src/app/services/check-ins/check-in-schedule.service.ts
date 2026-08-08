@@ -13,6 +13,8 @@ const DEFAULT_CHECK_IN_MINUTE = 0;
 const PERIOD_START_HOUR = 0;
 const PERIOD_START_MINUTE = 0;
 const LAST_MILLISECOND_OF_DAY = 1;
+const DAYS_IN_WEEK = 7;
+const WEEK_END_DAY = 7;
 
 interface CalendarDateParts {
   year: number;
@@ -66,6 +68,31 @@ export class CheckInScheduleService {
     now = new Date(),
   ): Date | null {
     return this.scheduleState(schedule, now).nextCheckInDeadline;
+  }
+
+  retroactiveSubmissionDeadline(
+    schedule: CheckInScheduleInput,
+    period: CheckInPeriod,
+  ): Date | null {
+    if (schedule.checkInFrequency !== CheckInFrequency.Daily) {
+      return null;
+    }
+
+    const periodStart = this.dateParts(period.startsAt, schedule.timeZone);
+    const weekDay = this.isoWeekDay(periodStart);
+    const weekEnd = this.addDays(periodStart, WEEK_END_DAY - weekDay);
+
+    return this.endOfDateParts(weekEnd, schedule.timeZone);
+  }
+
+  canSubmitMissedPeriodRetroactively(
+    schedule: CheckInScheduleInput,
+    period: CheckInPeriod,
+    now = new Date(),
+  ): boolean {
+    const deadline = this.retroactiveSubmissionDeadline(schedule, period);
+
+    return deadline !== null && now.getTime() <= deadline.getTime();
   }
 
   scheduleState(
@@ -315,6 +342,14 @@ export class CheckInScheduleService {
 
   private endOfDate(date: Date, timeZone: string): Date {
     const dateParts = this.dateParts(date, timeZone);
+
+    return this.endOfDateParts(dateParts, timeZone);
+  }
+
+  private endOfDateParts(
+    dateParts: CalendarDateParts,
+    timeZone: string,
+  ): Date {
     const nextDay = this.addDays(dateParts, 1);
 
     return new Date(
@@ -325,6 +360,15 @@ export class CheckInScheduleService {
         timeZone,
       ).getTime() - LAST_MILLISECOND_OF_DAY,
     );
+  }
+
+  private isoWeekDay(dateParts: CalendarDateParts): number {
+    const date = new Date(
+      Date.UTC(dateParts.year, dateParts.month - 1, dateParts.day),
+    );
+    const day = date.getUTCDay();
+
+    return day === 0 ? DAYS_IN_WEEK : day;
   }
 
   private addDays(

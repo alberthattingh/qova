@@ -21,6 +21,12 @@
             <p-tag [value]="statusLabel(checkIn)" />
           </div>
 
+          @if (checkIn.persistedCheckIn?.wasMissed) {
+            <p class="late-note">
+              This check-in was missed and is being tracked as late.
+            </p>
+          }
+
           <dl>
             <div>
               <dt>Deadline</dt>
@@ -30,7 +36,12 @@
             @if (checkIn.persistedCheckIn) {
               <div>
                 <dt>Claimed result</dt>
-                <dd>{{ checkIn.persistedCheckIn.claimedResult }}</dd>
+                <dd>
+                  {{
+                    checkIn.persistedCheckIn.claimedResult ||
+                      'Awaiting late submission'
+                  }}
+                </dd>
               </div>
               <div>
                 <dt>
@@ -64,6 +75,12 @@
           }
 
           @if (showSubmitForm && checkIn.canSubmit) {
+            @if (checkIn.persistedCheckIn?.wasMissed) {
+              <p class="late-note">
+                You can still submit this missed daily check-in until the end of
+                the same calendar week.
+              </p>
+            }
             <app-check-in-submit-form
               [isSubmitting]="isSubmitting"
               (submitted)="submitted.emit({ checkIn, value: $event })"

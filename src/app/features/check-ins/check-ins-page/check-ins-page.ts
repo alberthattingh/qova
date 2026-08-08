@@ -2,6 +2,7 @@ import { AsyncPipe } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { DividerModule } from 'primeng/divider';
 
+import { CheckInStatus } from '../../../constants/check-in-statuses';
 import { CheckInFormValue } from '../../../models/check-in-form-value.model';
 import { DueCheckIn } from '../../../models/due-check-in.model';
 import { CheckInService } from '../../../services/check-ins/check-in.service';
@@ -29,12 +30,21 @@ export class CheckInsPage {
     this.isSubmitting.set(true);
 
     try {
-      await this.checkIns.submitCurrentCheckIn({
-        commitmentId: checkIn.commitment.id,
-        claimedResult: value.claimedResult,
-        comment: value.comment,
-        evidenceFiles: value.evidenceFiles,
-      });
+      if (checkIn.persistedCheckIn?.status === CheckInStatus.Missed) {
+        await this.checkIns.submitMissedCheckIn({
+          checkInId: checkIn.persistedCheckIn.id,
+          claimedResult: value.claimedResult,
+          comment: value.comment,
+          evidenceFiles: value.evidenceFiles,
+        });
+      } else {
+        await this.checkIns.submitCurrentCheckIn({
+          commitmentId: checkIn.commitment.id,
+          claimedResult: value.claimedResult,
+          comment: value.comment,
+          evidenceFiles: value.evidenceFiles,
+        });
+      }
       this.notifications.success(
         'Check-in submitted',
         'Your update has been sent to your manager.',

@@ -10,6 +10,9 @@
       <div class="history-item">
         <div class="history-copy">
           <strong>{{ checkIn.status | titlecase }}</strong>
+          @if (checkIn.isLate) {
+            <span class="late-badge">Late submission</span>
+          }
           <p>
             {{ checkIn.periodStartsAt | date: 'mediumDate' }}
             -
@@ -18,7 +21,7 @@
           <dl>
             <div>
               <dt>Claimed result</dt>
-              <dd>{{ checkIn.claimedResult }}</dd>
+              <dd>{{ checkIn.claimedResult || 'Not submitted' }}</dd>
             </div>
             <div>
               <dt>{{ checkIn.wasMissed ? 'Missed' : 'Submitted' }}</dt>

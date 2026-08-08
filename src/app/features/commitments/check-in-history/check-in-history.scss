@@ -51,6 +51,18 @@ dd {
   min-width: 0;
 }
 
+.late-badge {
+  display: inline-flex;
+  width: fit-content;
+  margin-top: 0.45rem;
+  padding: 0.25rem 0.45rem;
+  border-radius: 6px;
+  color: var(--qova-warning);
+  background: color-mix(in srgb, var(--qova-warning) 12%, transparent);
+  font-size: 0.85rem;
+  font-weight: 650;
+}
+
 .multiline {
   white-space: pre-wrap;
 }

@@ -88,6 +88,7 @@ export class MissedCheckInService {
           claimedResult: "",
           comment: null,
           wasMissed: true,
+          isLate: false,
           dueAt: Timestamp.fromDate(commitment.nextCheckInAt),
           missedAt: Timestamp.fromDate(now),
           status: CheckInStatus.Missed,

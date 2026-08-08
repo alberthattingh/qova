@@ -27,6 +27,7 @@ import { CommitmentManager } from '../../models/commitment-manager.model';
 import { Commitment } from '../../models/commitment.model';
 import { DueCheckIn } from '../../models/due-check-in.model';
 import { SubmitCheckInRequest } from '../../models/submit-check-in-request.model';
+import { SubmitMissedCheckInRequest } from '../../models/submit-missed-check-in-request.model';
 import { UploadedCheckInEvidence } from '../../models/uploaded-check-in-evidence.model';
 import { AuthService } from '../auth/auth.service';
 import { CheckInEvidenceService } from './check-in-evidence.service';
@@ -66,22 +67,21 @@ export class CheckInService {
             ownedEvidence,
             managedEvidence,
           }) => ({
-            dueCheckIns: ownedCommitments
-              .map((commitment) =>
-                this.ownerDueCheckIn(
-                  commitment,
-                  this.withEvidence(ownedCheckIns, ownedEvidence),
-                ),
-              )
-              .filter((checkIn): checkIn is DueCheckIn => checkIn !== null),
+            dueCheckIns: this.ownerDueCheckIns(
+              ownedCommitments,
+              this.withEvidence(ownedCheckIns, ownedEvidence),
+            ),
             managedCheckIns: managedCommitments
-              .map((commitment) =>
-                this.managerVisibleCheckIn(
+              .flatMap((commitment) =>
+                this.managerVisibleCheckIns(
                   commitment,
                   this.withEvidence(managedCheckIns, managedEvidence),
                 ),
               )
-              .filter((checkIn): checkIn is DueCheckIn => checkIn !== null),
+              .sort(
+                (a, b) =>
+                  b.period.deadline.getTime() - a.period.deadline.getTime(),
+              ),
           })),
         );
       }),
@@ -154,6 +154,7 @@ export class CheckInService {
         claimedResult,
         comment,
         wasMissed: false,
+        isLate: false,
         dueAt: Timestamp.fromDate(period.deadline),
         missedAt: null,
         status: CheckInStatus.Submitted,
@@ -168,6 +169,87 @@ export class CheckInService {
           this.evidenceMetadata(
             evidenceReference.id,
             checkInId,
+            commitment,
+            period,
+            upload,
+            createdAt,
+          ),
+        );
+      });
+    });
+  }
+
+  async submitMissedCheckIn(request: SubmitMissedCheckInRequest): Promise<void> {
+    const currentUserId = await this.auth.currentUserId();
+    const checkIn = await this.checkInSnapshot(request.checkInId);
+    const commitment = await this.commitmentSnapshot(checkIn.commitmentId);
+
+    if (checkIn.ownerUserId !== currentUserId) {
+      throw new Error('Only the commitment owner can submit this check-in');
+    }
+
+    if (commitment.ownerUserId !== currentUserId) {
+      throw new Error('Only the commitment owner can submit this check-in');
+    }
+
+    if (!this.canSubmitMissedCheckInRetroactively(commitment, checkIn)) {
+      throw new Error('This missed check-in can no longer be submitted');
+    }
+
+    const claimedResult = request.claimedResult.trim();
+    const comment = request.comment?.trim() || null;
+
+    if (!claimedResult) {
+      throw new Error('Enter a claimed result before submitting');
+    }
+
+    const period = this.periodFromCheckIn(checkIn);
+    const evidenceUploads = await Promise.all(
+      request.evidenceFiles.map(async (file) => {
+        const evidenceReference = this.checkInEvidenceRef();
+        const upload = await this.evidenceStorage.uploadEvidenceFile(
+          currentUserId,
+          checkIn.id,
+          evidenceReference.id,
+          file,
+        );
+
+        return { evidenceReference, upload };
+      }),
+    );
+    const submittedAt = Timestamp.now();
+    const createdAt = Timestamp.now();
+
+    await runTransaction(this.firestore, async (transaction) => {
+      const checkInReference = this.checkInRef(checkIn.id);
+      const latestCheckInSnapshot = await transaction.get(checkInReference);
+
+      if (!latestCheckInSnapshot.exists()) {
+        throw new Error('Check-in not found');
+      }
+
+      const latestCheckIn = this.toCheckIn(
+        latestCheckInSnapshot.data() as Record<string, unknown>,
+      );
+
+      if (!this.canSubmitMissedCheckInRetroactively(commitment, latestCheckIn)) {
+        throw new Error('This missed check-in can no longer be submitted');
+      }
+
+      transaction.update(checkInReference, {
+        claimedResult,
+        comment,
+        isLate: true,
+        status: CheckInStatus.Submitted,
+        submittedAt,
+      });
+
+      evidenceUploads.forEach(({ evidenceReference, upload }) => {
+        transaction.set(
+          evidenceReference,
+          this.evidenceMetadata(
+            evidenceReference.id,
+            checkIn.id,
             commitment,
             period,
             upload,
@@ -252,6 +334,22 @@ export class CheckInService {
     );
   }
 
+  private ownerDueCheckIns(
+    commitments: Commitment[],
+    checkIns: CheckIn[],
+  ): DueCheckIn[] {
+    const currentDueCheckIns = commitments
+      .map((commitment) => this.ownerDueCheckIn(commitment, checkIns))
+      .filter((checkIn): checkIn is DueCheckIn => checkIn !== null);
+    const retroactiveCheckIns = commitments.flatMap((commitment) =>
+      this.retroactiveMissedDueCheckIns(commitment, checkIns),
+    );
+
+    return [...retroactiveCheckIns, ...currentDueCheckIns].sort(
+      (a, b) => a.period.deadline.getTime() - b.period.deadline.getTime(),
+    );
+  }
+
   private ownerDueCheckIn(
     commitment: Commitment,
     checkIns: CheckIn[],
@@ -282,30 +380,45 @@ export class CheckInService {
     };
   }
 
-  private managerVisibleCheckIn(
+  private managerVisibleCheckIns(
     commitment: Commitment,
     checkIns: CheckIn[],
-  ): DueCheckIn | null {
-    const period = this.schedules.currentPeriod(this.scheduleInput(commitment));
-
-    if (!period) {
-      return null;
-    }
-
-    const persistedCheckIn = this.checkInForPeriod(commitment.id, period, checkIns);
-
-    if (persistedCheckIn) {
-      return {
-        id: persistedCheckIn.id,
+  ): DueCheckIn[] {
+    return checkIns
+      .filter(
+        (checkIn) =>
+          checkIn.commitmentId === commitment.id &&
+          (checkIn.status === CheckInStatus.Submitted ||
+            checkIn.status === CheckInStatus.Missed),
+      )
+      .map((checkIn) => ({
+        id: checkIn.id,
         commitment,
-        period,
-        persistedCheckIn,
-        status: persistedCheckIn.status,
+        period: this.periodFromCheckIn(checkIn),
+        persistedCheckIn: checkIn,
+        status: checkIn.status,
         canSubmit: false,
-      };
-    }
+      }));
+  }
 
-    return null;
+  private retroactiveMissedDueCheckIns(
+    commitment: Commitment,
+    checkIns: CheckIn[],
+  ): DueCheckIn[] {
+    return checkIns
+      .filter(
+        (checkIn) =>
+          checkIn.commitmentId === commitment.id &&
+          this.canSubmitMissedCheckInRetroactively(commitment, checkIn),
+      )
+      .map((checkIn) => ({
+        id: checkIn.id,
+        commitment,
+        period: this.periodFromCheckIn(checkIn),
+        persistedCheckIn: checkIn,
+        status: checkIn.status,
+        canSubmit: true,
+      }));
   }
 
   private checkInForPeriod(
@@ -342,6 +455,16 @@ export class CheckInService {
     return this.toCommitment(snapshot.data() as Record<string, unknown>);
   }
 
+  private async checkInSnapshot(checkInId: string): Promise<CheckIn> {
+    const snapshot = await getDoc(this.checkInRef(checkInId));
+
+    if (!snapshot.exists()) {
+      throw new Error('Check-in not found');
+    }
+
+    return this.toCheckIn(snapshot.data() as Record<string, unknown>);
+  }
+
   private commitmentRef(commitmentId: string) {
     return doc(this.firestore, FirebaseCollection.Commitments, commitmentId);
   }
@@ -356,6 +479,30 @@ export class CheckInService {
 
   private checkInId(commitmentId: string, period: CheckInPeriod): string {
     return `${commitmentId}_${period.index}`;
+  }
+
+  private canSubmitMissedCheckInRetroactively(
+    commitment: Commitment,
+    checkIn: CheckIn,
+  ): boolean {
+    return (
+      commitment.checkInFrequency === CheckInFrequency.Daily &&
+      checkIn.status === CheckInStatus.Missed &&
+      checkIn.wasMissed &&
+      this.schedules.canSubmitMissedPeriodRetroactively(
+        this.scheduleInput(commitment),
+        this.periodFromCheckIn(checkIn),
+      )
+    );
+  }
+
+  private periodFromCheckIn(checkIn: CheckIn): CheckInPeriod {
+    return {
+      index: checkIn.periodIndex,
+      startsAt: checkIn.periodStartsAt,
+      endsAt: checkIn.periodEndsAt,
+      deadline: checkIn.deadline,
+    };
   }
 
   private scheduleInput(commitment: Commitment): CheckInScheduleInput {
@@ -407,6 +554,7 @@ export class CheckInService {
       comment: this.toNullableString(value['comment']),
       evidence: [],
       wasMissed: this.toBooleanField(value, 'wasMissed'),
+      isLate: this.toBooleanField(value, 'isLate'),
       dueAt: this.toDate(value['dueAt']),
       missedAt: this.toNullableDate(value['missedAt']),
       status: this.toCheckInStatus(value['status']),

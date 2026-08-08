@@ -28,6 +28,14 @@ dt {
   color: var(--qova-text-secondary);
 }
 
+.late-note {
+  padding: 0.65rem 0.75rem;
+  border: 1px solid color-mix(in srgb, var(--qova-warning) 50%, transparent);
+  border-radius: 8px;
+  color: var(--qova-warning);
+  background: color-mix(in srgb, var(--qova-warning) 12%, transparent);
+}
+
 dl {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));

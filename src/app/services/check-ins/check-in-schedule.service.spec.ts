@@ -50,6 +50,7 @@ describe('CheckInScheduleService', () => {
       comment: null,
       evidence: [],
       wasMissed: false,
+      isLate: false,
       dueAt: new Date('2026-08-08T09:00:00.000Z'),
       missedAt: null,
       status: CheckInStatus.Submitted,
@@ -109,6 +110,44 @@ describe('CheckInScheduleService', () => {
 
     expect(period?.startsAt.toISOString()).toBe('2026-02-15T00:00:00.000Z');
     expect(period?.deadline.toISOString()).toBe('2026-03-14T09:00:00.000Z');
+  });
+
+  it('allows retroactive daily submissions until the end of the same calendar week', () => {
+    const schedule = scheduleInput(CheckInFrequency.Daily);
+    const period = service.currentPeriod(
+      schedule,
+      new Date('2026-08-05T12:00:00.000Z'),
+    );
+
+    expect(period).not.toBeNull();
+    expect(
+      service.retroactiveSubmissionDeadline(schedule, period!)?.toISOString(),
+    ).toBe('2026-08-09T23:59:59.999Z');
+    expect(
+      service.canSubmitMissedPeriodRetroactively(
+        schedule,
+        period!,
+        new Date('2026-08-09T23:00:00.000Z'),
+      ),
+    ).toBe(true);
+    expect(
+      service.canSubmitMissedPeriodRetroactively(
+        schedule,
+        period!,
+        new Date('2026-08-10T00:00:00.000Z'),
+      ),
+    ).toBe(false);
+  });
+
+  it('does not allow retroactive weekly missed submissions for MVP', () => {
+    const schedule = scheduleInput(CheckInFrequency.Weekly);
+    const period = service.currentPeriod(
+      schedule,
+      new Date('2026-08-12T12:00:00.000Z'),
+    );
+
+    expect(period).not.toBeNull();
+    expect(service.retroactiveSubmissionDeadline(schedule, period!)).toBeNull();
   });
 });
 

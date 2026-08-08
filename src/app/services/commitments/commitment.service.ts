@@ -672,6 +672,7 @@ export class CommitmentService {
       comment: this.toNullableString(value['comment']),
       evidence: [],
       wasMissed: this.toBooleanField(value, 'wasMissed'),
+      isLate: this.toBooleanField(value, 'isLate'),
       dueAt: this.toDate(value['dueAt']),
       missedAt: this.toNullableDate(value['missedAt']),
       status: this.toCheckInStatus(value['status']),

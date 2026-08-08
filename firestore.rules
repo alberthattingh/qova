@@ -103,7 +103,27 @@ service cloud.firestore {
         request.resource.data.id == checkInId &&
         request.resource.data.status == 'submitted';
 
-      allow update, delete: if false;
+      allow update: if signedIn() &&
+        request.auth.uid == resource.data.ownerUserId &&
+        request.auth.uid == resource.data.userId &&
+        resource.data.status == 'missed' &&
+        resource.data.wasMissed == true &&
+        request.resource.data.id == resource.data.id &&
+        request.resource.data.commitmentId == resource.data.commitmentId &&
+        request.resource.data.ownerUserId == resource.data.ownerUserId &&
+        request.resource.data.managerUserIds == resource.data.managerUserIds &&
+        request.resource.data.userId == resource.data.userId &&
+        request.resource.data.periodIndex == resource.data.periodIndex &&
+        request.resource.data.periodStartsAt == resource.data.periodStartsAt &&
+        request.resource.data.periodEndsAt == resource.data.periodEndsAt &&
+        request.resource.data.deadline == resource.data.deadline &&
+        request.resource.data.wasMissed == true &&
+        request.resource.data.dueAt == resource.data.dueAt &&
+        request.resource.data.missedAt == resource.data.missedAt &&
+        request.resource.data.isLate == true &&
+        request.resource.data.status == 'submitted';
+
+      allow delete: if false;
     }
 
     match /checkInEvidence/{evidenceId} {
