@@ -1,0 +1,24 @@
+form {
+  display: grid;
+  gap: 0.75rem;
+}
+
+label {
+  display: grid;
+  gap: 0.4rem;
+}
+
+label span {
+  display: flex;
+  gap: 0.4rem;
+  align-items: baseline;
+}
+
+small {
+  color: var(--qova-text-muted);
+}
+
+input,
+textarea {
+  width: 100%;
+}

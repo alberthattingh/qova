@@ -1,0 +1,53 @@
+.list,
+.check-in {
+  display: grid;
+  gap: 1rem;
+}
+
+.heading {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+h2,
+p,
+dl,
+dd {
+  margin: 0;
+}
+
+p,
+dt {
+  color: var(--qova-text-secondary);
+}
+
+dl {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+dl div {
+  padding: 0.75rem;
+  border: 1px solid var(--qova-border);
+  border-radius: 8px;
+  background: var(--qova-surface-hover);
+}
+
+dd {
+  margin-top: 0.25rem;
+  color: var(--qova-text-primary);
+  font-weight: 650;
+}
+
+.multiline {
+  white-space: pre-wrap;
+}
+
+@media (max-width: 760px) {
+  dl {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,14 @@
+.check-in-section {
+  display: grid;
+  gap: 1rem;
+}
+
+.check-in-section h2,
+.check-in-section p {
+  margin: 0;
+}
+
+.check-in-section p {
+  margin-top: 0.25rem;
+  color: var(--qova-text-secondary);
+}

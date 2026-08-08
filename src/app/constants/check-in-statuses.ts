@@ -1,5 +1,5 @@
 export enum CheckInStatus {
-  Pending = 'pending',
+  Submitted = 'submitted',
   Passed = 'passed',
   Failed = 'failed',
 }

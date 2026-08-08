@@ -1,0 +1,58 @@
+@if (checkIns.length === 0) {
+  <app-empty-state
+    icon="pi pi-calendar-clock"
+    [title]="emptyTitle"
+    [message]="emptyMessage"
+  />
+} @else {
+  <div class="list">
+    @for (checkIn of checkIns; track checkIn.id) {
+      <p-card>
+        <article class="check-in">
+          <div class="heading">
+            <div>
+              <h2>{{ checkIn.commitment.title }}</h2>
+              <p>
+                {{ checkIn.period.startsAt | date: 'mediumDate' }}
+                -
+                {{ checkIn.period.endsAt | date: 'mediumDate' }}
+              </p>
+            </div>
+            <p-tag [value]="statusLabel(checkIn)" />
+          </div>
+
+          <dl>
+            <div>
+              <dt>Deadline</dt>
+              <dd>{{ checkIn.period.deadline | date: 'medium' }}</dd>
+            </div>
+
+            @if (checkIn.persistedCheckIn) {
+              <div>
+                <dt>Claimed result</dt>
+                <dd>{{ checkIn.persistedCheckIn.claimedResult }}</dd>
+              </div>
+              <div>
+                <dt>Submitted</dt>
+                <dd>{{ checkIn.persistedCheckIn.submittedAt | date: 'medium' }}</dd>
+              </div>
+              @if (checkIn.persistedCheckIn.comment) {
+                <div>
+                  <dt>Comment</dt>
+                  <dd class="multiline">{{ checkIn.persistedCheckIn.comment }}</dd>
+                </div>
+              }
+            }
+          </dl>
+
+          @if (showSubmitForm && checkIn.canSubmit) {
+            <app-check-in-submit-form
+              [isSubmitting]="isSubmitting"
+              (submitted)="submitted.emit({ checkIn, value: $event })"
+            />
+          }
+        </article>
+      </p-card>
+    }
+  </div>
+}

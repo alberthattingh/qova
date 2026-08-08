@@ -1,0 +1,19 @@
+<form [formGroup]="form" (ngSubmit)="submit()">
+  <label>
+    <span>Claimed result</span>
+    <input pInputText type="text" formControlName="claimedResult" />
+  </label>
+
+  <label>
+    <span>Comment <small>Optional</small></span>
+    <textarea pTextarea rows="3" formControlName="comment"></textarea>
+  </label>
+
+  <p-button
+    type="submit"
+    label="Submit check-in"
+    icon="pi pi-send"
+    [loading]="isSubmitting"
+    [disabled]="form.invalid || isSubmitting"
+  />
+</form>

@@ -42,7 +42,13 @@ describe('CheckInScheduleService', () => {
       ownerUserId: 'owner-1',
       managerUserIds: ['manager-1'],
       userId: 'owner-1',
-      status: CheckInStatus.Pending,
+      periodIndex: 7,
+      periodStartsAt: new Date('2026-08-08T00:00:00.000Z'),
+      periodEndsAt: new Date('2026-08-08T23:59:59.999Z'),
+      deadline: new Date('2026-08-08T09:00:00.000Z'),
+      claimedResult: 'Done',
+      comment: null,
+      status: CheckInStatus.Submitted,
       submittedAt: new Date('2026-08-08T08:30:00.000Z'),
     };
     const state = service.currentPeriodSubmissionState(

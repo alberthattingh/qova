@@ -5,7 +5,7 @@
 
 .history-item {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
   gap: 1rem;
   padding: 0.75rem;
@@ -15,11 +15,37 @@
 }
 
 strong,
-p {
+p,
+dl,
+dd {
   margin: 0;
 }
 
 p {
   margin-top: 0.25rem;
   color: var(--qova-text-secondary);
+}
+
+dl {
+  display: grid;
+  gap: 0.65rem;
+  margin-top: 0.75rem;
+}
+
+dt {
+  color: var(--qova-text-secondary);
+  font-size: 0.85rem;
+}
+
+dd {
+  color: var(--qova-text-primary);
+  font-weight: 650;
+}
+
+.history-copy {
+  min-width: 0;
+}
+
+.multiline {
+  white-space: pre-wrap;
 }

@@ -2,12 +2,44 @@
   <div class="page-heading">
     <p>Check-ins</p>
     <h1>Progress updates</h1>
-    <p-tag [value]="status" severity="info" />
   </div>
 
-  <app-empty-state
-    icon="pi pi-calendar-clock"
-    title="No check-ins due"
-    message="Upcoming and submitted check-ins will appear here."
-  />
+  @if (isSubmitting()) {
+    <app-loading-state message="Submitting check-in" />
+  }
+
+  @if (dashboard$ | async; as dashboard) {
+    <section class="check-in-section">
+      <div>
+        <h2>Your due check-ins</h2>
+        <p>Submit the current period before its deadline.</p>
+      </div>
+
+      <app-check-in-list
+        [checkIns]="dashboard.dueCheckIns"
+        emptyTitle="No check-ins due"
+        emptyMessage="Current check-ins that need your update will appear here."
+        [showSubmitForm]="true"
+        [isSubmitting]="isSubmitting()"
+        (submitted)="submitCheckIn($event.checkIn, $event.value)"
+      />
+    </section>
+
+    <p-divider />
+
+    <section class="check-in-section">
+      <div>
+        <h2>Managed check-ins</h2>
+        <p>Only submitted or missed current check-ins are shown to managers.</p>
+      </div>
+
+      <app-check-in-list
+        [checkIns]="dashboard.managedCheckIns"
+        emptyTitle="No managed check-ins"
+        emptyMessage="Submitted and missed check-ins from people you manage will appear here."
+      />
+    </section>
+  } @else {
+    <app-loading-state message="Loading check-ins" />
+  }
 </section>

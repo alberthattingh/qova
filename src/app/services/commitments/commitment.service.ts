@@ -332,8 +332,7 @@ export class CommitmentService {
           .map((checkIn) => this.toCheckIn(checkIn as Record<string, unknown>))
           .sort(
             (a, b) =>
-              (b.submittedAt?.getTime() ?? 0) -
-              (a.submittedAt?.getTime() ?? 0),
+              b.submittedAt.getTime() - a.submittedAt.getTime(),
           ),
       ),
     );
@@ -639,10 +638,14 @@ export class CommitmentService {
       ownerUserId: this.toStringField(value, 'ownerUserId'),
       managerUserIds: this.toStringArray(value['managerUserIds']),
       userId: this.toStringField(value, 'userId'),
+      periodIndex: this.toNumberField(value, 'periodIndex'),
+      periodStartsAt: this.toDate(value['periodStartsAt']),
+      periodEndsAt: this.toDate(value['periodEndsAt']),
+      deadline: this.toDate(value['deadline']),
+      claimedResult: this.toStringField(value, 'claimedResult'),
+      comment: this.toNullableString(value['comment']),
       status: this.toCheckInStatus(value['status']),
-      submittedAt: value['submittedAt']
-        ? this.toDate(value['submittedAt'])
-        : undefined,
+      submittedAt: this.toDate(value['submittedAt']),
     };
   }
 
@@ -692,7 +695,7 @@ export class CommitmentService {
 
   private toCheckInStatus(value: unknown): CheckInStatus {
     if (
-      value === CheckInStatus.Pending ||
+      value === CheckInStatus.Submitted ||
       value === CheckInStatus.Passed ||
       value === CheckInStatus.Failed
     ) {

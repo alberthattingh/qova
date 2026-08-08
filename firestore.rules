@@ -96,7 +96,14 @@ service cloud.firestore {
 
     match /checkIns/{checkInId} {
       allow read: if isCommitmentParticipant(resource.data);
-      allow write: if false;
+
+      allow create: if signedIn() &&
+        request.auth.uid == request.resource.data.ownerUserId &&
+        request.auth.uid == request.resource.data.userId &&
+        request.resource.data.id == checkInId &&
+        request.resource.data.status == 'submitted';
+
+      allow update, delete: if false;
     }
 
     match /{document=**} {

@@ -6,6 +6,12 @@ export interface CheckIn {
   ownerUserId: string;
   managerUserIds: string[];
   userId: string;
+  periodIndex: number;
+  periodStartsAt: Date;
+  periodEndsAt: Date;
+  deadline: Date;
+  claimedResult: string;
+  comment: string | null;
   status: CheckInStatus;
-  submittedAt?: Date;
+  submittedAt: Date;
 }

@@ -309,16 +309,7 @@ export class CheckInScheduleService {
     period: CheckInPeriod,
   ): CheckIn | null {
     return (
-      checkIns.find((checkIn) => {
-        if (!checkIn.submittedAt) {
-          return false;
-        }
-
-        return (
-          checkIn.submittedAt.getTime() >= period.startsAt.getTime() &&
-          checkIn.submittedAt.getTime() <= period.endsAt.getTime()
-        );
-      }) ?? null
+      checkIns.find((checkIn) => checkIn.periodIndex === period.index) ?? null
     );
   }
 
