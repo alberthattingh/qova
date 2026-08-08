@@ -2,12 +2,19 @@
   <div class="page-heading">
     <p>Review queue</p>
     <h1>Manager reviews</h1>
-    <p-tag [value]="status" severity="warn" />
   </div>
 
-  <app-empty-state
-    icon="pi pi-inbox"
-    title="No reviews waiting"
-    message="Check-ins that need manager review will appear here."
-  />
+  @if (queue$ | async; as queue) {
+    <div class="queue-summary">
+      <p-tag [value]="status" severity="warn" />
+      <span>
+        {{ queue.actionRequiredCount }} item{{ queue.actionRequiredCount === 1 ? '' : 's' }}
+        requiring manager action
+      </span>
+    </div>
+
+    <app-review-queue-list [items]="queue.items" />
+  } @else {
+    <app-loading-state message="Loading review queue" />
+  }
 </section>

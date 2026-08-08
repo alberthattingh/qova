@@ -1,0 +1,103 @@
+@if (items.length === 0) {
+  <app-empty-state
+    icon="pi pi-inbox"
+    title="No reviews waiting"
+    message="Submitted and missed check-ins from people you manage will appear here."
+  />
+} @else {
+  <div class="queue">
+    @for (item of items; track item.id) {
+      <p-card>
+        <article class="review-item">
+          <div class="item-heading">
+            <div class="person">
+              <img [src]="item.user.profileImageUrl" [alt]="item.user.displayName" />
+              <div>
+                <h2>{{ item.user.displayName }}</h2>
+                <p>{{ item.user.email }}</p>
+              </div>
+            </div>
+
+            <div class="tags">
+              @if (item.requiresAction) {
+                <p-tag value="Needs review" severity="warn" />
+              }
+              @if (item.checkIn.wasMissed) {
+                <p-tag value="Originally missed" severity="warn" />
+              }
+              <p-tag
+                [value]="item.checkIn.status | titlecase"
+                [severity]="statusSeverity(item)"
+              />
+            </div>
+          </div>
+
+          <div class="commitment-copy">
+            <h3>{{ item.commitment.title }}</h3>
+            <p class="multiline">{{ item.commitment.targetDescription }}</p>
+          </div>
+
+          <dl>
+            <div>
+              <dt>Reporting period</dt>
+              <dd>
+                {{ item.checkIn.periodStartsAt | date: 'mediumDate' }}
+                -
+                {{ item.checkIn.periodEndsAt | date: 'mediumDate' }}
+              </dd>
+            </div>
+            <div>
+              <dt>Due</dt>
+              <dd>{{ item.checkIn.dueAt | date: 'medium' }}</dd>
+            </div>
+            <div>
+              <dt>{{ item.checkIn.wasMissed ? 'Missed' : 'Submitted' }}</dt>
+              <dd>
+                {{
+                  (item.checkIn.wasMissed
+                    ? item.checkIn.missedAt
+                    : item.checkIn.submittedAt) | date: 'medium'
+                }}
+              </dd>
+            </div>
+            @if (item.checkIn.isLate) {
+              <div>
+                <dt>Late submission</dt>
+                <dd>{{ item.checkIn.submittedAt | date: 'medium' }}</dd>
+              </div>
+            }
+            <div>
+              <dt>Claimed result</dt>
+              <dd>{{ item.checkIn.claimedResult || 'No result submitted' }}</dd>
+            </div>
+            @if (item.checkIn.comment) {
+              <div>
+                <dt>Comment</dt>
+                <dd class="multiline">{{ item.checkIn.comment }}</dd>
+              </div>
+            }
+          </dl>
+
+          <section class="evidence-section">
+            <h3>Evidence</h3>
+            <app-check-in-evidence-list
+              [evidence]="item.checkIn.evidence"
+              [showEmptyState]="true"
+            />
+          </section>
+
+          <div class="actions">
+            <a
+              class="review-link"
+              [routerLink]="ABSOLUTE_ROUTES.commitmentDetails(item.commitment.id)"
+              [queryParams]="{ checkInId: item.checkIn.id }"
+            >
+              <i class="pi pi-arrow-right"></i>
+              <span>Open full review</span>
+            </a>
+          </div>
+        </article>
+      </p-card>
+    }
+  </div>
+}

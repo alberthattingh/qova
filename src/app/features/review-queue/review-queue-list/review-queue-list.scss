@@ -1,0 +1,117 @@
+.queue,
+.review-item {
+  display: grid;
+  gap: 1rem;
+}
+
+.item-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.person {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-width: 0;
+}
+
+.person img {
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid var(--qova-border);
+}
+
+h2,
+h3,
+p,
+dl,
+dd {
+  margin: 0;
+}
+
+h2 {
+  font-size: 1.1rem;
+}
+
+h3 {
+  font-size: 1rem;
+}
+
+p,
+dt {
+  color: var(--qova-text-secondary);
+}
+
+.tags {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.commitment-copy {
+  display: grid;
+  gap: 0.35rem;
+}
+
+dl {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+dl div {
+  padding: 0.75rem;
+  border: 1px solid var(--qova-border);
+  border-radius: 8px;
+  background: var(--qova-surface-hover);
+}
+
+dd {
+  margin-top: 0.25rem;
+  color: var(--qova-text-primary);
+  font-weight: 650;
+}
+
+.multiline {
+  white-space: pre-wrap;
+}
+
+.evidence-section {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.review-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--qova-primary);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.review-link:hover {
+  color: var(--qova-primary-hover);
+}
+
+@media (max-width: 760px) {
+  dl {
+    grid-template-columns: 1fr;
+  }
+
+  .actions {
+    justify-content: flex-start;
+  }
+}
