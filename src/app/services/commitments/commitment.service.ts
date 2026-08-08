@@ -103,8 +103,14 @@ export class CommitmentService {
             }
 
             return combineLatest({
-              versions: this.commitmentVersions$(commitment.id),
-              checkIns: this.checkInsForCommitment$(commitment.id),
+              versions: this.commitmentVersionsForViewer$(
+                commitment,
+                session.id,
+              ),
+              checkIns: this.checkInsForCommitmentForViewer$(
+                commitment,
+                session.id,
+              ),
             }).pipe(
               map(({ versions, checkIns }) => ({
                 commitment,
@@ -265,12 +271,18 @@ export class CommitmentService {
     );
   }
 
-  private commitmentVersions$(
-    commitmentId: string,
+  private commitmentVersionsForViewer$(
+    commitment: Commitment,
+    userId: string,
   ): Observable<CommitmentVersion[]> {
+    const accessFilter =
+      commitment.ownerUserId === userId
+        ? where('ownerUserId', '==', userId)
+        : where('managerUserIds', 'array-contains', userId);
     const versionsQuery = query(
       collection(this.firestore, FirebaseCollection.CommitmentVersions),
-      where('commitmentId', '==', commitmentId),
+      where('commitmentId', '==', commitment.id),
+      accessFilter,
     );
 
     return collectionData(versionsQuery).pipe(
@@ -284,10 +296,18 @@ export class CommitmentService {
     );
   }
 
-  private checkInsForCommitment$(commitmentId: string): Observable<CheckIn[]> {
+  private checkInsForCommitmentForViewer$(
+    commitment: Commitment,
+    userId: string,
+  ): Observable<CheckIn[]> {
+    const accessFilter =
+      commitment.ownerUserId === userId
+        ? where('ownerUserId', '==', userId)
+        : where('managerUserIds', 'array-contains', userId);
     const checkInsQuery = query(
       collection(this.firestore, FirebaseCollection.CheckIns),
-      where('commitmentId', '==', commitmentId),
+      where('commitmentId', '==', commitment.id),
+      accessFilter,
     );
 
     return collectionData(checkInsQuery).pipe(
@@ -578,6 +598,8 @@ export class CommitmentService {
     return {
       id: this.toStringField(value, 'id'),
       commitmentId: this.toStringField(value, 'commitmentId'),
+      ownerUserId: this.toStringField(value, 'ownerUserId'),
+      managerUserIds: this.toStringArray(value['managerUserIds']),
       userId: this.toStringField(value, 'userId'),
       status: this.toCheckInStatus(value['status']),
       submittedAt: value['submittedAt']
