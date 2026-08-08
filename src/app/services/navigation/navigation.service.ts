@@ -19,6 +19,11 @@ export class NavigationService {
       route: ABSOLUTE_ROUTES.commitments,
     },
     {
+      label: 'Managers',
+      icon: 'pi pi-users',
+      route: ABSOLUTE_ROUTES.managers,
+    },
+    {
       label: 'Check-ins',
       icon: 'pi pi-calendar-check',
       route: ABSOLUTE_ROUTES.checkIns,

@@ -1,0 +1,39 @@
+.cards {
+  display: grid;
+  gap: 1rem;
+}
+
+.relationship {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 1rem;
+}
+
+img {
+  width: 3rem;
+  height: 3rem;
+  border: 1px solid var(--qova-border);
+  border-radius: 999px;
+  object-fit: cover;
+  background: var(--qova-primary-soft);
+}
+
+strong,
+p {
+  margin: 0;
+}
+
+p {
+  color: var(--qova-text-secondary);
+}
+
+@media (max-width: 720px) {
+  .relationship {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  app-relationship-actions {
+    grid-column: 1 / -1;
+  }
+}

@@ -2,11 +2,15 @@ import { Injectable, inject } from '@angular/core';
 import {
   Firestore,
   Timestamp,
+  collection,
   doc,
   docData,
   getDoc,
+  getDocs,
+  query,
   setDoc,
   updateDoc,
+  where,
 } from '@angular/fire/firestore';
 import { map, Observable } from 'rxjs';
 
@@ -54,6 +58,20 @@ export class UserService {
     }
 
     return this.toUserProfile(snapshot.data() as Record<string, unknown>);
+  }
+
+  async profileByEmail(email: string): Promise<UserProfile | null> {
+    const normalizedEmail = email.trim().toLowerCase();
+    const usersQuery = query(
+      collection(this.firestore, FirebaseCollection.Users),
+      where('email', '==', normalizedEmail),
+    );
+    const snapshot = await getDocs(usersQuery);
+    const userDocument = snapshot.docs.at(0);
+
+    return userDocument
+      ? this.toUserProfile(userDocument.data() as Record<string, unknown>)
+      : null;
   }
 
   updateProfile(

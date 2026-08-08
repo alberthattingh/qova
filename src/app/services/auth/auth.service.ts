@@ -110,7 +110,7 @@ export class AuthService {
       await this.persistenceReady;
       await signInWithEmailAndPassword(
         this.auth,
-        credentials.email,
+        credentials.email.trim().toLowerCase(),
         credentials.password,
       );
     });
@@ -119,9 +119,10 @@ export class AuthService {
   async register(credentials: RegistrationCredentials): Promise<void> {
     await this.withAuthStatus(async () => {
       await this.persistenceReady;
+      const email = credentials.email.trim().toLowerCase();
       const userCredential = await createUserWithEmailAndPassword(
         this.auth,
-        credentials.email,
+        email,
         credentials.password,
       );
       const displayName = credentials.displayName.trim();
@@ -142,7 +143,7 @@ export class AuthService {
       await this.users.createProfile({
         id: userCredential.user.uid,
         displayName,
-        email: credentials.email,
+        email,
         profileImageUrl,
         profileImageSource,
       });

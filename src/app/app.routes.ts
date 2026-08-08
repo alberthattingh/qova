@@ -49,6 +49,13 @@ export const routes: Routes = [
           ).then((component) => component.ManagerDashboardPage),
       },
       {
+        path: AppRoutePath.Managers,
+        loadComponent: () =>
+          import('./features/managers/managers-page/managers-page').then(
+            (component) => component.ManagersPage,
+          ),
+      },
+      {
         path: AppRoutePath.Commitments,
         loadComponent: () =>
           import('./features/commitments/commitments-page/commitments-page').then(

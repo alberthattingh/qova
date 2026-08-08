@@ -2,8 +2,65 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
-    match /users/{userId}/{document=**} {
-      allow read, write: if request.auth != null && request.auth.uid == userId;
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function isParticipant(data) {
+      return signedIn() &&
+        (request.auth.uid == data.managedUserId ||
+          request.auth.uid == data.managerUserId);
+    }
+
+    match /users/{userId} {
+      allow read: if signedIn();
+      allow create, update: if signedIn() && request.auth.uid == userId;
+      allow delete: if false;
+    }
+
+    match /managerInvitations/{invitationId} {
+      allow read: if isParticipant(resource.data);
+
+      allow create: if signedIn() &&
+        request.auth.uid == request.resource.data.managedUserId &&
+        request.resource.data.managedUserId != request.resource.data.managerUserId &&
+        request.resource.data.status == 'pending';
+
+      allow update: if isParticipant(resource.data) &&
+        resource.data.status == 'pending' &&
+        request.resource.data.id == resource.data.id &&
+        request.resource.data.managedUserId == resource.data.managedUserId &&
+        request.resource.data.managerUserId == resource.data.managerUserId &&
+        (
+          (
+            request.auth.uid == resource.data.managerUserId &&
+            request.resource.data.status in ['accepted', 'declined']
+          ) ||
+          (
+            request.auth.uid == resource.data.managedUserId &&
+            request.resource.data.status == 'cancelled'
+          )
+        );
+
+      allow delete: if false;
+    }
+
+    match /managerRelationships/{relationshipId} {
+      allow read: if isParticipant(resource.data);
+
+      allow create: if signedIn() &&
+        request.auth.uid == request.resource.data.managerUserId &&
+        request.resource.data.managedUserId != request.resource.data.managerUserId &&
+        request.resource.data.status == 'active';
+
+      allow update: if isParticipant(resource.data) &&
+        resource.data.status == 'active' &&
+        request.resource.data.id == resource.data.id &&
+        request.resource.data.managedUserId == resource.data.managedUserId &&
+        request.resource.data.managerUserId == resource.data.managerUserId &&
+        request.resource.data.status == 'removed';
+
+      allow delete: if false;
     }
 
     match /{document=**} {

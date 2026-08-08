@@ -1,0 +1,78 @@
+<section class="page">
+  <div class="page-heading">
+    <p>Managers</p>
+    <h1>Trusted manager relationships</h1>
+  </div>
+
+  <p-card>
+    <h2>Invite a manager</h2>
+    <app-manager-invite-form (submitted)="inviteManager($event)" />
+  </p-card>
+
+  @if (errorMessage()) {
+    <app-error-state
+      title="Manager action failed"
+      [message]="errorMessage()!"
+      [showAction]="false"
+    />
+  }
+
+  @if (isWorking()) {
+    <app-loading-state message="Updating manager relationships" />
+  }
+
+  @if (dashboard$ | async; as dashboard) {
+    <section class="relationship-section">
+      <h2>Pending invitations for you</h2>
+      <app-manager-invitation-list
+        [invitations]="dashboard.receivedInvitations"
+        emptyTitle="No pending invitations"
+        emptyMessage="Invitations from people asking you to manage them will appear here."
+        mode="received"
+        (accepted)="acceptInvitation($event)"
+        (declined)="declineInvitation($event)"
+      />
+    </section>
+
+    <p-divider />
+
+    <section class="relationship-section">
+      <h2>Invitations you sent</h2>
+      <app-manager-invitation-list
+        [invitations]="dashboard.sentInvitations"
+        emptyTitle="No sent invitations"
+        emptyMessage="Pending manager invitations you send will appear here."
+        mode="sent"
+        (cancelled)="cancelInvitation($event)"
+      />
+    </section>
+
+    <p-divider />
+
+    <section class="relationship-section">
+      <h2>People managing you</h2>
+      <app-manager-card-list
+        [relationships]="dashboard.managers"
+        emptyTitle="No managers yet"
+        emptyMessage="Invite a trusted person to help manage your commitments."
+        mode="manager"
+        (relationshipEnded)="removeManager($event)"
+      />
+    </section>
+
+    <p-divider />
+
+    <section class="relationship-section">
+      <h2>People you manage</h2>
+      <app-manager-card-list
+        [relationships]="dashboard.managedUsers"
+        emptyTitle="No managed users yet"
+        emptyMessage="People who accept your management invitation will appear here."
+        mode="managed-user"
+        (relationshipEnded)="stopManaging($event)"
+      />
+    </section>
+  } @else {
+    <app-loading-state message="Loading manager relationships" />
+  }
+</section>

@@ -1,0 +1,35 @@
+@if (relationships.length === 0) {
+  <app-empty-state
+    icon="pi pi-users"
+    [title]="emptyTitle"
+    [message]="emptyMessage"
+  />
+} @else {
+  <div class="cards">
+    @for (relationship of relationships; track relationship.id) {
+      <p-card>
+        <div class="relationship">
+          <img
+            [src]="mode === 'manager' ? relationship.managerProfileImageUrl : relationship.managedUserProfileImageUrl"
+            alt=""
+          />
+
+          <div>
+            <strong>
+              {{ mode === 'manager' ? relationship.managerDisplayName : relationship.managedUserDisplayName }}
+            </strong>
+            <p>
+              {{ mode === 'manager' ? relationship.managerEmail : relationship.managedUserEmail }}
+            </p>
+            <p-tag [value]="relationship.status" severity="success" />
+          </div>
+
+          <app-relationship-actions
+            [mode]="mode"
+            (ended)="relationshipEnded.emit(relationship.id)"
+          />
+        </div>
+      </p-card>
+    }
+  </div>
+}

@@ -1,0 +1,7 @@
+<p-button
+  [label]="mode === 'manager' ? 'Remove manager' : 'Stop managing'"
+  icon="pi pi-user-minus"
+  severity="secondary"
+  outlined
+  (onClick)="ended.emit()"
+/>
