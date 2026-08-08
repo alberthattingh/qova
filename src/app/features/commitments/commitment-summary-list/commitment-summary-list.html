@@ -44,11 +44,12 @@
               @if (!managerView && commitment.status === CommitmentStatus.Draft) {
                 <p-button
                   label="Activate"
-                  icon="pi pi-play"
-                  severity="secondary"
-                  outlined
-                  (onClick)="activated.emit(commitment.id)"
-                />
+                icon="pi pi-play"
+                severity="secondary"
+                outlined
+                [loading]="isWorking"
+                (onClick)="activated.emit(commitment.id)"
+              />
               }
 
               @if (!managerView && commitment.status === CommitmentStatus.Active) {
@@ -57,6 +58,7 @@
                   icon="pi pi-check"
                   severity="secondary"
                   outlined
+                  [loading]="isWorking"
                   (onClick)="completed.emit(commitment.id)"
                 />
                 <p-button
@@ -64,6 +66,7 @@
                   icon="pi pi-ban"
                   severity="secondary"
                   outlined
+                  [loading]="isWorking"
                   (onClick)="cancelled.emit(commitment.id)"
                 />
               }

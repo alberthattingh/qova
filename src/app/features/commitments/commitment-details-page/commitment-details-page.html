@@ -1,5 +1,10 @@
-@if (details$ | async; as details) {
-  <section class="page">
+@if (detailsState$ | async; as state) {
+  @if (state.isLoading) {
+    <section class="page">
+      <app-loading-state message="Loading commitment" />
+    </section>
+  } @else if (state.details; as details) {
+    <section class="page">
     <div class="page-heading">
       <div>
         <p>Commitment details</p>
@@ -16,14 +21,14 @@
       @if (details.commitment.ownerUserId === currentUserId) {
         <div class="actions">
           @if (details.commitment.status === CommitmentStatus.Draft) {
-            <p-button label="Edit draft" icon="pi pi-file-edit" severity="secondary" outlined (onClick)="showEditForm()" />
-            <p-button label="Activate" icon="pi pi-play" (onClick)="activateCommitment(details.commitment.id)" />
+            <p-button label="Edit draft" icon="pi pi-file-edit" severity="secondary" outlined [disabled]="isWorking()" (onClick)="showEditForm()" />
+            <p-button label="Activate" icon="pi pi-play" [loading]="isWorking()" (onClick)="activateCommitment(details.commitment.id)" />
           }
 
           @if (details.commitment.status === CommitmentStatus.Active) {
-            <p-button label="Revise terms" icon="pi pi-history" severity="secondary" outlined (onClick)="showEditForm()" />
-            <p-button label="Complete" icon="pi pi-check" (onClick)="completeCommitment(details.commitment.id)" />
-            <p-button label="Cancel" icon="pi pi-ban" severity="secondary" outlined (onClick)="cancelCommitment(details.commitment.id)" />
+            <p-button label="Revise terms" icon="pi pi-history" severity="secondary" outlined [disabled]="isWorking()" (onClick)="showEditForm()" />
+            <p-button label="Complete" icon="pi pi-check" [loading]="isWorking()" (onClick)="completeCommitment(details.commitment.id)" />
+            <p-button label="Cancel" icon="pi pi-ban" severity="secondary" outlined [loading]="isWorking()" (onClick)="cancelCommitment(details.commitment.id)" />
           }
         </div>
       }
@@ -36,6 +41,7 @@
           <app-commitment-form
             [availableManagers]="workspace.availableManagers"
             [commitment]="details.commitment"
+            [isSubmitting]="isWorking()"
             submitLabel="Save terms"
             (submitted)="saveTerms(details.commitment, $event)"
             (cancelled)="hideEditForm()"
@@ -110,13 +116,14 @@
         </div>
       }
     </p-card>
-  </section>
-} @else {
-  <section class="page">
-    <app-empty-state
-      icon="pi pi-lock"
-      title="Commitment unavailable"
-      message="This commitment could not be found or is not assigned to you."
-    />
-  </section>
+    </section>
+  } @else {
+    <section class="page">
+      <app-empty-state
+        icon="pi pi-lock"
+        title="Commitment unavailable"
+        message="This commitment could not be found or is not assigned to you."
+      />
+    </section>
+  }
 }

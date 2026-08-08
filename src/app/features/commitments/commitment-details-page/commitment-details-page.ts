@@ -5,7 +5,7 @@ import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 import { DividerModule } from 'primeng/divider';
 import { TagModule } from 'primeng/tag';
-import { map } from 'rxjs';
+import { map, startWith } from 'rxjs';
 
 import { RouteParam } from '../../../constants/app-routes';
 import { CommitmentStatus } from '../../../constants/commitment-statuses';
@@ -47,9 +47,11 @@ export class CommitmentDetailsPage {
 
   protected readonly commitmentId =
     this.route.snapshot.paramMap.get(RouteParam.CommitmentId) ?? '';
-  protected readonly details$ = this.commitments.commitmentDetails$(
-    this.commitmentId,
-  );
+  protected readonly detailsState$ =
+    this.commitments.commitmentDetails$(this.commitmentId).pipe(
+      map((details) => ({ isLoading: false, details })),
+      startWith({ isLoading: true, details: null }),
+    );
   protected readonly currentUserId$ = this.auth.currentAuthSession$.pipe(
     map((session) => session?.id ?? null),
   );

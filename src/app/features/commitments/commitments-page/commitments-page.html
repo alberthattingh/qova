@@ -5,7 +5,12 @@
       <h1>Commitment workspace</h1>
     </div>
 
-    <p-button label="New commitment" icon="pi pi-plus" (onClick)="showCreateDialog()" />
+    <p-button
+      label="New commitment"
+      icon="pi pi-plus"
+      [disabled]="isWorking()"
+      (onClick)="showCreateDialog()"
+    />
   </div>
 
   @if (isWorking()) {
@@ -18,6 +23,7 @@
         <h2>New commitment draft</h2>
         <app-commitment-form
           [availableManagers]="workspace.availableManagers"
+          [isSubmitting]="isWorking()"
           submitLabel="Create draft"
           (submitted)="createCommitment($event)"
           (cancelled)="hideCreateForm()"
@@ -30,6 +36,7 @@
       [commitments]="workspace.activeCommitments"
       emptyTitle="No active commitments"
       emptyMessage="Activated commitments with check-in tracking will appear here."
+      [isWorking]="isWorking()"
       (completed)="completeCommitment($event)"
       (cancelled)="cancelCommitment($event)"
     />
@@ -41,6 +48,7 @@
       [commitments]="workspace.draftCommitments"
       emptyTitle="No draft commitments"
       emptyMessage="Drafts you create before activation will appear here."
+      [isWorking]="isWorking()"
       (activated)="activateCommitment($event)"
     />
 

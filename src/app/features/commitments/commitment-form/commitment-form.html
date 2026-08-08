@@ -74,7 +74,19 @@
   </div>
 
   <div class="actions">
-    <p-button type="button" label="Cancel" severity="secondary" outlined (onClick)="cancelled.emit()" />
-    <p-button type="submit" [label]="submitLabel" icon="pi pi-save" />
+    <p-button
+      type="button"
+      label="Cancel"
+      severity="secondary"
+      outlined
+      [disabled]="isSubmitting"
+      (onClick)="cancelled.emit()"
+    />
+    <p-button
+      type="submit"
+      [label]="submitLabel"
+      icon="pi pi-save"
+      [loading]="isSubmitting"
+    />
   </div>
 </form>

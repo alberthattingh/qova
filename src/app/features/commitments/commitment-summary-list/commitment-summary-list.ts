@@ -21,6 +21,7 @@ export class CommitmentSummaryList {
   @Input() title = 'Commitments';
   @Input() emptyTitle = 'No commitments';
   @Input() emptyMessage = 'Commitments will appear here.';
+  @Input() isWorking = false;
   @Input() managerView = false;
 
   @Output() activated = new EventEmitter<string>();

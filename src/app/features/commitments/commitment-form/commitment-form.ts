@@ -29,6 +29,7 @@ export class CommitmentForm implements OnChanges {
 
   @Input() availableManagers: ManagerRelationship[] = [];
   @Input() commitment: Commitment | null = null;
+  @Input() isSubmitting = false;
   @Input() submitLabel = 'Save draft';
 
   @Output() submitted = new EventEmitter<CreateCommitmentRequest>();
