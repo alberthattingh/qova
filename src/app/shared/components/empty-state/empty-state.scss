@@ -1,0 +1,32 @@
+.state {
+  display: grid;
+  place-items: center;
+  gap: 1rem;
+  min-height: 18rem;
+  padding: 2rem;
+  border: 1px dashed var(--qova-border);
+  border-radius: 8px;
+  background: var(--qova-surface);
+  text-align: center;
+}
+
+i {
+  display: grid;
+  place-items: center;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 8px;
+  color: var(--qova-primary);
+  background: var(--qova-primary-soft);
+  font-size: 1.25rem;
+}
+
+h2,
+p {
+  margin: 0;
+}
+
+p {
+  margin-top: 0.5rem;
+  color: var(--qova-text-secondary);
+}

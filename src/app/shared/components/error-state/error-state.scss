@@ -1,0 +1,24 @@
+.state {
+  display: grid;
+  gap: 1rem;
+  max-width: 34rem;
+  padding: 1.25rem;
+  border: 1px solid var(--qova-border);
+  border-radius: 8px;
+  background: var(--qova-surface);
+  color: var(--qova-text-primary);
+}
+
+i {
+  color: var(--qova-danger);
+  font-size: 1.5rem;
+}
+
+h2,
+p {
+  margin: 0;
+}
+
+p {
+  color: var(--qova-text-secondary);
+}

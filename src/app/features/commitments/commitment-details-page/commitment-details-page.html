@@ -1,0 +1,15 @@
+<section class="page">
+  <div class="page-heading">
+    <p>Commitment details</p>
+    <h1>{{ commitmentId || 'Draft commitment' }}</h1>
+    <p-tag [value]="status" />
+  </div>
+
+  <p-card>
+    <app-empty-state
+      icon="pi pi-file-edit"
+      title="Details are ready for data"
+      message="The route and page shell are in place for commitment detail workflows."
+    />
+  </p-card>
+</section>

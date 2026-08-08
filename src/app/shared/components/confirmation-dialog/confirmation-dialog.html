@@ -1,0 +1,14 @@
+<p-dialog
+  [modal]="true"
+  [visible]="visible"
+  [header]="options.title"
+  [style]="{ width: 'min(92vw, 28rem)' }"
+  (visibleChange)="visibleChange.emit($event)"
+>
+  <p>{{ options.message }}</p>
+
+  <ng-template #footer>
+    <p-button [label]="options.cancelLabel" severity="secondary" outlined (onClick)="cancel()" />
+    <p-button [label]="options.confirmLabel" icon="pi pi-check" (onClick)="confirm()" />
+  </ng-template>
+</p-dialog>

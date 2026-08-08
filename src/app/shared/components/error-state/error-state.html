@@ -1,0 +1,11 @@
+<section class="state" role="alert">
+  <i class="pi pi-exclamation-triangle"></i>
+  <div>
+    <h2>{{ title }}</h2>
+    <p>{{ message }}</p>
+  </div>
+
+  @if (showAction) {
+    <p-button [label]="actionLabel" icon="pi pi-refresh" severity="danger" outlined (onClick)="action.emit()" />
+  }
+</section>

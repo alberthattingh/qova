@@ -1,0 +1,21 @@
+<section class="page">
+  <div class="page-heading">
+    <div>
+      <p>Commitments</p>
+      <h1>Commitment workspace</h1>
+    </div>
+
+    <p-button label="New commitment" icon="pi pi-plus" (onClick)="showCreateDialog()" />
+  </div>
+
+  <app-empty-state
+    icon="pi pi-flag"
+    title="No active commitments"
+    message="Commitments with accountability tracking will be listed here."
+  />
+
+  <app-confirmation-dialog
+    [(visible)]="isConfirmingCreate"
+    [options]="createDialogOptions"
+  />
+</section>
