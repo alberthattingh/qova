@@ -207,8 +207,13 @@ export class CommitmentService {
   ): Observable<Commitment[]> {
     return this.commitmentsQuery$([
       where('managerUserIds', 'array-contains', managerUserId),
-      where('status', '==', CommitmentStatus.Active),
-    ]);
+    ]).pipe(
+      map((commitments) =>
+        commitments.filter((commitment) =>
+          this.isManagerWorkspaceStatus(commitment.status),
+        ),
+      ),
+    );
   }
 
   private commitmentsQuery$(
@@ -449,6 +454,10 @@ export class CommitmentService {
     status: CommitmentStatus,
   ): Commitment[] {
     return commitments.filter((commitment) => commitment.status === status);
+  }
+
+  private isManagerWorkspaceStatus(status: CommitmentStatus): boolean {
+    return status === CommitmentStatus.Draft || status === CommitmentStatus.Active;
   }
 
   private assertOwner(commitment: Commitment, userId: string): void {
