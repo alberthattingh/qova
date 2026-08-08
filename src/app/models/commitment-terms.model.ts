@@ -1,10 +1,7 @@
 import { CheckInFrequency } from '../constants/check-in-frequency';
-import { CommitmentStatus } from '../constants/commitment-statuses';
 import { CommitmentManager } from './commitment-manager.model';
 
-export interface Commitment {
-  id: string;
-  ownerUserId: string;
+export interface CommitmentTerms {
   managerUserIds: string[];
   managers: CommitmentManager[];
   title: string;
@@ -15,9 +12,4 @@ export interface Commitment {
   endDate: Date | null;
   checkInFrequency: CheckInFrequency;
   checkInTime: string;
-  status: CommitmentStatus;
-  currentVersionId: string | null;
-  currentVersionNumber: number;
-  createdAt: Date;
-  updatedAt: Date;
 }

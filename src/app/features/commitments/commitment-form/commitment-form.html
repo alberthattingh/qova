@@ -1,0 +1,65 @@
+<form [formGroup]="form" (ngSubmit)="submit()">
+  <label>
+    <span>Managers</span>
+    <p-multi-select
+      formControlName="managerUserIds"
+      [options]="availableManagers"
+      optionLabel="managerDisplayName"
+      optionValue="managerUserId"
+      placeholder="Select active managers"
+      display="chip"
+    />
+  </label>
+
+  <label>
+    <span>Title</span>
+    <input pInputText type="text" formControlName="title" />
+  </label>
+
+  <label>
+    <span>Description</span>
+    <textarea pTextarea rows="3" formControlName="description"></textarea>
+  </label>
+
+  <label>
+    <span>Target</span>
+    <textarea pTextarea rows="3" formControlName="targetDescription"></textarea>
+  </label>
+
+  <label>
+    <span>Evidence instructions</span>
+    <textarea pTextarea rows="3" formControlName="evidenceInstructions"></textarea>
+  </label>
+
+  <div class="form-grid">
+    <label>
+      <span>Start date</span>
+      <input pInputText type="date" formControlName="startDate" />
+    </label>
+
+    <label>
+      <span>End date</span>
+      <input pInputText type="date" formControlName="endDate" />
+    </label>
+
+    <label>
+      <span>Frequency</span>
+      <p-select
+        formControlName="checkInFrequency"
+        [options]="frequencyOptions"
+        optionLabel="label"
+        optionValue="value"
+      />
+    </label>
+
+    <label>
+      <span>Check-in time</span>
+      <input pInputText type="time" formControlName="checkInTime" />
+    </label>
+  </div>
+
+  <div class="actions">
+    <p-button type="button" label="Cancel" severity="secondary" outlined (onClick)="cancelled.emit()" />
+    <p-button type="submit" [label]="submitLabel" icon="pi pi-save" />
+  </div>
+</form>

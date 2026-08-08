@@ -1,0 +1,19 @@
+@if (checkIns.length === 0) {
+  <app-empty-state
+    icon="pi pi-calendar-clock"
+    title="No check-ins yet"
+    message="Submitted check-ins will appear here once tracking starts."
+  />
+} @else {
+  <div class="history">
+    @for (checkIn of checkIns; track checkIn.id) {
+      <div class="history-item">
+        <div>
+          <strong>{{ checkIn.status | titlecase }}</strong>
+          <p>{{ checkIn.submittedAt ? (checkIn.submittedAt | date: 'medium') : 'Not submitted' }}</p>
+        </div>
+        <p-tag [value]="checkIn.status" />
+      </div>
+    }
+  </div>
+}

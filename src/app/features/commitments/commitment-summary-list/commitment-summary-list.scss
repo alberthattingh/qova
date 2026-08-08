@@ -1,0 +1,44 @@
+.summary-section {
+  display: grid;
+  gap: 1rem;
+}
+
+h2,
+h3,
+p {
+  margin: 0;
+}
+
+.cards {
+  display: grid;
+  gap: 1rem;
+}
+
+.commitment-card {
+  display: grid;
+  gap: 1rem;
+}
+
+.card-heading,
+.actions,
+.meta {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.card-heading {
+  align-items: center;
+  justify-content: space-between;
+}
+
+.commitment-card p,
+.meta {
+  color: var(--qova-text-secondary);
+}
+
+.meta span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}

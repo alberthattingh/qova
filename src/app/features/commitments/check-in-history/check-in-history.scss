@@ -1,0 +1,25 @@
+.history {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.history-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.75rem;
+  border: 1px solid var(--qova-border);
+  border-radius: 8px;
+  background: var(--qova-surface);
+}
+
+strong,
+p {
+  margin: 0;
+}
+
+p {
+  margin-top: 0.25rem;
+  color: var(--qova-text-secondary);
+}

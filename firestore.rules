@@ -12,6 +12,25 @@ service cloud.firestore {
           request.auth.uid == data.managerUserId);
     }
 
+    function isCommitmentParticipant(data) {
+      return signedIn() &&
+        (request.auth.uid == data.ownerUserId ||
+          request.auth.uid in data.managerUserIds);
+    }
+
+    function isCheckInParticipant(data) {
+      return signedIn() &&
+        (
+          request.auth.uid == data.userId ||
+          (
+            exists(/databases/$(database)/documents/commitments/$(data.commitmentId)) &&
+            isCommitmentParticipant(
+              get(/databases/$(database)/documents/commitments/$(data.commitmentId)).data
+            )
+          )
+        );
+    }
+
     match /users/{userId} {
       allow read: if signedIn();
       allow create, update: if signedIn() && request.auth.uid == userId;
@@ -61,6 +80,36 @@ service cloud.firestore {
         request.resource.data.status == 'removed';
 
       allow delete: if false;
+    }
+
+    match /commitments/{commitmentId} {
+      allow read: if isCommitmentParticipant(resource.data);
+
+      allow create: if signedIn() &&
+        request.auth.uid == request.resource.data.ownerUserId &&
+        request.resource.data.status == 'draft';
+
+      allow update: if isCommitmentParticipant(resource.data) &&
+        request.auth.uid == resource.data.ownerUserId &&
+        request.resource.data.id == resource.data.id &&
+        request.resource.data.ownerUserId == resource.data.ownerUserId;
+
+      allow delete: if false;
+    }
+
+    match /commitmentVersions/{versionId} {
+      allow read: if isCommitmentParticipant(resource.data);
+
+      allow create: if signedIn() &&
+        request.auth.uid == request.resource.data.ownerUserId &&
+        request.resource.data.createdByUserId == request.auth.uid;
+
+      allow update, delete: if false;
+    }
+
+    match /checkIns/{checkInId} {
+      allow read: if isCheckInParticipant(resource.data);
+      allow write: if false;
     }
 
     match /{document=**} {

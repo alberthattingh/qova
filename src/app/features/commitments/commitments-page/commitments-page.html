@@ -8,14 +8,61 @@
     <p-button label="New commitment" icon="pi pi-plus" (onClick)="showCreateDialog()" />
   </div>
 
-  <app-empty-state
-    icon="pi pi-flag"
-    title="No active commitments"
-    message="Commitments with accountability tracking will be listed here."
-  />
+  @if (isWorking()) {
+    <app-loading-state message="Updating commitments" />
+  }
 
-  <app-confirmation-dialog
-    [(visible)]="isConfirmingCreate"
-    [options]="createDialogOptions"
-  />
+  @if (workspace$ | async; as workspace) {
+    @if (isCreating()) {
+      <p-card>
+        <h2>New commitment draft</h2>
+        <app-commitment-form
+          [availableManagers]="workspace.availableManagers"
+          submitLabel="Create draft"
+          (submitted)="createCommitment($event)"
+          (cancelled)="hideCreateForm()"
+        />
+      </p-card>
+    }
+
+    <app-commitment-summary-list
+      title="Active commitments"
+      [commitments]="workspace.activeCommitments"
+      emptyTitle="No active commitments"
+      emptyMessage="Activated commitments with check-in tracking will appear here."
+      (completed)="completeCommitment($event)"
+      (cancelled)="cancelCommitment($event)"
+    />
+
+    <p-divider />
+
+    <app-commitment-summary-list
+      title="Draft commitments"
+      [commitments]="workspace.draftCommitments"
+      emptyTitle="No draft commitments"
+      emptyMessage="Drafts you create before activation will appear here."
+      (activated)="activateCommitment($event)"
+    />
+
+    <p-divider />
+
+    <app-commitment-summary-list
+      title="Completed commitments"
+      [commitments]="workspace.completedCommitments"
+      emptyTitle="No completed commitments"
+      emptyMessage="Completed commitment history will appear here."
+    />
+
+    <p-divider />
+
+    <app-commitment-summary-list
+      title="Commitments you manage"
+      [commitments]="workspace.managerCommitments"
+      emptyTitle="No assigned commitments"
+      emptyMessage="Active commitments assigned to you as manager will appear here."
+      [managerView]="true"
+    />
+  } @else {
+    <app-loading-state message="Loading commitments" />
+  }
 </section>

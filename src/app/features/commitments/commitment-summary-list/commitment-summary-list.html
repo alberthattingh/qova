@@ -1,0 +1,77 @@
+<section class="summary-section">
+  <h2>{{ title }}</h2>
+
+  @if (commitments.length === 0) {
+    <app-empty-state
+      icon="pi pi-list-check"
+      [title]="emptyTitle"
+      [message]="emptyMessage"
+    />
+  } @else {
+    <div class="cards">
+      @for (commitment of commitments; track commitment.id) {
+        <p-card>
+          <article class="commitment-card">
+            <div>
+              <div class="card-heading">
+                <h3>{{ commitment.title }}</h3>
+                <p-tag [value]="commitment.status | titlecase" />
+              </div>
+              <p>{{ commitment.description }}</p>
+            </div>
+
+            <div class="meta">
+              <span>
+                <i class="pi pi-calendar-clock"></i>
+                {{ commitment.checkInFrequency | titlecase }} at {{ commitment.checkInTime }}
+              </span>
+              <span>
+                <i class="pi pi-user"></i>
+                {{ commitment.managers.length }} manager{{ commitment.managers.length === 1 ? '' : 's' }}
+              </span>
+              <span>
+                <i class="pi pi-clock"></i>
+                Updated {{ commitment.updatedAt | date: 'mediumDate' }}
+              </span>
+            </div>
+
+            <div class="actions">
+              <p-button
+                label="View"
+                icon="pi pi-arrow-right"
+                [routerLink]="ABSOLUTE_ROUTES.commitmentDetails(commitment.id)"
+              />
+
+              @if (!managerView && commitment.status === CommitmentStatus.Draft) {
+                <p-button
+                  label="Activate"
+                  icon="pi pi-play"
+                  severity="secondary"
+                  outlined
+                  (onClick)="activated.emit(commitment.id)"
+                />
+              }
+
+              @if (!managerView && commitment.status === CommitmentStatus.Active) {
+                <p-button
+                  label="Complete"
+                  icon="pi pi-check"
+                  severity="secondary"
+                  outlined
+                  (onClick)="completed.emit(commitment.id)"
+                />
+                <p-button
+                  label="Cancel"
+                  icon="pi pi-ban"
+                  severity="secondary"
+                  outlined
+                  (onClick)="cancelled.emit(commitment.id)"
+                />
+              }
+            </div>
+          </article>
+        </p-card>
+      }
+    </div>
+  }
+</section>

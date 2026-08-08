@@ -1,15 +1,122 @@
-<section class="page">
-  <div class="page-heading">
-    <p>Commitment details</p>
-    <h1>{{ commitmentId || 'Draft commitment' }}</h1>
-    <p-tag [value]="status" />
-  </div>
+@if (details$ | async; as details) {
+  <section class="page">
+    <div class="page-heading">
+      <div>
+        <p>Commitment details</p>
+        <h1>{{ details.commitment.title }}</h1>
+      </div>
+      <p-tag [value]="details.commitment.status | titlecase" />
+    </div>
 
-  <p-card>
+    @if (isWorking()) {
+      <app-loading-state message="Updating commitment" />
+    }
+
+    @if (currentUserId$ | async; as currentUserId) {
+      @if (details.commitment.ownerUserId === currentUserId) {
+        <div class="actions">
+          @if (details.commitment.status === CommitmentStatus.Draft) {
+            <p-button label="Edit draft" icon="pi pi-file-edit" severity="secondary" outlined (onClick)="showEditForm()" />
+            <p-button label="Activate" icon="pi pi-play" (onClick)="activateCommitment(details.commitment.id)" />
+          }
+
+          @if (details.commitment.status === CommitmentStatus.Active) {
+            <p-button label="Revise terms" icon="pi pi-history" severity="secondary" outlined (onClick)="showEditForm()" />
+            <p-button label="Complete" icon="pi pi-check" (onClick)="completeCommitment(details.commitment.id)" />
+            <p-button label="Cancel" icon="pi pi-ban" severity="secondary" outlined (onClick)="cancelCommitment(details.commitment.id)" />
+          }
+        </div>
+      }
+    }
+
+    @if (isEditing()) {
+      @if (workspace$ | async; as workspace) {
+        <p-card>
+          <h2>{{ details.commitment.status === CommitmentStatus.Draft ? 'Edit draft' : 'Create new terms version' }}</h2>
+          <app-commitment-form
+            [availableManagers]="workspace.availableManagers"
+            [commitment]="details.commitment"
+            submitLabel="Save terms"
+            (submitted)="saveTerms(details.commitment, $event)"
+            (cancelled)="hideEditForm()"
+          />
+        </p-card>
+      }
+    }
+
+    <p-card>
+      <section class="terms">
+        <h2>Terms</h2>
+        <div>
+          <h3>Description</h3>
+          <p>{{ details.commitment.description }}</p>
+        </div>
+        <div>
+          <h3>Target</h3>
+          <p>{{ details.commitment.targetDescription }}</p>
+        </div>
+        <div>
+          <h3>Evidence</h3>
+          <p>{{ details.commitment.evidenceInstructions }}</p>
+        </div>
+      </section>
+    </p-card>
+
+    <p-card>
+      <h2>Managers</h2>
+      <div class="manager-list">
+        @for (manager of details.commitment.managers; track manager.id) {
+          <div class="manager">
+            <img [src]="manager.profileImageUrl" alt="" />
+            <div>
+              <strong>{{ manager.displayName }}</strong>
+              <p>{{ manager.email }}</p>
+            </div>
+          </div>
+        }
+      </div>
+    </p-card>
+
+    <p-card>
+      <h2>Schedule</h2>
+      <app-commitment-schedule [commitment]="details.commitment" />
+    </p-card>
+
+    <p-card>
+      <h2>Check-in history</h2>
+      <app-check-in-history [checkIns]="details.checkIns" />
+    </p-card>
+
+    <p-card>
+      <h2>Term versions</h2>
+      @if (details.versions.length === 0) {
+        <app-empty-state
+          icon="pi pi-history"
+          title="No versions yet"
+          message="A version snapshot is created when a commitment is activated."
+        />
+      } @else {
+        <div class="versions">
+          @for (version of details.versions; track version.id) {
+            <article>
+              <div>
+                <strong>Version {{ version.versionNumber }}</strong>
+                <p>{{ version.createdAt | date: 'medium' }}</p>
+              </div>
+              <p>{{ version.title }}</p>
+              <app-commitment-schedule [commitment]="version" />
+            </article>
+          }
+        </div>
+      }
+    </p-card>
+  </section>
+} @else {
+  <section class="page">
     <app-empty-state
-      icon="pi pi-file-edit"
-      title="Details are ready for data"
-      message="The route and page shell are in place for commitment detail workflows."
+      icon="pi pi-lock"
+      title="Commitment unavailable"
+      message="This commitment could not be found or is not assigned to you."
     />
-  </p-card>
-</section>
+  </section>
+}

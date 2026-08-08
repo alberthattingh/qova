@@ -3,6 +3,7 @@ export enum FirebaseCollection {
   ManagerInvitations = 'managerInvitations',
   ManagerRelationships = 'managerRelationships',
   Commitments = 'commitments',
+  CommitmentVersions = 'commitmentVersions',
   CheckIns = 'checkIns',
   Reviews = 'reviews',
 }

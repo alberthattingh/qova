@@ -24,6 +24,8 @@ export const ABSOLUTE_ROUTES = {
   managerDashboard: `/${AppRoutePath.ManagerDashboard}`,
   managers: `/${AppRoutePath.Managers}`,
   commitments: `/${AppRoutePath.Commitments}`,
+  commitmentDetails: (commitmentId: string) =>
+    `/${AppRoutePath.Commitments}/${commitmentId}`,
   checkIns: `/${AppRoutePath.CheckIns}`,
   reviewQueue: `/${AppRoutePath.ReviewQueue}`,
   settings: `/${AppRoutePath.Settings}`,

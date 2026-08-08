@@ -1,0 +1,18 @@
+<dl>
+  <div>
+    <dt>Frequency</dt>
+    <dd>{{ commitment.checkInFrequency | titlecase }}</dd>
+  </div>
+  <div>
+    <dt>Check-in time</dt>
+    <dd>{{ commitment.checkInTime }}</dd>
+  </div>
+  <div>
+    <dt>Start date</dt>
+    <dd>{{ commitment.startDate | date: 'mediumDate' }}</dd>
+  </div>
+  <div>
+    <dt>End date</dt>
+    <dd>{{ commitment.endDate ? (commitment.endDate | date: 'mediumDate') : 'Open ended' }}</dd>
+  </div>
+</dl>

@@ -1,0 +1,36 @@
+dl {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1rem;
+  margin: 0;
+}
+
+div {
+  padding: 0.75rem;
+  border: 1px solid var(--qova-border);
+  border-radius: 8px;
+  background: var(--qova-surface-hover);
+}
+
+dt {
+  color: var(--qova-text-muted);
+  font-size: 0.85rem;
+}
+
+dd {
+  margin: 0.25rem 0 0;
+  color: var(--qova-text-primary);
+  font-weight: 700;
+}
+
+@media (max-width: 840px) {
+  dl {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 520px) {
+  dl {
+    grid-template-columns: 1fr;
+  }
+}
