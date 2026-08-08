@@ -159,6 +159,7 @@ export class CommitmentService {
       ownerUserId,
       ...this.persistedTerms(terms),
       status: CommitmentStatus.Draft,
+      nextCheckInAt: null,
       currentVersionId: null,
       currentVersionNumber: 0,
       createdAt: timestamp,
@@ -338,7 +339,8 @@ export class CommitmentService {
           .map((checkIn) => this.toCheckIn(checkIn as Record<string, unknown>))
           .sort(
             (a, b) =>
-              b.submittedAt.getTime() - a.submittedAt.getTime(),
+              this.checkInSortDate(b).getTime() -
+              this.checkInSortDate(a).getTime(),
           ),
       ),
     );
@@ -428,6 +430,10 @@ export class CommitmentService {
     batch.update(this.commitmentRef(commitment.id), {
       ...this.persistedTerms(terms),
       status,
+      nextCheckInAt:
+        status === CommitmentStatus.Active
+          ? this.nextCheckInAt(terms)
+          : null,
       currentVersionId: versionReference.id,
       currentVersionNumber: versionNumber,
       updatedAt: timestamp,
@@ -451,6 +457,7 @@ export class CommitmentService {
 
     await updateDoc(this.commitmentRef(commitment.id), {
       status,
+      nextCheckInAt: null,
       updatedAt: Timestamp.now(),
     });
   }
@@ -509,6 +516,18 @@ export class CommitmentService {
       checkInTime: commitment.checkInTime,
       timeZone: commitment.timeZone,
     };
+  }
+
+  private nextCheckInAt(terms: CommitmentTerms): Timestamp | null {
+    const nextDeadline = this.checkInSchedules.nextCheckInDeadline({
+      startDate: terms.startDate,
+      endDate: terms.endDate,
+      checkInFrequency: terms.checkInFrequency,
+      checkInTime: terms.checkInTime,
+      timeZone: terms.timeZone,
+    });
+
+    return nextDeadline ? Timestamp.fromDate(nextDeadline) : null;
   }
 
   private commitmentsWithStatus(
@@ -583,6 +602,7 @@ export class CommitmentService {
       checkInTime: this.toStringField(value, 'checkInTime'),
       timeZone: this.toStringField(value, 'timeZone'),
       status: this.toCommitmentStatus(value['status']),
+      nextCheckInAt: this.toNullableDate(value['nextCheckInAt']),
       currentVersionId: this.toNullableString(value['currentVersionId']),
       currentVersionNumber: this.toNumberField(value, 'currentVersionNumber'),
       createdAt: this.toDate(value['createdAt']),
@@ -651,9 +671,16 @@ export class CommitmentService {
       claimedResult: this.toStringField(value, 'claimedResult'),
       comment: this.toNullableString(value['comment']),
       evidence: [],
+      wasMissed: this.toBooleanField(value, 'wasMissed'),
+      dueAt: this.toDate(value['dueAt']),
+      missedAt: this.toNullableDate(value['missedAt']),
       status: this.toCheckInStatus(value['status']),
-      submittedAt: this.toDate(value['submittedAt']),
+      submittedAt: this.toNullableDate(value['submittedAt']),
     };
+  }
+
+  private checkInSortDate(checkIn: CheckIn): Date {
+    return checkIn.submittedAt ?? checkIn.missedAt ?? checkIn.dueAt;
   }
 
   private withEvidence(
@@ -713,6 +740,7 @@ export class CommitmentService {
   private toCheckInStatus(value: unknown): CheckInStatus {
     if (
       value === CheckInStatus.Submitted ||
+      value === CheckInStatus.Missed ||
       value === CheckInStatus.Passed ||
       value === CheckInStatus.Failed
     ) {
@@ -751,6 +779,19 @@ export class CommitmentService {
     }
 
     throw new Error(`Invalid number field ${fieldName}`);
+  }
+
+  private toBooleanField(
+    value: Record<string, unknown>,
+    fieldName: string,
+  ): boolean {
+    const fieldValue = value[fieldName];
+
+    if (typeof fieldValue === 'boolean') {
+      return fieldValue;
+    }
+
+    throw new Error(`Invalid boolean field ${fieldName}`);
   }
 
   private toStringArray(value: unknown): string[] {

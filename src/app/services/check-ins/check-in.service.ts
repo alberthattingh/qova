@@ -153,6 +153,9 @@ export class CheckInService {
         deadline: Timestamp.fromDate(period.deadline),
         claimedResult,
         comment,
+        wasMissed: false,
+        dueAt: Timestamp.fromDate(period.deadline),
+        missedAt: null,
         status: CheckInStatus.Submitted,
         submittedAt: Timestamp.now(),
       });
@@ -240,7 +243,11 @@ export class CheckInService {
       map((checkIns) =>
         checkIns
           .map((checkIn) => this.toCheckIn(checkIn as Record<string, unknown>))
-          .sort((a, b) => b.submittedAt.getTime() - a.submittedAt.getTime()),
+          .sort(
+            (a, b) =>
+              this.checkInSortDate(b).getTime() -
+              this.checkInSortDate(a).getTime(),
+          ),
       ),
     );
   }
@@ -298,18 +305,7 @@ export class CheckInService {
       };
     }
 
-    if (!this.schedules.isPeriodOverdue(period)) {
-      return null;
-    }
-
-    return {
-      id: this.checkInId(commitment.id, period),
-      commitment,
-      period,
-      persistedCheckIn: null,
-      status: DueCheckInStatus.Missed,
-      canSubmit: false,
-    };
+    return null;
   }
 
   private checkInForPeriod(
@@ -388,6 +384,7 @@ export class CheckInService {
       checkInTime: this.toStringField(value, 'checkInTime'),
       timeZone: this.toStringField(value, 'timeZone'),
       status: this.toCommitmentStatus(value['status']),
+      nextCheckInAt: this.toNullableDate(value['nextCheckInAt']),
       currentVersionId: this.toNullableString(value['currentVersionId']),
       currentVersionNumber: this.toNumberField(value, 'currentVersionNumber'),
       createdAt: this.toDate(value['createdAt']),
@@ -409,9 +406,16 @@ export class CheckInService {
       claimedResult: this.toStringField(value, 'claimedResult'),
       comment: this.toNullableString(value['comment']),
       evidence: [],
+      wasMissed: this.toBooleanField(value, 'wasMissed'),
+      dueAt: this.toDate(value['dueAt']),
+      missedAt: this.toNullableDate(value['missedAt']),
       status: this.toCheckInStatus(value['status']),
-      submittedAt: this.toDate(value['submittedAt']),
+      submittedAt: this.toNullableDate(value['submittedAt']),
     };
+  }
+
+  private checkInSortDate(checkIn: CheckIn): Date {
+    return checkIn.submittedAt ?? checkIn.missedAt ?? checkIn.dueAt;
   }
 
   private evidenceMetadata(
@@ -485,6 +489,7 @@ export class CheckInService {
   private toCheckInStatus(value: unknown): CheckInStatus {
     if (
       value === CheckInStatus.Submitted ||
+      value === CheckInStatus.Missed ||
       value === CheckInStatus.Passed ||
       value === CheckInStatus.Failed
     ) {
@@ -512,6 +517,19 @@ export class CheckInService {
     }
 
     throw new Error(`Invalid number field ${fieldName}`);
+  }
+
+  private toBooleanField(
+    value: Record<string, unknown>,
+    fieldName: string,
+  ): boolean {
+    const fieldValue = value[fieldName];
+
+    if (typeof fieldValue === 'boolean') {
+      return fieldValue;
+    }
+
+    throw new Error(`Invalid boolean field ${fieldName}`);
   }
 
   private toStringArray(value: unknown): string[] {

@@ -49,6 +49,10 @@ export class CheckInList {
       return 'Submitted';
     }
 
+    if (checkIn.status === CheckInStatus.Missed) {
+      return 'Missed';
+    }
+
     if (checkIn.status === CheckInStatus.Passed) {
       return 'Passed';
     }

@@ -107,6 +107,20 @@
       ]
     },
     {
+      "collectionGroup": "commitments",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "status",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "nextCheckInAt",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
       "collectionGroup": "commitmentVersions",
       "queryScope": "COLLECTION",
       "fields": [

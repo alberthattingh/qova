@@ -21,8 +21,13 @@
               <dd>{{ checkIn.claimedResult }}</dd>
             </div>
             <div>
-              <dt>Submitted</dt>
-              <dd>{{ checkIn.submittedAt | date: 'medium' }}</dd>
+              <dt>{{ checkIn.wasMissed ? 'Missed' : 'Submitted' }}</dt>
+              <dd>
+                {{
+                  (checkIn.wasMissed ? checkIn.missedAt : checkIn.submittedAt)
+                    | date: 'medium'
+                }}
+              </dd>
             </div>
             @if (checkIn.comment) {
               <div>

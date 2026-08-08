@@ -49,6 +49,9 @@ describe('CheckInScheduleService', () => {
       claimedResult: 'Done',
       comment: null,
       evidence: [],
+      wasMissed: false,
+      dueAt: new Date('2026-08-08T09:00:00.000Z'),
+      missedAt: null,
       status: CheckInStatus.Submitted,
       submittedAt: new Date('2026-08-08T08:30:00.000Z'),
     };

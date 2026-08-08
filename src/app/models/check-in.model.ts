@@ -14,6 +14,9 @@ export interface CheckIn {
   claimedResult: string;
   comment: string | null;
   evidence: CheckInEvidence[];
+  wasMissed: boolean;
+  dueAt: Date;
+  missedAt: Date | null;
   status: CheckInStatus;
-  submittedAt: Date;
+  submittedAt: Date | null;
 }
