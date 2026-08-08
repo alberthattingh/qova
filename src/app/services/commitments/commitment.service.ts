@@ -94,6 +94,14 @@ export class CommitmentService {
               return of(null);
             }
 
+            if (commitment.status === CommitmentStatus.Draft) {
+              return of({
+                commitment,
+                versions: [],
+                checkIns: [],
+              });
+            }
+
             return combineLatest({
               versions: this.commitmentVersions$(commitment.id),
               checkIns: this.checkInsForCommitment$(commitment.id),
