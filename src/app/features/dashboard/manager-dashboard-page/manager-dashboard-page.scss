@@ -1,0 +1,24 @@
+.dashboard-summary {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.dashboard-summary div {
+  display: grid;
+  gap: 0.25rem;
+  min-width: 12rem;
+  padding: 1rem;
+  border: 1px solid var(--qova-border);
+  border-radius: 8px;
+  background: var(--qova-surface);
+}
+
+.dashboard-summary strong {
+  color: var(--qova-text-primary);
+  font-size: 1.6rem;
+}
+
+.dashboard-summary span {
+  color: var(--qova-text-secondary);
+}

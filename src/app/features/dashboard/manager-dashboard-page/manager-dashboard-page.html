@@ -4,9 +4,21 @@
     <h1>Team accountability</h1>
   </div>
 
-  <app-empty-state
-    icon="pi pi-users"
-    title="No team activity yet"
-    message="Commitments and check-ins awaiting manager attention will appear here."
-  />
+  @if (workspace$ | async; as workspace) {
+    <div class="dashboard-summary">
+      <div>
+        <strong>{{ workspace.managerCommitments.length }}</strong>
+        <span>managed commitment{{ workspace.managerCommitments.length === 1 ? '' : 's' }}</span>
+      </div>
+    </div>
+
+    <app-managed-commitment-list
+      [commitments]="workspace.managerCommitments"
+      title="Whose commitments you manage"
+      emptyTitle="No managed commitments"
+      emptyMessage="When someone assigns you as manager, their commitments will appear here."
+    />
+  } @else {
+    <app-loading-state message="Loading managed commitments" />
+  }
 </section>

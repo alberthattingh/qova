@@ -33,11 +33,14 @@ import { CommitmentWorkspace } from '../../models/commitment-workspace.model';
 import { Commitment } from '../../models/commitment.model';
 import { CreateCommitmentRequest } from '../../models/create-commitment-request.model';
 import { ManagerRelationship } from '../../models/manager-relationship.model';
+import { ManagedCommitment } from '../../models/managed-commitment.model';
 import { UpdateCommitmentRequest } from '../../models/update-commitment-request.model';
+import { UserProfile } from '../../models/user-profile.model';
 import { AuthService } from '../auth/auth.service';
 import { CheckInEvidenceService } from '../check-ins/check-in-evidence.service';
 import { BrowserTimeZoneService } from '../check-ins/browser-time-zone.service';
 import { CheckInScheduleService } from '../check-ins/check-in-schedule.service';
+import { UserService } from '../user/user.service';
 
 @Injectable({
   providedIn: 'root',
@@ -48,6 +51,7 @@ export class CommitmentService {
   private readonly checkInSchedules = inject(CheckInScheduleService);
   private readonly browserTimeZone = inject(BrowserTimeZoneService);
   private readonly firestore = inject(Firestore);
+  private readonly users = inject(UserService);
 
   workspace$(): Observable<CommitmentWorkspace> {
     return this.auth.currentAuthSession$.pipe(
@@ -60,8 +64,14 @@ export class CommitmentService {
           ownedCommitments: this.ownedCommitments$(session.id),
           managerCommitments: this.assignedManagerCommitments$(session.id),
           availableManagers: this.activeManagerRelationships$(session.id),
+          userProfiles: this.users.profiles$(),
         }).pipe(
-          map(({ ownedCommitments, managerCommitments, availableManagers }) => ({
+          map(({
+            ownedCommitments,
+            managerCommitments,
+            availableManagers,
+            userProfiles,
+          }) => ({
             activeCommitments: this.commitmentsWithStatus(
               ownedCommitments,
               CommitmentStatus.Active,
@@ -73,7 +83,10 @@ export class CommitmentService {
             completedCommitments: ownedCommitments.filter((commitment) =>
               this.isTerminalWorkspaceStatus(commitment.status),
             ),
-            managerCommitments,
+            managerCommitments: this.withCommitmentOwners(
+              managerCommitments,
+              userProfiles,
+            ),
             availableManagers,
           })),
         );
@@ -611,6 +624,33 @@ export class CommitmentService {
       email: relationship.managerEmail,
       profileImageUrl: relationship.managerProfileImageUrl,
     };
+  }
+
+  private withCommitmentOwners(
+    commitments: Commitment[],
+    profiles: UserProfile[],
+  ): ManagedCommitment[] {
+    const profileMap = new Map(profiles.map((profile) => [profile.id, profile]));
+
+    return commitments
+      .map((commitment) => {
+        const owner = profileMap.get(commitment.ownerUserId);
+
+        if (!owner) {
+          return null;
+        }
+
+        return {
+          commitment,
+          owner: {
+            id: owner.id,
+            displayName: owner.displayName,
+            email: owner.email,
+            profileImageUrl: owner.profileImageUrl,
+          },
+        };
+      })
+      .filter((commitment): commitment is ManagedCommitment => commitment !== null);
   }
 
   private emptyWorkspace(): CommitmentWorkspace {

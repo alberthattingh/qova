@@ -3,6 +3,7 @@ import {
   Firestore,
   Timestamp,
   collection,
+  collectionData,
   doc,
   docData,
   getDoc,
@@ -58,6 +59,16 @@ export class UserService {
     }
 
     return this.toUserProfile(snapshot.data() as Record<string, unknown>);
+  }
+
+  profiles$(): Observable<UserProfile[]> {
+    return collectionData(collection(this.firestore, FirebaseCollection.Users)).pipe(
+      map((profiles) =>
+        profiles.map((profile) =>
+          this.toUserProfile(profile as Record<string, unknown>),
+        ),
+      ),
+    );
   }
 
   async profileByEmail(email: string): Promise<UserProfile | null> {

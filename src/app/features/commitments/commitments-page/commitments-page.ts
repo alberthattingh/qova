@@ -12,6 +12,7 @@ import { NotificationService } from '../../../services/notifications/notificatio
 import { LoadingState } from '../../../shared/components/loading-state/loading-state';
 import { CommitmentForm } from '../commitment-form/commitment-form';
 import { CommitmentSummaryList } from '../commitment-summary-list/commitment-summary-list';
+import { ManagedCommitmentList } from '../managed-commitment-list/managed-commitment-list';
 
 @Component({
   selector: 'app-commitments-page',
@@ -23,6 +24,7 @@ import { CommitmentSummaryList } from '../commitment-summary-list/commitment-sum
     CommitmentSummaryList,
     DividerModule,
     LoadingState,
+    ManagedCommitmentList,
   ],
   templateUrl: './commitments-page.html',
   styleUrl: './commitments-page.scss',

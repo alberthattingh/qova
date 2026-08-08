@@ -1,0 +1,57 @@
+<section class="summary-section">
+  <h2>{{ title }}</h2>
+
+  @if (commitments.length === 0) {
+    <app-empty-state
+      icon="pi pi-users"
+      [title]="emptyTitle"
+      [message]="emptyMessage"
+    />
+  } @else {
+    <div class="cards">
+      @for (item of commitments; track item.commitment.id) {
+        <p-card>
+          <article class="commitment-card">
+            <div class="owner">
+              <img [src]="item.owner.profileImageUrl" [alt]="item.owner.displayName" />
+              <div>
+                <strong>{{ item.owner.displayName }}</strong>
+                <p>{{ item.owner.email }}</p>
+              </div>
+            </div>
+
+            <div>
+              <div class="card-heading">
+                <h3>{{ item.commitment.title }}</h3>
+                <p-tag [value]="item.commitment.status | titlecase" />
+              </div>
+              <p class="description-preview">{{ item.commitment.description }}</p>
+            </div>
+
+            <div class="meta">
+              <span>
+                <i class="pi pi-calendar-clock"></i>
+                {{ item.commitment.checkInFrequency | titlecase }} at
+                {{ item.commitment.checkInTime }}
+              </span>
+              <span>
+                <i class="pi pi-clock"></i>
+                Updated {{ item.commitment.updatedAt | date: 'mediumDate' }}
+              </span>
+            </div>
+
+            <div class="actions">
+              <a
+                class="view-link"
+                [routerLink]="ABSOLUTE_ROUTES.commitmentDetails(item.commitment.id)"
+              >
+                <i class="pi pi-arrow-right"></i>
+                <span>View</span>
+              </a>
+            </div>
+          </article>
+        </p-card>
+      }
+    </div>
+  }
+</section>
