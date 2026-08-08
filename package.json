@@ -1,0 +1,43 @@
+{
+  "name": "qova",
+  "version": "0.0.0",
+  "scripts": {
+    "ng": "ng",
+    "start": "ng serve",
+    "build": "ng build",
+    "watch": "ng build --watch --configuration development",
+    "test": "ng test",
+    "firebase": "firebase",
+    "emulators": "firebase emulators:start",
+    "deploy": "npm run build && npm --prefix functions run build && firebase deploy"
+  },
+  "private": true,
+  "packageManager": "npm@11.17.0",
+  "dependencies": {
+    "@angular/animations": "20.3.27",
+    "@angular/common": "20.3.27",
+    "@angular/compiler": "20.3.27",
+    "@angular/core": "20.3.27",
+    "@angular/fire": "^20.0.1",
+    "@angular/forms": "20.3.27",
+    "@angular/platform-browser": "20.3.27",
+    "@angular/platform-browser-dynamic": "20.3.27",
+    "@angular/router": "20.3.27",
+    "@primeuix/themes": "^1.2.5",
+    "firebase": "^12.17.1",
+    "primeicons": "^7.0.0",
+    "primeng": "^20.4.0",
+    "rxjs": "~7.8.0",
+    "tslib": "^2.3.0"
+  },
+  "devDependencies": {
+    "@angular/build": "20.3.27",
+    "@angular/cli": "20.3.27",
+    "@angular/compiler-cli": "20.3.27",
+    "firebase-tools": "^14.27.0",
+    "jsdom": "^26.1.0",
+    "prettier": "^3.8.1",
+    "typescript": "~5.8.0",
+    "vitest": "^3.2.7"
+  }
+}

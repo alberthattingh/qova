@@ -1,0 +1,56 @@
+@import 'primeicons/primeicons.css';
+
+:root {
+  color-scheme: light;
+  --qova-background: #f8f7fa;
+  --qova-surface: #ffffff;
+  --qova-surface-hover: #f3f0f8;
+  --qova-border: #e5e1ea;
+  --qova-primary: #7c3aed;
+  --qova-primary-hover: #6d28d9;
+  --qova-primary-soft: #ede9fe;
+  --qova-text-primary: #1c1821;
+  --qova-text-secondary: #686270;
+  --qova-text-muted: #928c99;
+  --qova-success: #059669;
+  --qova-warning: #d97706;
+  --qova-danger: #dc2626;
+  --qova-info: #2563eb;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+    --qova-background: #0d0b12;
+    --qova-surface: #17141d;
+    --qova-surface-hover: #211d2a;
+    --qova-border: #302a3b;
+    --qova-primary: #8b5cf6;
+    --qova-primary-hover: #9f7aea;
+    --qova-primary-soft: #2d2145;
+    --qova-text-primary: #f5f3f7;
+    --qova-text-secondary: #aaa4b2;
+    --qova-text-muted: #77717f;
+    --qova-success: #34d399;
+    --qova-warning: #fbbf24;
+    --qova-danger: #f87171;
+    --qova-info: #60a5fa;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  min-height: 100%;
+  margin: 0;
+  background: var(--qova-background);
+}
+
+body {
+  font-family:
+    Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI',
+    sans-serif;
+}

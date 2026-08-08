@@ -1,0 +1,34 @@
+<main class="app-shell">
+  <section class="intro">
+    <p-tag value="qova-control" icon="pi pi-sparkles" severity="contrast" />
+    <h1>{{ title() }}</h1>
+    <p>
+      Angular is connected to your Firebase project and ready for auth,
+      Firestore, Storage, Functions, and Hosting.
+    </p>
+
+    <div class="actions">
+      <p-button label="Open Console" icon="pi pi-external-link" />
+      <p-button label="Run Emulators" icon="pi pi-play" severity="secondary" outlined />
+    </div>
+  </section>
+
+  <section class="service-grid" aria-label="Configured Firebase services">
+    @for (service of firebaseServices; track service) {
+      <p-card>
+        <ng-template #header>
+          <div class="service-icon">
+            <i [class]="service.icon"></i>
+          </div>
+        </ng-template>
+        <div class="service-copy">
+          <strong>{{ service.name }}</strong>
+          <p-tag value="Configured" [severity]="service.severity" />
+        </div>
+      </p-card>
+    }
+  </section>
+
+  <p-divider />
+  <router-outlet />
+</main>
