@@ -3,14 +3,6 @@
     <h1>Create account</h1>
     <p>Start tracking commitments with Qova.</p>
 
-    @if (errorMessage()) {
-      <app-error-state
-        title="Unable to register"
-        [message]="errorMessage()!"
-        [showAction]="false"
-      />
-    }
-
     @if (isSubmitting()) {
       <app-loading-state message="Creating account" />
     } @else {

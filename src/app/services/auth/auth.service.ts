@@ -1,10 +1,8 @@
 import { Injectable, inject } from '@angular/core';
 import {
   Auth,
-  browserLocalPersistence,
   authState,
   createUserWithEmailAndPassword,
-  setPersistence,
   signInWithEmailAndPassword,
   signOut,
   updateProfile,
@@ -45,7 +43,6 @@ export class AuthService {
   private readonly profileImages = inject(ProfileImageStorageService);
   private readonly users = inject(UserService);
   private readonly statusSubject = new BehaviorSubject<AuthStatus>(AuthStatus.Idle);
-  private readonly persistenceReady = setPersistence(this.auth, browserLocalPersistence);
 
   readonly authStatus$ = this.statusSubject.asObservable();
 
@@ -71,17 +68,7 @@ export class AuthService {
   readonly currentUserProfile$: Observable<UserProfile | null> =
     this.currentAuthSession$.pipe(
       switchMap((session) =>
-        session
-          ? this.users.profile$(session.id).pipe(
-              map((profile) => {
-                if (!profile) {
-                  throw new Error('User profile not found');
-                }
-
-                return profile;
-              }),
-            )
-          : of(null),
+        session ? this.users.profile$(session.id) : of(null),
       ),
       shareReplay({ bufferSize: 1, refCount: true }),
     );
@@ -107,7 +94,6 @@ export class AuthService {
 
   async signIn(credentials: LoginCredentials): Promise<void> {
     await this.withAuthStatus(async () => {
-      await this.persistenceReady;
       await signInWithEmailAndPassword(
         this.auth,
         credentials.email.trim().toLowerCase(),
@@ -118,7 +104,6 @@ export class AuthService {
 
   async register(credentials: RegistrationCredentials): Promise<void> {
     await this.withAuthStatus(async () => {
-      await this.persistenceReady;
       const email = credentials.email.trim().toLowerCase();
       const userCredential = await createUserWithEmailAndPassword(
         this.auth,

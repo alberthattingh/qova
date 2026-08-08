@@ -7,14 +7,6 @@
   <p-card>
     <h2>Profile</h2>
 
-    @if (errorMessage()) {
-      <app-error-state
-        title="Unable to save profile"
-        [message]="errorMessage()!"
-        [showAction]="false"
-      />
-    }
-
     @if (isSaving()) {
       <app-loading-state message="Saving profile" />
     }

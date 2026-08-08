@@ -3,14 +3,6 @@
     <h1>Sign in</h1>
     <p>Access your commitments, check-ins, and reviews.</p>
 
-    @if (errorMessage()) {
-      <app-error-state
-        title="Unable to sign in"
-        [message]="errorMessage()!"
-        [showAction]="false"
-      />
-    }
-
     @if (isSubmitting()) {
       <app-loading-state message="Signing in" />
     } @else {

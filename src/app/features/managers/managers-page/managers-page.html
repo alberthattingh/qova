@@ -9,14 +9,6 @@
     <app-manager-invite-form (submitted)="inviteManager($event)" />
   </p-card>
 
-  @if (errorMessage()) {
-    <app-error-state
-      title="Manager action failed"
-      [message]="errorMessage()!"
-      [showAction]="false"
-    />
-  }
-
   @if (isWorking()) {
     <app-loading-state message="Updating manager relationships" />
   }
