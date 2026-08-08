@@ -42,3 +42,27 @@ p {
   align-items: center;
   gap: 0.4rem;
 }
+
+.actions {
+  align-items: center;
+}
+
+.view-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 2.5rem;
+  padding: 0 1rem;
+  border: 1px solid var(--qova-primary);
+  border-radius: 8px;
+  background: var(--qova-primary);
+  color: #ffffff;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.view-link:hover {
+  border-color: var(--qova-primary-hover);
+  background: var(--qova-primary-hover);
+}

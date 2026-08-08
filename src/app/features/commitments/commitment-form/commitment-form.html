@@ -38,8 +38,23 @@
     </label>
 
     <label>
-      <span>End date</span>
-      <input pInputText type="date" formControlName="endDate" />
+      <span>End date <small>Optional</small></span>
+      <div class="optional-date">
+        <input
+          pInputText
+          type="date"
+          formControlName="endDate"
+          autocomplete="off"
+        />
+        <p-button
+          type="button"
+          icon="pi pi-times"
+          severity="secondary"
+          outlined
+          ariaLabel="Clear end date"
+          (onClick)="clearEndDate()"
+        />
+      </div>
     </label>
 
     <label>

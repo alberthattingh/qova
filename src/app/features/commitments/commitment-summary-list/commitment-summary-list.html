@@ -36,11 +36,10 @@
             </div>
 
             <div class="actions">
-              <p-button
-                label="View"
-                icon="pi pi-arrow-right"
-                [routerLink]="ABSOLUTE_ROUTES.commitmentDetails(commitment.id)"
-              />
+              <a class="view-link" [routerLink]="ABSOLUTE_ROUTES.commitmentDetails(commitment.id)">
+                <i class="pi pi-arrow-right"></i>
+                <span>View</span>
+              </a>
 
               @if (!managerView && commitment.status === CommitmentStatus.Draft) {
                 <p-button

@@ -56,18 +56,18 @@ export const routes: Routes = [
           ),
       },
       {
-        path: AppRoutePath.Commitments,
-        loadComponent: () =>
-          import('./features/commitments/commitments-page/commitments-page').then(
-            (component) => component.CommitmentsPage,
-          ),
-      },
-      {
         path: AppRoutePath.CommitmentDetails,
         loadComponent: () =>
           import(
             './features/commitments/commitment-details-page/commitment-details-page'
           ).then((component) => component.CommitmentDetailsPage),
+      },
+      {
+        path: AppRoutePath.Commitments,
+        loadComponent: () =>
+          import('./features/commitments/commitments-page/commitments-page').then(
+            (component) => component.CommitmentsPage,
+          ),
       },
       {
         path: AppRoutePath.CheckIns,

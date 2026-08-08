@@ -8,11 +8,28 @@ label {
   gap: 0.5rem;
 }
 
+label span {
+  display: flex;
+  align-items: baseline;
+  gap: 0.4rem;
+}
+
+small {
+  color: var(--qova-text-muted);
+  font-weight: 500;
+}
+
 input,
 textarea,
 p-select,
 p-multi-select {
   width: 100%;
+}
+
+.optional-date {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.5rem;
 }
 
 .form-grid {

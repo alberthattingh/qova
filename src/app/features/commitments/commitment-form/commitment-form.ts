@@ -93,6 +93,11 @@ export class CommitmentForm implements OnChanges {
     });
   }
 
+  clearEndDate(): void {
+    this.form.controls.endDate.setValue('');
+    this.form.controls.endDate.markAsDirty();
+  }
+
   private toDateInputValue(date: Date): string {
     return date.toISOString().slice(0, 10);
   }
