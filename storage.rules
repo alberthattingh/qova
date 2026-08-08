@@ -19,11 +19,15 @@ service firebase.storage {
     }
 
     function isCheckInParticipant(checkInId) {
+      let doc = checkInDocument(checkInId);
+
       return signedIn() &&
         checkInExists(checkInId) &&
         (
-          request.auth.uid == checkInDocument(checkInId).data.ownerUserId ||
-          request.auth.uid in checkInDocument(checkInId).data.managerUserIds
+          request.auth.uid == doc.data.ownerUserId ||
+          doc.data.managerUserIds.hasAny([
+            request.auth.uid
+          ])
         );
     }
 
