@@ -61,9 +61,8 @@ export class CommitmentService {
               ownedCommitments,
               CommitmentStatus.Draft,
             ),
-            completedCommitments: this.commitmentsWithStatus(
-              ownedCommitments,
-              CommitmentStatus.Completed,
+            completedCommitments: ownedCommitments.filter((commitment) =>
+              this.isTerminalWorkspaceStatus(commitment.status),
             ),
             managerCommitments,
             availableManagers,
@@ -486,6 +485,13 @@ export class CommitmentService {
 
   private isManagerWorkspaceStatus(status: CommitmentStatus): boolean {
     return status === CommitmentStatus.Draft || status === CommitmentStatus.Active;
+  }
+
+  private isTerminalWorkspaceStatus(status: CommitmentStatus): boolean {
+    return (
+      status === CommitmentStatus.Completed ||
+      status === CommitmentStatus.Cancelled
+    );
   }
 
   private assertOwner(commitment: Commitment, userId: string): void {
