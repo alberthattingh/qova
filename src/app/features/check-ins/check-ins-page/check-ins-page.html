@@ -42,11 +42,23 @@
         <p>Only submitted or missed current check-ins are shown to managers.</p>
       </div>
 
-      <app-check-in-list
-        [checkIns]="dashboard.managedCheckIns"
-        emptyTitle="No managed check-ins"
-        emptyMessage="Submitted and missed check-ins from people you manage will appear here."
-      />
+      @if (managedQueueState$ | async; as managedState) {
+        @if (managedState.isLoading) {
+          <app-loading-state message="Loading managed check-ins" />
+        } @else if (managedState.error) {
+          <app-error-state
+            title="Unable to load managed check-ins"
+            [message]="managedState.error"
+            [showAction]="false"
+          />
+        } @else if (managedState.queue; as queue) {
+          <app-review-queue-list
+            [items]="queue.items"
+            emptyTitle="No managed check-ins"
+            emptyMessage="Submitted and missed check-ins from people you manage will appear here."
+          />
+        }
+      }
     </section>
     }
   }

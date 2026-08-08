@@ -1,8 +1,8 @@
 @if (items.length === 0) {
   <app-empty-state
     icon="pi pi-inbox"
-    title="No reviews waiting"
-    message="Submitted and missed check-ins from people you manage will appear here."
+    [title]="emptyTitle"
+    [message]="emptyMessage"
   />
 } @else {
   <div class="queue">

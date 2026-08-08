@@ -49,40 +49,19 @@ export class CheckInService {
     return this.auth.currentAuthSession$.pipe(
       switchMap((session) => {
         if (!session) {
-          return of({ dueCheckIns: [], managedCheckIns: [] });
+          return of({ dueCheckIns: [] });
         }
 
         return combineLatest({
           ownedCommitments: this.activeOwnedCommitments$(session.id),
-          managedCommitments: this.activeManagedCommitments$(session.id),
           ownedCheckIns: this.ownerCheckIns$(session.id),
-          managedCheckIns: this.managerCheckIns$(session.id),
           ownedEvidence: this.evidence.evidenceForOwner$(session.id),
-          managedEvidence: this.evidence.evidenceForManager$(session.id),
         }).pipe(
-          map(({
-            ownedCommitments,
-            managedCommitments,
-            ownedCheckIns,
-            managedCheckIns,
-            ownedEvidence,
-            managedEvidence,
-          }) => ({
+          map(({ ownedCommitments, ownedCheckIns, ownedEvidence }) => ({
             dueCheckIns: this.ownerDueCheckIns(
               ownedCommitments,
               this.withEvidence(ownedCheckIns, ownedEvidence),
             ),
-            managedCheckIns: managedCommitments
-              .flatMap((commitment) =>
-                this.managerVisibleCheckIns(
-                  commitment,
-                  this.withEvidence(managedCheckIns, managedEvidence),
-                ),
-              )
-              .sort(
-                (a, b) =>
-                  b.period.deadline.getTime() - a.period.deadline.getTime(),
-              ),
           })),
         );
       }),
@@ -347,20 +326,6 @@ export class CheckInService {
     );
   }
 
-  private activeManagedCommitments$(
-    managerUserId: string,
-  ): Observable<Commitment[]> {
-    return this.commitmentsQuery$([
-      where('managerUserIds', 'array-contains', managerUserId),
-    ]).pipe(
-      map((commitments) =>
-        commitments.filter(
-          (commitment) => commitment.status === CommitmentStatus.Active,
-        ),
-      ),
-    );
-  }
-
   private commitmentsQuery$(
     filters: ReturnType<typeof where>[],
   ): Observable<Commitment[]> {
@@ -382,12 +347,6 @@ export class CheckInService {
 
   private ownerCheckIns$(ownerUserId: string): Observable<CheckIn[]> {
     return this.checkInsQuery$([where('ownerUserId', '==', ownerUserId)]);
-  }
-
-  private managerCheckIns$(managerUserId: string): Observable<CheckIn[]> {
-    return this.checkInsQuery$([
-      where('managerUserIds', 'array-contains', managerUserId),
-    ]);
   }
 
   private checkInsQuery$(
@@ -455,27 +414,6 @@ export class CheckInService {
         : DueCheckInStatus.AwaitingSubmission,
       canSubmit: !isOverdue,
     };
-  }
-
-  private managerVisibleCheckIns(
-    commitment: Commitment,
-    checkIns: CheckIn[],
-  ): DueCheckIn[] {
-    return checkIns
-      .filter(
-        (checkIn) =>
-          checkIn.commitmentId === commitment.id &&
-          (checkIn.status === CheckInStatus.Submitted ||
-            checkIn.status === CheckInStatus.Missed),
-      )
-      .map((checkIn) => ({
-        id: checkIn.id,
-        commitment,
-        period: this.periodFromCheckIn(checkIn),
-        persistedCheckIn: checkIn,
-        status: checkIn.status,
-        canSubmit: false,
-      }));
   }
 
   private retroactiveMissedDueCheckIns(
