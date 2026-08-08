@@ -95,7 +95,13 @@ service cloud.firestore {
     }
 
     match /checkIns/{checkInId} {
-      allow read: if isCommitmentParticipant(resource.data);
+      allow get: if signedIn() &&
+        (
+          !exists(/databases/$(database)/documents/checkIns/$(checkInId)) ||
+          isCommitmentParticipant(resource.data)
+        );
+
+      allow list: if isCommitmentParticipant(resource.data);
 
       allow create: if signedIn() &&
         request.auth.uid == request.resource.data.ownerUserId &&
