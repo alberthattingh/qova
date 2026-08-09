@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" role="img" aria-label="qova">
+  <rect width="1200" height="630" fill="#0D0B12"/>
+  <path d="M0 0h1200v630H0z" fill="#0D0B12"/>
+  <path d="M70 64h1060v502H70z" fill="#17141D" stroke="#302A3B" stroke-width="2"/>
+  <path d="M100 94h1000v442H100z" fill="none" stroke="#211D2A" stroke-width="2"/>
+  <path d="M0 0h1200v630H0z" fill="url(#wash)"/>
+
+  <g transform="translate(326 118) scale(1.85)">
+    <path d="M0 0h292v226H0z" fill="#17141D" stroke="#8B5CF6" stroke-width="8" transform="skewX(-8 146 113)"/>
+    <path d="M36 36h220v154H36z" fill="none" stroke="#302A3B" stroke-width="6" transform="skewX(-8 146 113)"/>
+    <path d="M78 78h136v70H78z" fill="#2D2145" stroke="#8B5CF6" stroke-width="6" transform="skewX(-8 146 113)"/>
+    <rect x="34" y="38" width="72" height="13" rx="6.5" fill="#8B5CF6"/>
+    <rect x="206" y="94" width="72" height="13" rx="6.5" fill="#60A5FA"/>
+    <rect x="146" y="184" width="72" height="13" rx="6.5" fill="#34D399"/>
+    <rect x="54" y="228" width="72" height="13" rx="6.5" fill="#FBBF24"/>
+  </g>
+
+  <g opacity=".9">
+    <path d="M310 518h580" stroke="#8B5CF6" stroke-width="6" stroke-linecap="round"/>
+    <path d="M398 548h404" stroke="#8B5CF6" stroke-width="6" stroke-linecap="round" opacity=".72"/>
+    <path d="M486 578h228" stroke="#8B5CF6" stroke-width="6" stroke-linecap="round" opacity=".44"/>
+  </g>
+
+  <defs>
+    <linearGradient id="wash" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#2D2145" stop-opacity=".5"/>
+      <stop offset=".42" stop-color="#0D0B12" stop-opacity="0"/>
+      <stop offset="1" stop-color="#8B5CF6" stop-opacity=".16"/>
+    </linearGradient>
+  </defs>
+</svg>

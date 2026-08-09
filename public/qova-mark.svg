@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="qova">
+  <rect width="512" height="512" rx="96" fill="#0D0B12"/>
+  <path d="M112 114h288v224H112z" fill="#17141D" stroke="#8B5CF6" stroke-width="10" transform="skewX(-8 256 256)"/>
+  <path d="M148 150h216v152H148z" fill="none" stroke="#302A3B" stroke-width="8" transform="skewX(-8 256 256)"/>
+  <path d="M188 190h136v72H188z" fill="#2D2145" stroke="#8B5CF6" stroke-width="8" transform="skewX(-8 256 256)"/>
+  <rect x="142" y="150" width="70" height="14" rx="7" fill="#8B5CF6"/>
+  <rect x="302" y="206" width="70" height="14" rx="7" fill="#60A5FA"/>
+  <rect x="242" y="296" width="70" height="14" rx="7" fill="#34D399"/>
+  <rect x="160" y="338" width="70" height="14" rx="7" fill="#FBBF24"/>
+  <path d="M116 392h280" stroke="#8B5CF6" stroke-width="6" stroke-linecap="round"/>
+  <path d="M158 418h196" stroke="#8B5CF6" stroke-width="6" stroke-linecap="round" opacity=".72"/>
+  <path d="M200 444h112" stroke="#8B5CF6" stroke-width="6" stroke-linecap="round" opacity=".44"/>
+</svg>
