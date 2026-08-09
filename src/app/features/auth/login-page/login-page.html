@@ -1,14 +1,49 @@
 <main class="auth-page">
-  <p-card>
-    <h1>Sign in</h1>
-    <p>Access your commitments, check-ins, and reviews.</p>
+  <section class="auth-shell">
+    <p-card styleClass="auth-card">
+      <a class="brand-mark" routerLink="/">
+        <span>q</span>
+        <strong>qova</strong>
+      </a>
 
-    @if (isSubmitting()) {
-      <app-loading-state message="Signing in" />
-    } @else {
-      <app-login-form (submitted)="submit($event)" />
-    }
+      <div class="auth-heading">
+        <p>Welcome back</p>
+        <h1>Sign in</h1>
+      </div>
 
-    <a [routerLink]="registerRoute">Create an account</a>
-  </p-card>
+      @if (isSubmitting()) {
+        <app-loading-state message="Signing in" />
+      } @else {
+        <app-login-form (submitted)="submit($event)" />
+      }
+
+      <p class="auth-switch">
+        New to qova?
+        <a [routerLink]="registerRoute">Create an account</a>
+      </p>
+    </p-card>
+
+    <aside class="auth-visual" aria-label="qova">
+      <div class="visual-copy">
+        <p class="eyebrow">qova</p>
+        <h2>discipline is hard. until it's not.</h2>
+      </div>
+
+      <div class="abstract-mark" aria-hidden="true">
+        <div class="mark-frame">
+          <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+        <div class="rhythm-lines">
+          <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      </div>
+    </aside>
+  </section>
 </main>

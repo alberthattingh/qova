@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { firstValueFrom } from 'rxjs';
+import { filter, firstValueFrom, take } from 'rxjs';
 
 import { ABSOLUTE_ROUTES } from '../../constants/app-routes';
 import { LoginCredentials } from '../../models/login-credentials.model';
@@ -26,7 +26,15 @@ export class AuthFlowService {
 
   async signOutAndRedirect(): Promise<void> {
     await this.auth.signOut();
-    await this.router.navigateByUrl(ABSOLUTE_ROUTES.login);
+    await firstValueFrom(
+      this.auth.currentAuthSession$.pipe(
+        filter((session) => session === null),
+        take(1),
+      ),
+    );
+    await this.router.navigateByUrl(ABSOLUTE_ROUTES.login, {
+      replaceUrl: true,
+    });
   }
 
   private async navigateToCurrentUserDashboard(): Promise<void> {

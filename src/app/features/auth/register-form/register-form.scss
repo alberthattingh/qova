@@ -9,6 +9,33 @@ label {
   gap: 0.5rem;
 }
 
+label span {
+  color: var(--qova-text-secondary);
+  font-weight: 700;
+}
+
+input {
+  width: 100%;
+}
+
+input[type='file'] {
+  padding: 0.75rem;
+  border: 1px dashed var(--qova-border);
+  border-radius: 8px;
+  color: var(--qova-text-secondary);
+  background: var(--qova-surface-hover);
+}
+
+:host ::ng-deep .p-password,
+:host ::ng-deep .p-password input {
+  width: 100%;
+}
+
+:host ::ng-deep .p-button {
+  width: 100%;
+  margin-top: 0.35rem;
+}
+
 .field-error {
   margin: -0.5rem 0 0;
   color: var(--qova-danger);

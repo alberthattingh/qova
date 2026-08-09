@@ -2,25 +2,263 @@
   min-height: 100vh;
   display: grid;
   place-items: center;
-  padding: 1rem;
-  background: var(--qova-background);
+  padding: clamp(1rem, 3vw, 2.5rem);
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--qova-primary-soft) 38%, transparent), transparent 34%),
+    var(--qova-background);
 }
 
-:host ::ng-deep .p-card {
-  width: min(100%, 28rem);
+.auth-shell {
+  width: min(100%, 68rem);
+  display: grid;
+  grid-template-columns: minmax(20rem, 0.82fr) minmax(24rem, 1.18fr);
+  gap: 1rem;
+  align-items: stretch;
+}
+
+:host ::ng-deep .auth-card {
+  height: 100%;
   border: 1px solid var(--qova-border);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--qova-surface) 94%, var(--qova-background));
+}
+
+:host ::ng-deep .auth-card .p-card-body,
+:host ::ng-deep .auth-card .p-card-content {
+  height: 100%;
+}
+
+:host ::ng-deep .auth-card .p-card-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.brand-mark {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  width: fit-content;
+  color: var(--qova-text-primary);
+  text-decoration: none;
+}
+
+.brand-mark span {
+  display: grid;
+  place-items: center;
+  width: 2.35rem;
+  height: 2.35rem;
+  border-radius: 8px;
+  background: var(--qova-primary);
+  color: white;
+  font-size: 1.3rem;
+  font-weight: 850;
+}
+
+.brand-mark strong {
+  font-size: 1.2rem;
+}
+
+.auth-heading {
+  margin-top: clamp(2.5rem, 7vw, 5rem);
+}
+
+.auth-heading p,
+.visual-copy p,
+.auth-switch {
+  color: var(--qova-text-secondary);
 }
 
 h1,
+h2,
 p {
   margin: 0;
 }
 
-p {
-  margin-top: 0.5rem;
-  color: var(--qova-text-secondary);
+h1 {
+  margin-top: 0.35rem;
+  color: var(--qova-text-primary);
+  font-size: clamp(2rem, 4vw, 3.4rem);
+  line-height: 1;
+}
+
+.auth-switch {
+  margin-top: auto;
+  padding-top: 1.5rem;
 }
 
 a {
   color: var(--qova-primary);
+  font-weight: 750;
+}
+
+a:hover {
+  color: var(--qova-primary-hover);
+}
+
+.auth-visual {
+  position: relative;
+  display: grid;
+  align-content: space-between;
+  min-height: 38rem;
+  padding: clamp(1.25rem, 4vw, 3rem);
+  overflow: hidden;
+  border: 1px solid var(--qova-border);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--qova-primary-soft) 42%, transparent), transparent 32%),
+    linear-gradient(160deg, color-mix(in srgb, var(--qova-surface-hover) 82%, var(--qova-background)), var(--qova-surface)),
+    var(--qova-surface);
+}
+
+.visual-copy,
+.abstract-mark {
+  position: relative;
+  z-index: 1;
+}
+
+.eyebrow {
+  color: var(--qova-primary);
+  font-weight: 850;
+}
+
+h2 {
+  width: min(100%, 34rem);
+  margin-top: 0.75rem;
+  color: var(--qova-text-primary);
+  font-size: clamp(2rem, 4.6vw, 4.4rem);
+  line-height: 0.98;
+}
+
+.abstract-mark {
+  width: min(100%, 31rem);
+  min-height: 18rem;
+  justify-self: end;
+  display: grid;
+  place-items: center;
+}
+
+.mark-frame {
+  position: relative;
+  width: min(100%, 23rem);
+  aspect-ratio: 1.25;
+  border: 1px solid color-mix(in srgb, var(--qova-primary) 48%, var(--qova-border));
+  border-radius: 8px;
+  transform: skewX(-8deg);
+  background:
+    repeating-linear-gradient(
+      90deg,
+      color-mix(in srgb, var(--qova-border) 62%, transparent) 0 1px,
+      transparent 1px 2.2rem
+    ),
+    color-mix(in srgb, var(--qova-background) 56%, transparent);
+}
+
+.mark-frame::before,
+.mark-frame::after {
+  content: '';
+  position: absolute;
+  border: 1px solid var(--qova-border);
+  border-radius: 8px;
+}
+
+.mark-frame::before {
+  inset: 1.2rem;
+}
+
+.mark-frame::after {
+  inset: 2.45rem;
+  border-color: color-mix(in srgb, var(--qova-primary) 54%, var(--qova-border));
+  background: color-mix(in srgb, var(--qova-primary-soft) 44%, transparent);
+}
+
+.mark-frame span {
+  position: absolute;
+  width: 3.2rem;
+  height: 0.55rem;
+  border-radius: 999px;
+  background: var(--qova-primary);
+}
+
+.mark-frame span:nth-child(1) {
+  top: 2rem;
+  left: 2rem;
+}
+
+.mark-frame span:nth-child(2) {
+  top: 5.4rem;
+  right: 2.4rem;
+  background: var(--qova-info);
+}
+
+.mark-frame span:nth-child(3) {
+  right: 5.8rem;
+  bottom: 4.5rem;
+  background: var(--qova-success);
+}
+
+.mark-frame span:nth-child(4) {
+  left: 4.2rem;
+  bottom: 2.5rem;
+  background: var(--qova-warning);
+}
+
+.rhythm-lines {
+  position: absolute;
+  right: clamp(1rem, 5vw, 4rem);
+  bottom: clamp(1rem, 5vw, 4rem);
+  display: grid;
+  gap: 0.55rem;
+  width: min(48%, 17rem);
+}
+
+.rhythm-lines span {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--qova-primary), transparent);
+}
+
+.rhythm-lines span:nth-child(2) {
+  width: 82%;
+}
+
+.rhythm-lines span:nth-child(3) {
+  width: 64%;
+}
+
+.rhythm-lines span:nth-child(4) {
+  width: 46%;
+}
+
+.rhythm-lines span:nth-child(5) {
+  width: 28%;
+}
+
+@media (max-width: 880px) {
+  .auth-shell {
+    grid-template-columns: 1fr;
+  }
+
+  .auth-visual {
+    min-height: 30rem;
+    order: -1;
+  }
+}
+
+@media (max-width: 560px) {
+  .auth-page {
+    padding: 0;
+  }
+
+  .auth-shell {
+    gap: 0;
+  }
+
+  :host ::ng-deep .auth-card,
+  .auth-visual {
+    border-radius: 0;
+    border-inline: 0;
+  }
+
+  .auth-visual {
+    min-height: 24rem;
+  }
 }
