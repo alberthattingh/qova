@@ -92,6 +92,11 @@
     </p-card>
 
     <p-card>
+      <h2>Progress metrics</h2>
+      <app-commitment-progress-metrics [metrics]="details.metrics" />
+    </p-card>
+
+    <p-card>
       <h2>Schedule</h2>
       <app-commitment-schedule
         [commitment]="details.commitment"

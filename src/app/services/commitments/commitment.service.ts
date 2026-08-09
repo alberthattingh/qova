@@ -42,6 +42,7 @@ import { CheckInEvidenceService } from '../check-ins/check-in-evidence.service';
 import { BrowserTimeZoneService } from '../check-ins/browser-time-zone.service';
 import { CheckInScheduleService } from '../check-ins/check-in-schedule.service';
 import { UserService } from '../user/user.service';
+import { CommitmentMetricsService } from './commitment-metrics.service';
 
 @Injectable({
   providedIn: 'root',
@@ -52,6 +53,7 @@ export class CommitmentService {
   private readonly checkInSchedules = inject(CheckInScheduleService);
   private readonly browserTimeZone = inject(BrowserTimeZoneService);
   private readonly firestore = inject(Firestore);
+  private readonly metrics = inject(CommitmentMetricsService);
   private readonly users = inject(UserService);
 
   workspace$(): Observable<CommitmentWorkspace> {
@@ -121,6 +123,7 @@ export class CommitmentService {
                 commitment,
                 versions: [],
                 checkIns: [],
+                metrics: this.metrics.metricsForCheckIns([]),
                 scheduleState: this.checkInSchedules.scheduleState(
                   this.scheduleInput(commitment),
                 ),
@@ -146,25 +149,27 @@ export class CommitmentService {
                 session.id,
               ),
             }).pipe(
-              map(({ versions, checkIns, evidence, reviews }) => ({
-                commitment,
-                versions,
-                checkIns: this.withReviews(
+              map(({ versions, checkIns, evidence, reviews }) => {
+                const hydratedCheckIns = this.withReviews(
                   this.withEvidence(checkIns, evidence),
                   reviews,
-                ),
-                scheduleState: this.checkInSchedules.scheduleState(
-                  this.scheduleInput(commitment),
-                ),
-                currentCheckInState:
-                  this.checkInSchedules.currentPeriodSubmissionState(
+                );
+
+                return {
+                  commitment,
+                  versions,
+                  checkIns: hydratedCheckIns,
+                  metrics: this.metrics.metricsForCheckIns(hydratedCheckIns),
+                  scheduleState: this.checkInSchedules.scheduleState(
                     this.scheduleInput(commitment),
-                    this.withReviews(
-                      this.withEvidence(checkIns, evidence),
-                      reviews,
-                    ),
                   ),
-              })),
+                  currentCheckInState:
+                    this.checkInSchedules.currentPeriodSubmissionState(
+                      this.scheduleInput(commitment),
+                      hydratedCheckIns,
+                    ),
+                };
+              }),
             );
           }),
         );

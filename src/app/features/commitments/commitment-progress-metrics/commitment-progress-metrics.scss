@@ -1,0 +1,53 @@
+.metrics {
+  display: grid;
+  gap: 1.25rem;
+}
+
+section {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.section-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+h3,
+span,
+strong {
+  margin: 0;
+}
+
+h3 {
+  font-size: 1rem;
+}
+
+.metric-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+  gap: 0.75rem;
+}
+
+article {
+  display: grid;
+  gap: 0.35rem;
+  padding: 0.75rem;
+  border: 1px solid var(--qova-border);
+  border-radius: 8px;
+  background: var(--qova-surface-hover);
+}
+
+span {
+  color: var(--qova-text-secondary);
+  font-size: 0.9rem;
+}
+
+strong {
+  color: var(--qova-text-primary);
+  font-size: 1.35rem;
+  line-height: 1;
+}

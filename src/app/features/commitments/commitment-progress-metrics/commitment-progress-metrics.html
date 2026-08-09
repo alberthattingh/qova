@@ -1,0 +1,56 @@
+<div class="metrics">
+  <section>
+    <div class="section-heading">
+      <h3>Goal compliance</h3>
+      <p-tag [value]="rateLabel(metrics.goal.passRate)" severity="success" />
+    </div>
+
+    <div class="metric-grid">
+      <article>
+        <span>Passed</span>
+        <strong>{{ metrics.goal.passed }}</strong>
+      </article>
+      <article>
+        <span>Failed</span>
+        <strong>{{ metrics.goal.failed }}</strong>
+      </article>
+      <article>
+        <span>Unresolved</span>
+        <strong>{{ metrics.goal.unresolved }}</strong>
+      </article>
+      <article>
+        <span>Current streak</span>
+        <strong>{{ metrics.goal.currentSuccessfulStreak }}</strong>
+      </article>
+      <article>
+        <span>Longest streak</span>
+        <strong>{{ metrics.goal.longestSuccessfulStreak }}</strong>
+      </article>
+    </div>
+  </section>
+
+  <section>
+    <div class="section-heading">
+      <h3>Reporting compliance</h3>
+      <p-tag
+        [value]="complianceLabel(metrics.reporting.reportingComplianceRate)"
+        severity="info"
+      />
+    </div>
+
+    <div class="metric-grid">
+      <article>
+        <span>Submitted on time</span>
+        <strong>{{ metrics.reporting.submittedOnTime }}</strong>
+      </article>
+      <article>
+        <span>Submitted late</span>
+        <strong>{{ metrics.reporting.submittedLate }}</strong>
+      </article>
+      <article>
+        <span>Missed</span>
+        <strong>{{ metrics.reporting.missed }}</strong>
+      </article>
+    </div>
+  </section>
+</div>

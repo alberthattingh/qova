@@ -22,6 +22,7 @@ import { ErrorState } from '../../../shared/components/error-state/error-state';
 import { LoadingState } from '../../../shared/components/loading-state/loading-state';
 import { CheckInHistory } from '../check-in-history/check-in-history';
 import { CommitmentForm } from '../commitment-form/commitment-form';
+import { CommitmentProgressMetricsComponent } from '../commitment-progress-metrics/commitment-progress-metrics';
 import { CommitmentSchedule } from '../commitment-schedule/commitment-schedule';
 
 @Component({
@@ -32,6 +33,7 @@ import { CommitmentSchedule } from '../commitment-schedule/commitment-schedule';
     CardModule,
     CheckInHistory,
     CommitmentForm,
+    CommitmentProgressMetricsComponent,
     CommitmentSchedule,
     DatePipe,
     DividerModule,
