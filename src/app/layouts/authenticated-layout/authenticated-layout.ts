@@ -1,5 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import { Component, DestroyRef, inject } from '@angular/core';
+import { Component, DestroyRef, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
@@ -34,6 +34,7 @@ export class AuthenticatedLayout {
   protected readonly isRouteLoading$ = inject(NavigationLoadingService).isLoading$;
   protected readonly navItems = inject(NavigationService).authenticatedNavItems;
   protected readonly ABSOLUTE_ROUTES = ABSOLUTE_ROUTES;
+  protected readonly isSidebarCollapsed = signal(false);
 
   constructor() {
     this.authService.currentAuthSession$.pipe(
@@ -47,5 +48,9 @@ export class AuthenticatedLayout {
 
   async signOut(): Promise<void> {
     await this.authFlow.signOutAndRedirect();
+  }
+
+  toggleSidebar(): void {
+    this.isSidebarCollapsed.update((isCollapsed) => !isCollapsed);
   }
 }

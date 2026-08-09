@@ -1,13 +1,25 @@
-<div class="layout">
+<div class="layout" [class.sidebar-collapsed]="isSidebarCollapsed()">
   <aside>
-    <a class="brand" [routerLink]="ABSOLUTE_ROUTES.userDashboard">
-      <span>Q</span>
-      <strong>qova</strong>
-    </a>
+    <div class="sidebar-top">
+      <a class="brand" [routerLink]="ABSOLUTE_ROUTES.userDashboard" title="qova">
+        <span>Q</span>
+        <strong>qova</strong>
+      </a>
+
+      <button
+        type="button"
+        class="sidebar-toggle"
+        [attr.aria-label]="isSidebarCollapsed() ? 'Expand sidebar' : 'Collapse sidebar'"
+        [attr.aria-expanded]="!isSidebarCollapsed()"
+        (click)="toggleSidebar()"
+      >
+        <i [class]="isSidebarCollapsed() ? 'pi pi-angle-right' : 'pi pi-angle-left'"></i>
+      </button>
+    </div>
 
     <nav aria-label="Primary navigation">
       @for (item of navItems; track item.route) {
-        <a [routerLink]="item.route" routerLinkActive="active">
+        <a [routerLink]="item.route" routerLinkActive="active" [title]="item.label">
           <i [class]="item.icon"></i>
           <span>{{ item.label }}</span>
         </a>
