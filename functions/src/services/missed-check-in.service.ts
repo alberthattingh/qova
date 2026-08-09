@@ -85,7 +85,7 @@ export class MissedCheckInService {
           periodStartsAt: Timestamp.fromDate(duePeriod.startsAt),
           periodEndsAt: Timestamp.fromDate(duePeriod.endsAt),
           deadline: Timestamp.fromDate(duePeriod.deadline),
-          claimedResult: "",
+          claimedResult: null,
           comment: null,
           wasMissed: true,
           isLate: false,

@@ -18,6 +18,10 @@ service cloud.firestore {
           request.auth.uid in data.managerUserIds);
     }
 
+    function isClaimedResult(value) {
+      return value in ['passed', 'failed'];
+    }
+
     match /users/{userId} {
       allow read: if signedIn();
       allow create, update: if signedIn() && request.auth.uid == userId;
@@ -107,6 +111,7 @@ service cloud.firestore {
         request.auth.uid == request.resource.data.ownerUserId &&
         request.auth.uid == request.resource.data.userId &&
         request.resource.data.id == checkInId &&
+        isClaimedResult(request.resource.data.claimedResult) &&
         request.resource.data.status == 'submitted';
 
       allow update: if signedIn() &&
@@ -126,6 +131,7 @@ service cloud.firestore {
         request.resource.data.wasMissed == true &&
         request.resource.data.dueAt == resource.data.dueAt &&
         request.resource.data.missedAt == resource.data.missedAt &&
+        isClaimedResult(request.resource.data.claimedResult) &&
         request.resource.data.isLate == true &&
         request.resource.data.status == 'submitted';
 
@@ -145,6 +151,7 @@ service cloud.firestore {
         request.resource.data.wasMissed == resource.data.wasMissed &&
         request.resource.data.dueAt == resource.data.dueAt &&
         request.resource.data.missedAt == resource.data.missedAt &&
+        isClaimedResult(request.resource.data.claimedResult) &&
         request.resource.data.isLate == resource.data.isLate &&
         request.resource.data.status == 'submitted';
 

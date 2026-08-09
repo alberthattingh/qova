@@ -1,7 +1,13 @@
 <form [formGroup]="form" (ngSubmit)="submit()">
   <label>
-    <span>Claimed result</span>
-    <input pInputText type="text" formControlName="claimedResult" />
+    <span>Did you pass?</span>
+    <p-select
+      formControlName="claimedResult"
+      [options]="claimedResultOptions"
+      optionLabel="label"
+      optionValue="value"
+      placeholder="Choose pass or fail"
+    />
   </label>
 
   <label>

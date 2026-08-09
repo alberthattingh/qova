@@ -1,3 +1,4 @@
+import { CheckInClaimedResult } from '../constants/check-in-claimed-results';
 import { CheckInStatus } from '../constants/check-in-statuses';
 import { CheckInEvidence } from './check-in-evidence.model';
 import { CheckInReview } from './check-in-review.model';
@@ -12,7 +13,7 @@ export interface CheckIn {
   periodStartsAt: Date;
   periodEndsAt: Date;
   deadline: Date;
-  claimedResult: string;
+  claimedResult: CheckInClaimedResult | null;
   comment: string | null;
   evidence: CheckInEvidence[];
   wasMissed: boolean;

@@ -6,6 +6,8 @@ import { TagModule } from 'primeng/tag';
 import { catchError, map, of, startWith } from 'rxjs';
 
 import { ABSOLUTE_ROUTES, RouteParam } from '../../../constants/app-routes';
+import { CHECK_IN_CLAIMED_RESULT_LABELS } from '../../../constants/check-in-claimed-result-labels';
+import { CheckInClaimedResult } from '../../../constants/check-in-claimed-results';
 import { CHECK_IN_REVIEW_DECISION_LABELS } from '../../../constants/check-in-review-decision-labels';
 import { CheckInReviewDecision } from '../../../constants/check-in-review-decisions';
 import { CHECK_IN_STATUS_LABELS } from '../../../constants/check-in-status-labels';
@@ -44,6 +46,7 @@ export class ReviewDetailsPage {
   private readonly route = inject(ActivatedRoute);
 
   protected readonly ABSOLUTE_ROUTES = ABSOLUTE_ROUTES;
+  protected readonly claimedResultLabels = CHECK_IN_CLAIMED_RESULT_LABELS;
   protected readonly reviewDecisionLabels = CHECK_IN_REVIEW_DECISION_LABELS;
   protected readonly statusLabels = CHECK_IN_STATUS_LABELS;
   protected readonly checkInId =
@@ -90,6 +93,16 @@ export class ReviewDetailsPage {
 
   protected reviewDecisionLabel(decision: CheckInReviewDecision): string {
     return this.reviewDecisionLabels[decision];
+  }
+
+  protected claimedResultLabel(result: CheckInClaimedResult): string {
+    return this.claimedResultLabels[result];
+  }
+
+  protected claimedResultSeverity(
+    result: CheckInClaimedResult,
+  ): 'success' | 'danger' {
+    return result === CheckInClaimedResult.Passed ? 'success' : 'danger';
   }
 
   protected async reviewCheckIn(

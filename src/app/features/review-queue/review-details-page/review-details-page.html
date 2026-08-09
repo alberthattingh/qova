@@ -80,10 +80,15 @@
         <section class="detail-section">
           <h2>Submitted update</h2>
           <div class="field">
-            <h3>Claimed result</h3>
-            <p class="multiline">
-              {{ details.checkIn.claimedResult || 'No result submitted' }}
-            </p>
+            <h3>User admitted</h3>
+            @if (details.checkIn.claimedResult; as claimedResult) {
+              <p-tag
+                [value]="claimedResultLabel(claimedResult)"
+                [severity]="claimedResultSeverity(claimedResult)"
+              />
+            } @else {
+              <p>No result submitted</p>
+            }
           </div>
           @if (details.checkIn.comment) {
             <div class="field">

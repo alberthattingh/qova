@@ -13,6 +13,7 @@ import {
 } from '@angular/fire/firestore';
 import { combineLatest, map, Observable, of, switchMap } from 'rxjs';
 
+import { CheckInClaimedResult } from '../../constants/check-in-claimed-results';
 import { CheckInFrequency } from '../../constants/check-in-frequency';
 import { CheckInStatus } from '../../constants/check-in-statuses';
 import { CommitmentStatus } from '../../constants/commitment-statuses';
@@ -92,13 +93,9 @@ export class CheckInService {
 
     const checkInId = this.checkInId(commitment.id, period);
     const checkInReference = this.checkInRef(checkInId);
-    const claimedResult = request.claimedResult.trim();
+    const claimedResult = this.validClaimedResult(request.claimedResult);
     const comment = request.comment?.trim() || null;
     const evidenceFiles = request.evidenceFiles;
-
-    if (!claimedResult) {
-      throw new Error('Enter a claimed result before submitting');
-    }
 
     const evidenceUploads = await Promise.all(
       evidenceFiles.map(async (file) => {
@@ -176,12 +173,8 @@ export class CheckInService {
       throw new Error('This missed check-in can no longer be submitted');
     }
 
-    const claimedResult = request.claimedResult.trim();
+    const claimedResult = this.validClaimedResult(request.claimedResult);
     const comment = request.comment?.trim() || null;
-
-    if (!claimedResult) {
-      throw new Error('Enter a claimed result before submitting');
-    }
 
     const period = this.periodFromCheckIn(checkIn);
     const evidenceUploads = await Promise.all(
@@ -253,12 +246,8 @@ export class CheckInService {
       throw new Error('Only check-ins needing more evidence can be resubmitted');
     }
 
-    const claimedResult = request.claimedResult.trim();
+    const claimedResult = this.validClaimedResult(request.claimedResult);
     const comment = request.comment?.trim() || null;
-
-    if (!claimedResult) {
-      throw new Error('Enter a claimed result before submitting');
-    }
 
     const period = this.periodFromCheckIn(checkIn);
     const evidenceUploads = await Promise.all(
@@ -566,7 +555,7 @@ export class CheckInService {
       periodStartsAt: this.toDate(value['periodStartsAt']),
       periodEndsAt: this.toDate(value['periodEndsAt']),
       deadline: this.toDate(value['deadline']),
-      claimedResult: this.toStringField(value, 'claimedResult'),
+      claimedResult: this.toNullableCheckInClaimedResult(value['claimedResult']),
       comment: this.toNullableString(value['comment']),
       evidence: [],
       wasMissed: this.toBooleanField(value, 'wasMissed'),
@@ -581,6 +570,17 @@ export class CheckInService {
 
   private checkInSortDate(checkIn: CheckIn): Date {
     return checkIn.submittedAt ?? checkIn.missedAt ?? checkIn.dueAt;
+  }
+
+  private validClaimedResult(value: CheckInClaimedResult): CheckInClaimedResult {
+    if (
+      value === CheckInClaimedResult.Passed ||
+      value === CheckInClaimedResult.Failed
+    ) {
+      return value;
+    }
+
+    throw new Error('Choose whether you passed or failed before submitting');
   }
 
   private evidenceMetadata(
@@ -663,6 +663,27 @@ export class CheckInService {
     }
 
     throw new Error('Invalid check-in status');
+  }
+
+  private toCheckInClaimedResult(value: unknown): CheckInClaimedResult {
+    if (
+      value === CheckInClaimedResult.Passed ||
+      value === CheckInClaimedResult.Failed
+    ) {
+      return value;
+    }
+
+    throw new Error('Invalid claimed result');
+  }
+
+  private toNullableCheckInClaimedResult(
+    value: unknown,
+  ): CheckInClaimedResult | null {
+    if (value === null) {
+      return null;
+    }
+
+    return this.toCheckInClaimedResult(value);
   }
 
   private toStringField(value: Record<string, unknown>, fieldName: string): string {

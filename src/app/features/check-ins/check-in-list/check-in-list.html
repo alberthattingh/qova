@@ -40,12 +40,16 @@
 
             @if (checkIn.persistedCheckIn) {
               <div>
-                <dt>Claimed result</dt>
+                <dt>User admitted</dt>
                 <dd>
-                  {{
-                    checkIn.persistedCheckIn.claimedResult ||
-                      'Awaiting late submission'
-                  }}
+                  @if (checkIn.persistedCheckIn.claimedResult; as claimedResult) {
+                    <p-tag
+                      [value]="claimedResultLabel(claimedResult)"
+                      [severity]="claimedResultSeverity(claimedResult)"
+                    />
+                  } @else {
+                    Awaiting late submission
+                  }
                 </dd>
               </div>
               <div>

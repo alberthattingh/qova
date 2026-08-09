@@ -12,6 +12,7 @@ import {
 import { combineLatest, map, Observable, of, switchMap } from 'rxjs';
 
 import { ProfileImageSource } from '../../constants/avatar';
+import { CheckInClaimedResult } from '../../constants/check-in-claimed-results';
 import { CheckInReviewDecision } from '../../constants/check-in-review-decisions';
 import { CheckInFrequency } from '../../constants/check-in-frequency';
 import { CheckInStatus } from '../../constants/check-in-statuses';
@@ -298,7 +299,7 @@ export class ReviewQueueService {
       periodStartsAt: this.toDate(value['periodStartsAt']),
       periodEndsAt: this.toDate(value['periodEndsAt']),
       deadline: this.toDate(value['deadline']),
-      claimedResult: this.toStringField(value, 'claimedResult'),
+      claimedResult: this.toNullableCheckInClaimedResult(value['claimedResult']),
       comment: this.toNullableString(value['comment']),
       evidence: [],
       wasMissed: this.toBooleanField(value, 'wasMissed'),
@@ -393,6 +394,27 @@ export class ReviewQueueService {
     }
 
     throw new Error('Invalid check-in status');
+  }
+
+  private toCheckInClaimedResult(value: unknown): CheckInClaimedResult {
+    if (
+      value === CheckInClaimedResult.Passed ||
+      value === CheckInClaimedResult.Failed
+    ) {
+      return value;
+    }
+
+    throw new Error('Invalid claimed result');
+  }
+
+  private toNullableCheckInClaimedResult(
+    value: unknown,
+  ): CheckInClaimedResult | null {
+    if (value === null) {
+      return null;
+    }
+
+    return this.toCheckInClaimedResult(value);
   }
 
   private toCheckInReviewDecision(value: unknown): CheckInReviewDecision {

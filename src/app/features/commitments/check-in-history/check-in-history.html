@@ -20,8 +20,17 @@
           </p>
           <dl>
             <div>
-              <dt>Claimed result</dt>
-              <dd>{{ checkIn.claimedResult || 'Not submitted' }}</dd>
+              <dt>User admitted</dt>
+              <dd>
+                @if (checkIn.claimedResult; as claimedResult) {
+                  <p-tag
+                    [value]="claimedResultLabel(claimedResult)"
+                    [severity]="claimedResultSeverity(claimedResult)"
+                  />
+                } @else {
+                  Not submitted
+                }
+              </dd>
             </div>
             <div>
               <dt>{{ checkIn.wasMissed ? 'Missed' : 'Submitted' }}</dt>

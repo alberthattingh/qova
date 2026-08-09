@@ -3,6 +3,8 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CardModule } from 'primeng/card';
 import { TagModule } from 'primeng/tag';
 
+import { CHECK_IN_CLAIMED_RESULT_LABELS } from '../../../constants/check-in-claimed-result-labels';
+import { CheckInClaimedResult } from '../../../constants/check-in-claimed-results';
 import { CHECK_IN_STATUS_LABELS } from '../../../constants/check-in-status-labels';
 import { CheckInStatus } from '../../../constants/check-in-statuses';
 import { DueCheckInStatus } from '../../../constants/due-check-in-statuses';
@@ -38,6 +40,7 @@ export class CheckInList {
   }>();
 
   protected readonly checkInStatus = CheckInStatus;
+  protected readonly claimedResultLabels = CHECK_IN_CLAIMED_RESULT_LABELS;
   protected readonly checkInStatusLabels = CHECK_IN_STATUS_LABELS;
 
   protected statusLabel(checkIn: DueCheckIn): string {
@@ -50,5 +53,15 @@ export class CheckInList {
     }
 
     return this.checkInStatusLabels[checkIn.status];
+  }
+
+  protected claimedResultLabel(result: CheckInClaimedResult): string {
+    return this.claimedResultLabels[result];
+  }
+
+  protected claimedResultSeverity(
+    result: CheckInClaimedResult,
+  ): 'success' | 'danger' {
+    return result === CheckInClaimedResult.Passed ? 'success' : 'danger';
   }
 }

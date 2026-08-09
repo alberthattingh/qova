@@ -11,19 +11,21 @@ import {
 } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
-import { InputTextModule } from 'primeng/inputtext';
+import { SelectModule } from 'primeng/select';
 import { TextareaModule } from 'primeng/textarea';
 
 import {
   CHECK_IN_EVIDENCE_ACCEPT,
   CheckInEvidenceFileCategory,
 } from '../../../constants/check-in-evidence-file-types';
+import { CHECK_IN_CLAIMED_RESULT_LABELS } from '../../../constants/check-in-claimed-result-labels';
+import { CheckInClaimedResult } from '../../../constants/check-in-claimed-results';
 import { CheckInFormValue } from '../../../models/check-in-form-value.model';
 import { EvidenceFilePreview } from '../../../models/evidence-file-preview.model';
 
 @Component({
   selector: 'app-check-in-submit-form',
-  imports: [ButtonModule, InputTextModule, ReactiveFormsModule, TextareaModule],
+  imports: [ButtonModule, ReactiveFormsModule, SelectModule, TextareaModule],
   templateUrl: './check-in-submit-form.html',
   styleUrl: './check-in-submit-form.scss',
 })
@@ -37,8 +39,18 @@ export class CheckInSubmitForm implements OnDestroy {
   protected readonly evidenceAccept = CHECK_IN_EVIDENCE_ACCEPT;
   protected readonly evidencePreviews = signal<EvidenceFilePreview[]>([]);
   protected readonly fileCategory = CheckInEvidenceFileCategory;
-  protected readonly form = this.formBuilder.nonNullable.group({
-    claimedResult: ['', [Validators.required, Validators.maxLength(500)]],
+  protected readonly claimedResultOptions = [
+    {
+      label: CHECK_IN_CLAIMED_RESULT_LABELS[CheckInClaimedResult.Passed],
+      value: CheckInClaimedResult.Passed,
+    },
+    {
+      label: CHECK_IN_CLAIMED_RESULT_LABELS[CheckInClaimedResult.Failed],
+      value: CheckInClaimedResult.Failed,
+    },
+  ];
+  protected readonly form = this.formBuilder.group({
+    claimedResult: [null as CheckInClaimedResult | null, [Validators.required]],
     comment: ['', [Validators.maxLength(1000)]],
   });
 
@@ -82,12 +94,20 @@ export class CheckInSubmitForm implements OnDestroy {
 
     const value = this.form.getRawValue();
 
+    if (!value.claimedResult) {
+      this.form.markAllAsTouched();
+      return;
+    }
+
     this.submitted.emit({
       claimedResult: value.claimedResult,
       comment: value.comment.trim() || null,
       evidenceFiles: this.evidencePreviews().map((preview) => preview.file),
     });
-    this.form.reset();
+    this.form.reset({
+      claimedResult: null,
+      comment: '',
+    });
     this.clearEvidence();
   }
 

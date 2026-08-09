@@ -1,4 +1,5 @@
 import { CheckInFrequency } from '../../constants/check-in-frequency';
+import { CheckInClaimedResult } from '../../constants/check-in-claimed-results';
 import { CheckInStatus } from '../../constants/check-in-statuses';
 import { CheckIn } from '../../models/check-in.model';
 import { CheckInScheduleInput } from '../../models/check-in-schedule-input.model';
@@ -46,7 +47,7 @@ describe('CheckInScheduleService', () => {
       periodStartsAt: new Date('2026-08-08T00:00:00.000Z'),
       periodEndsAt: new Date('2026-08-08T23:59:59.999Z'),
       deadline: new Date('2026-08-08T09:00:00.000Z'),
-      claimedResult: 'Done',
+      claimedResult: CheckInClaimedResult.Passed,
       comment: null,
       evidence: [],
       wasMissed: false,

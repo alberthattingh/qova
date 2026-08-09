@@ -2,6 +2,8 @@ import { DatePipe } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { TagModule } from 'primeng/tag';
 
+import { CHECK_IN_CLAIMED_RESULT_LABELS } from '../../../constants/check-in-claimed-result-labels';
+import { CheckInClaimedResult } from '../../../constants/check-in-claimed-results';
 import { CHECK_IN_REVIEW_DECISION_LABELS } from '../../../constants/check-in-review-decision-labels';
 import { CHECK_IN_STATUS_LABELS } from '../../../constants/check-in-status-labels';
 import { CheckInReviewDecision } from '../../../constants/check-in-review-decisions';
@@ -34,6 +36,7 @@ export class CheckInHistory {
     value: CheckInReviewFormValue;
   }>();
 
+  protected readonly claimedResultLabels = CHECK_IN_CLAIMED_RESULT_LABELS;
   protected readonly reviewDecisionLabels = CHECK_IN_REVIEW_DECISION_LABELS;
   protected readonly statusLabels = CHECK_IN_STATUS_LABELS;
 
@@ -51,5 +54,15 @@ export class CheckInHistory {
 
   protected reviewDecisionLabel(decision: CheckInReviewDecision): string {
     return this.reviewDecisionLabels[decision];
+  }
+
+  protected claimedResultLabel(result: CheckInClaimedResult): string {
+    return this.claimedResultLabels[result];
+  }
+
+  protected claimedResultSeverity(
+    result: CheckInClaimedResult,
+  ): 'success' | 'danger' {
+    return result === CheckInClaimedResult.Passed ? 'success' : 'danger';
   }
 }
