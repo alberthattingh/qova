@@ -12,29 +12,12 @@
           <div class="history-summary">
             <div class="summary-main">
               <p-tag [value]="statusLabel(checkIn)" />
-              @if (checkIn.isLate) {
-                <p-tag value="Late" severity="warn" />
-              }
               <strong>
-                {{ checkIn.periodStartsAt | date: 'mediumDate' }}
-                -
-                {{ checkIn.periodEndsAt | date: 'mediumDate' }}
+                Due {{ checkIn.dueAt | date: DATE_FORMATS.dateTime }}
               </strong>
             </div>
 
             <div class="summary-meta">
-              <span>
-                {{ submittedOrMissedLabel(checkIn) }}
-                @if (submittedOrMissedAt(checkIn); as activityAt) {
-                  {{ activityAt | date: 'mediumDate' }}
-                }
-              </span>
-              @if (checkIn.claimedResult; as claimedResult) {
-                <p-tag
-                  [value]="claimedResultLabel(claimedResult)"
-                  [severity]="claimedResultSeverity(claimedResult)"
-                />
-              }
               <span>{{ evidenceLabel(checkIn) }}</span>
             </div>
           </div>
