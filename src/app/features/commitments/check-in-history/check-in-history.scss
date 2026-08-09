@@ -1,17 +1,69 @@
-.history {
+:host ::ng-deep .history-accordion {
   display: grid;
   gap: 0.75rem;
 }
 
-.history-item {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 1rem;
-  padding: 0.75rem;
+:host ::ng-deep .p-accordionpanel {
+  overflow: hidden;
   border: 1px solid var(--qova-border);
   border-radius: 8px;
   background: var(--qova-surface);
+}
+
+:host ::ng-deep .p-accordionheader {
+  padding: 0.85rem 1rem;
+  background: var(--qova-surface);
+  color: var(--qova-text-primary);
+}
+
+:host ::ng-deep .p-accordionheader:hover {
+  background: var(--qova-surface-hover);
+}
+
+:host ::ng-deep .p-accordioncontent-content {
+  padding: 0 1rem 1rem;
+  border-top: 1px solid var(--qova-border);
+  background: var(--qova-surface);
+}
+
+.history-summary {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+  min-width: 0;
+}
+
+.summary-main,
+.summary-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  min-width: 0;
+}
+
+.summary-main strong {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.summary-meta {
+  justify-content: flex-end;
+  color: var(--qova-text-secondary);
+  font-size: 0.9rem;
+}
+
+.summary-meta span {
+  white-space: nowrap;
+}
+
+.history-detail {
+  display: grid;
+  gap: 1rem;
+  padding-top: 1rem;
 }
 
 strong,
@@ -23,6 +75,7 @@ dd {
 }
 
 h3 {
+  color: var(--qova-text-primary);
   font-size: 1rem;
 }
 
@@ -33,8 +86,8 @@ p {
 
 dl {
   display: grid;
-  gap: 0.65rem;
-  margin-top: 0.75rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
 }
 
 dt {
@@ -43,23 +96,8 @@ dt {
 }
 
 dd {
+  margin-top: 0.25rem;
   color: var(--qova-text-primary);
-  font-weight: 650;
-}
-
-.history-copy {
-  min-width: 0;
-}
-
-.late-badge {
-  display: inline-flex;
-  width: fit-content;
-  margin-top: 0.45rem;
-  padding: 0.25rem 0.45rem;
-  border-radius: 6px;
-  color: var(--qova-warning);
-  background: color-mix(in srgb, var(--qova-warning) 12%, transparent);
-  font-size: 0.85rem;
   font-weight: 650;
 }
 
@@ -72,7 +110,6 @@ dd {
 .review-history {
   display: grid;
   gap: 0.75rem;
-  margin-top: 0.75rem;
 }
 
 .review-history article {
@@ -82,4 +119,16 @@ dd {
   border: 1px solid var(--qova-border);
   border-radius: 8px;
   background: var(--qova-surface-hover);
+}
+
+@media (max-width: 760px) {
+  .history-summary,
+  dl {
+    grid-template-columns: 1fr;
+  }
+
+  .summary-meta {
+    justify-content: flex-start;
+    flex-wrap: wrap;
+  }
 }

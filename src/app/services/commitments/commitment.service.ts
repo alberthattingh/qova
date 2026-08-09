@@ -878,6 +878,13 @@ export class CommitmentService {
       return null;
     }
 
+    if (
+      value !== CheckInClaimedResult.Passed &&
+      value !== CheckInClaimedResult.Failed
+    ) {
+      return null;
+    }
+
     return this.toCheckInClaimedResult(value);
   }
 

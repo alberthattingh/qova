@@ -1,5 +1,6 @@
 import { DatePipe } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { AccordionModule } from 'primeng/accordion';
 import { TagModule } from 'primeng/tag';
 
 import { CHECK_IN_CLAIMED_RESULT_LABELS } from '../../../constants/check-in-claimed-result-labels';
@@ -17,6 +18,7 @@ import { CheckInReviewForm } from '../check-in-review-form/check-in-review-form'
 @Component({
   selector: 'app-check-in-history',
   imports: [
+    AccordionModule,
     CheckInEvidenceList,
     CheckInReviewForm,
     DatePipe,
@@ -64,5 +66,23 @@ export class CheckInHistory {
     result: CheckInClaimedResult,
   ): 'success' | 'danger' {
     return result === CheckInClaimedResult.Passed ? 'success' : 'danger';
+  }
+
+  protected submittedOrMissedLabel(checkIn: CheckIn): string {
+    if (checkIn.wasMissed && checkIn.submittedAt) {
+      return 'Submitted late';
+    }
+
+    return checkIn.wasMissed ? 'Missed' : 'Submitted';
+  }
+
+  protected submittedOrMissedAt(checkIn: CheckIn): Date | null {
+    return checkIn.submittedAt ?? checkIn.missedAt;
+  }
+
+  protected evidenceLabel(checkIn: CheckIn): string {
+    const evidenceCount = checkIn.evidence.length;
+
+    return `${evidenceCount} file${evidenceCount === 1 ? '' : 's'}`;
   }
 }
