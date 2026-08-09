@@ -3,6 +3,7 @@ import { Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
+import { TabsModule } from 'primeng/tabs';
 import { TagModule } from 'primeng/tag';
 import { catchError, map, of, startWith } from 'rxjs';
 
@@ -17,6 +18,7 @@ import { UserDashboardService } from '../../../services/dashboard/user-dashboard
 import { EmptyState } from '../../../shared/components/empty-state/empty-state';
 import { ErrorState } from '../../../shared/components/error-state/error-state';
 import { LoadingState } from '../../../shared/components/loading-state/loading-state';
+import { ManagerDashboardPage } from '../manager-dashboard-page/manager-dashboard-page';
 
 @Component({
   selector: 'app-user-dashboard-page',
@@ -28,7 +30,9 @@ import { LoadingState } from '../../../shared/components/loading-state/loading-s
     EmptyState,
     ErrorState,
     LoadingState,
+    ManagerDashboardPage,
     RouterLink,
+    TabsModule,
     TagModule,
   ],
   templateUrl: './user-dashboard-page.html',

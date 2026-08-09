@@ -2,6 +2,43 @@
   border: 1px solid var(--qova-border);
 }
 
+:host ::ng-deep .p-tabs {
+  display: grid;
+  gap: 1rem;
+}
+
+:host ::ng-deep .p-tablist {
+  border: 1px solid var(--qova-border);
+  border-radius: 8px;
+  background: var(--qova-surface);
+  overflow: hidden;
+}
+
+:host ::ng-deep .p-tablist-tab-list {
+  background: transparent;
+  border: 0;
+}
+
+:host ::ng-deep .p-tab {
+  gap: 0.5rem;
+  color: var(--qova-text-secondary);
+  border-color: transparent;
+}
+
+:host ::ng-deep .p-tab.p-tab-active {
+  color: var(--qova-primary);
+}
+
+:host ::ng-deep .p-tabpanels {
+  padding: 0;
+  background: transparent;
+}
+
+:host ::ng-deep .p-tabs-panel {
+  display: grid;
+  gap: 1rem;
+}
+
 .dashboard-section {
   display: grid;
   gap: 1rem;
@@ -40,6 +77,11 @@ span {
   padding-left: 1rem;
 }
 
+.user-dashboard-content {
+  display: grid;
+  gap: 1rem;
+}
+
 .action-list,
 .review-list,
 .commitment-list {
@@ -71,6 +113,7 @@ span {
   display: grid;
   grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
   gap: 1rem;
+  margin-top: 1rem;
 }
 
 a {

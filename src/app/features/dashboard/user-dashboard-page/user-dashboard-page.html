@@ -1,170 +1,193 @@
 <section class="page">
   <div class="page-heading">
-    <p>User dashboard</p>
-    <h1>Your commitments</h1>
+    <p>Dashboard</p>
+    <h1>Your workspace</h1>
   </div>
 
-  @if (dashboardState$ | async; as state) {
-    @if (state.isLoading) {
-      <app-loading-state message="Loading dashboard" />
-    } @else if (state.error) {
-      <app-error-state
-        title="Unable to load dashboard"
-        [message]="state.error"
-        [showAction]="false"
-      />
-    } @else if (state.dashboard; as dashboard) {
-      <p-card>
-        <section class="dashboard-section priority-section">
-          <div class="section-heading">
-            <div>
-              <h2>Needs your attention</h2>
-              <p>Current check-ins and recoverable misses.</p>
-            </div>
-            <p-tag
-              [value]="actionCount(dashboard) + ' action' + (actionCount(dashboard) === 1 ? '' : 's')"
-              severity="warn"
+  <p-tabs value="user" scrollable>
+    <p-tablist>
+      <p-tab value="user">
+        <i class="pi pi-list-check"></i>
+        <span>Your commitments</span>
+      </p-tab>
+      <p-tab value="manager">
+        <i class="pi pi-briefcase"></i>
+        <span>Managing others</span>
+      </p-tab>
+    </p-tablist>
+
+    <p-tabpanels>
+      <p-tabpanel value="user">
+        @if (dashboardState$ | async; as state) {
+          @if (state.isLoading) {
+            <app-loading-state message="Loading dashboard" />
+          } @else if (state.error) {
+            <app-error-state
+              title="Unable to load dashboard"
+              [message]="state.error"
+              [showAction]="false"
             />
-          </div>
-
-          @if (dashboard.checkInsDueToday.length === 0 && dashboard.retroactiveCheckIns.length === 0) {
-            <app-empty-state
-              icon="pi pi-check-circle"
-              title="Nothing due today"
-              message="Current check-ins that need your update will appear here."
-            />
-          } @else {
-            <div class="action-list">
-              @for (checkIn of dashboard.checkInsDueToday; track checkIn.id) {
-                <article class="action-card">
-                  <div>
-                    <p-tag value="Due today" severity="warn" />
-                    <h3>{{ checkIn.commitment.title }}</h3>
-                    <p>{{ checkIn.period.deadline | date: 'shortTime' }}</p>
-                  </div>
-                  <a [routerLink]="ABSOLUTE_ROUTES.checkIns">
-                    <i class="pi pi-send"></i>
-                    <span>Submit check-in</span>
-                  </a>
-                </article>
-              }
-
-              @for (checkIn of dashboard.retroactiveCheckIns; track checkIn.id) {
-                <article class="action-card missed">
-                  <div>
-                    <p-tag value="Recoverable miss" severity="danger" />
-                    <h3>{{ checkIn.commitment.title }}</h3>
-                    <p>
-                      Missed {{ checkIn.period.deadline | date: 'mediumDate' }}
-                    </p>
-                  </div>
-                  <a [routerLink]="ABSOLUTE_ROUTES.checkIns">
-                    <i class="pi pi-paperclip"></i>
-                    <span>Submit late evidence</span>
-                  </a>
-                </article>
-              }
-            </div>
-          }
-        </section>
-      </p-card>
-
-      <div class="dashboard-grid">
-        <p-card>
-          <section class="dashboard-section">
-            <div class="section-heading">
-              <div>
-                <h2>Recent review results</h2>
-                <p>Latest manager decisions.</p>
-              </div>
-            </div>
-
-            @if (dashboard.recentReviewResults.length === 0) {
-              <app-empty-state
-                icon="pi pi-inbox"
-                title="No review results yet"
-                message="Manager decisions will appear here after check-ins are reviewed."
-              />
-            } @else {
-              <div class="review-list">
-                @for (result of dashboard.recentReviewResults; track result.review.id) {
-                  <article>
+          } @else if (state.dashboard; as dashboard) {
+            <div class="user-dashboard-content">
+              <p-card>
+                <section class="dashboard-section priority-section">
+                  <div class="section-heading">
                     <div>
-                      <p-tag
-                        [value]="reviewDecisionLabel(result.review.decision)"
-                        [severity]="reviewSeverity(result)"
-                      />
-                      @if (isNeedsMoreEvidence(result)) {
-                        <p-tag value="Action needed" severity="warn" />
+                      <h2>Needs your attention</h2>
+                      <p>Current check-ins and recoverable misses.</p>
+                    </div>
+                    <p-tag
+                      [value]="actionCount(dashboard) + ' action' + (actionCount(dashboard) === 1 ? '' : 's')"
+                      severity="warn"
+                    />
+                  </div>
+
+                  @if (dashboard.checkInsDueToday.length === 0 && dashboard.retroactiveCheckIns.length === 0) {
+                    <app-empty-state
+                      icon="pi pi-check-circle"
+                      title="Nothing due today"
+                      message="Current check-ins that need your update will appear here."
+                    />
+                  } @else {
+                    <div class="action-list">
+                      @for (checkIn of dashboard.checkInsDueToday; track checkIn.id) {
+                        <article class="action-card">
+                          <div>
+                            <p-tag value="Due today" severity="warn" />
+                            <h3>{{ checkIn.commitment.title }}</h3>
+                            <p>{{ checkIn.period.deadline | date: 'shortTime' }}</p>
+                          </div>
+                          <a [routerLink]="ABSOLUTE_ROUTES.checkIns">
+                            <i class="pi pi-send"></i>
+                            <span>Submit check-in</span>
+                          </a>
+                        </article>
+                      }
+
+                      @for (checkIn of dashboard.retroactiveCheckIns; track checkIn.id) {
+                        <article class="action-card missed">
+                          <div>
+                            <p-tag value="Recoverable miss" severity="danger" />
+                            <h3>{{ checkIn.commitment.title }}</h3>
+                            <p>
+                              Missed {{ checkIn.period.deadline | date: 'mediumDate' }}
+                            </p>
+                          </div>
+                          <a [routerLink]="ABSOLUTE_ROUTES.checkIns">
+                            <i class="pi pi-paperclip"></i>
+                            <span>Submit late evidence</span>
+                          </a>
+                        </article>
                       }
                     </div>
-                    <h3>{{ result.commitment.title }}</h3>
-                    <p>{{ result.review.createdAt | date: 'medium' }}</p>
-                    @if (result.review.comment) {
-                      <p class="comment">{{ result.review.comment }}</p>
-                    }
-                    <a [routerLink]="ABSOLUTE_ROUTES.reviewDetails(result.checkIn.id)">
-                      <i class="pi pi-arrow-right"></i>
-                      <span>Open review</span>
-                    </a>
-                  </article>
-                }
-              </div>
-            }
-          </section>
-        </p-card>
+                  }
+                </section>
+              </p-card>
 
-        <p-card>
-          <section class="dashboard-section">
-            <div class="section-heading">
-              <div>
-                <h2>Active commitments</h2>
-                <p>Progress across current commitments.</p>
+              <div class="dashboard-grid">
+                <p-card>
+                  <section class="dashboard-section">
+                    <div class="section-heading">
+                      <div>
+                        <h2>Recent review results</h2>
+                        <p>Latest manager decisions.</p>
+                      </div>
+                    </div>
+
+                    @if (dashboard.recentReviewResults.length === 0) {
+                      <app-empty-state
+                        icon="pi pi-inbox"
+                        title="No review results yet"
+                        message="Manager decisions will appear here after check-ins are reviewed."
+                      />
+                    } @else {
+                      <div class="review-list">
+                        @for (result of dashboard.recentReviewResults; track result.review.id) {
+                          <article>
+                            <div>
+                              <p-tag
+                                [value]="reviewDecisionLabel(result.review.decision)"
+                                [severity]="reviewSeverity(result)"
+                              />
+                              @if (isNeedsMoreEvidence(result)) {
+                                <p-tag value="Action needed" severity="warn" />
+                              }
+                            </div>
+                            <h3>{{ result.commitment.title }}</h3>
+                            <p>{{ result.review.createdAt | date: 'medium' }}</p>
+                            @if (result.review.comment) {
+                              <p class="comment">{{ result.review.comment }}</p>
+                            }
+                            <a [routerLink]="ABSOLUTE_ROUTES.reviewDetails(result.checkIn.id)">
+                              <i class="pi pi-arrow-right"></i>
+                              <span>Open review</span>
+                            </a>
+                          </article>
+                        }
+                      </div>
+                    }
+                  </section>
+                </p-card>
+
+                <p-card>
+                  <section class="dashboard-section">
+                    <div class="section-heading">
+                      <div>
+                        <h2>Active commitments</h2>
+                        <p>Progress across current commitments.</p>
+                      </div>
+                    </div>
+
+                    @if (dashboard.activeCommitments.length === 0) {
+                      <app-empty-state
+                        icon="pi pi-list-check"
+                        title="No active commitments"
+                        message="Active commitments will appear here once tracking starts."
+                      />
+                    } @else {
+                      <div class="commitment-list">
+                        @for (item of dashboard.activeCommitments; track item.commitment.id) {
+                          <article>
+                            <div class="commitment-heading">
+                              <div>
+                                <h3>{{ item.commitment.title }}</h3>
+                                <p>{{ item.commitment.checkInFrequency }} at {{ item.commitment.checkInTime }}</p>
+                              </div>
+                              <a [routerLink]="ABSOLUTE_ROUTES.commitmentDetails(item.commitment.id)">
+                                <i class="pi pi-arrow-right"></i>
+                                <span>Open</span>
+                              </a>
+                            </div>
+
+                            <div class="progress-row">
+                              <div>
+                                <span>Goal pass rate</span>
+                                <strong>{{ progressRateLabel(item) }}</strong>
+                              </div>
+                              <div>
+                                <span>Reporting rate</span>
+                                <strong>{{ reportingRateLabel(item) }}</strong>
+                              </div>
+                              <div>
+                                <span>Current streak</span>
+                                <strong>{{ item.metrics.goal.currentSuccessfulStreak }}</strong>
+                              </div>
+                            </div>
+                          </article>
+                        }
+                      </div>
+                    }
+                  </section>
+                </p-card>
               </div>
             </div>
+          }
+        }
+      </p-tabpanel>
 
-            @if (dashboard.activeCommitments.length === 0) {
-              <app-empty-state
-                icon="pi pi-list-check"
-                title="No active commitments"
-                message="Active commitments will appear here once tracking starts."
-              />
-            } @else {
-              <div class="commitment-list">
-                @for (item of dashboard.activeCommitments; track item.commitment.id) {
-                  <article>
-                    <div class="commitment-heading">
-                      <div>
-                        <h3>{{ item.commitment.title }}</h3>
-                        <p>{{ item.commitment.checkInFrequency }} at {{ item.commitment.checkInTime }}</p>
-                      </div>
-                      <a [routerLink]="ABSOLUTE_ROUTES.commitmentDetails(item.commitment.id)">
-                        <i class="pi pi-arrow-right"></i>
-                        <span>Open</span>
-                      </a>
-                    </div>
-
-                    <div class="progress-row">
-                      <div>
-                        <span>Goal pass rate</span>
-                        <strong>{{ progressRateLabel(item) }}</strong>
-                      </div>
-                      <div>
-                        <span>Reporting rate</span>
-                        <strong>{{ reportingRateLabel(item) }}</strong>
-                      </div>
-                      <div>
-                        <span>Current streak</span>
-                        <strong>{{ item.metrics.goal.currentSuccessfulStreak }}</strong>
-                      </div>
-                    </div>
-                  </article>
-                }
-              </div>
-            }
-          </section>
-        </p-card>
-      </div>
-    }
-  }
+      <p-tabpanel value="manager" lazy>
+        <app-manager-dashboard-page [showHeading]="false" />
+      </p-tabpanel>
+    </p-tabpanels>
+  </p-tabs>
 </section>

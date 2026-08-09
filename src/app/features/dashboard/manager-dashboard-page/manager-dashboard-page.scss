@@ -1,13 +1,13 @@
 .dashboard-summary {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 1rem;
-  flex-wrap: wrap;
 }
 
 .dashboard-summary div {
   display: grid;
   gap: 0.25rem;
-  min-width: 12rem;
+  min-width: 0;
   padding: 1rem;
   border: 1px solid var(--qova-border);
   border-radius: 8px;
@@ -17,8 +17,215 @@
 .dashboard-summary strong {
   color: var(--qova-text-primary);
   font-size: 1.6rem;
+  line-height: 1;
 }
 
 .dashboard-summary span {
   color: var(--qova-text-secondary);
+}
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
+  gap: 1rem;
+}
+
+.dashboard-grid > p-card {
+  display: block;
+  min-width: 0;
+}
+
+.dashboard-section {
+  display: grid;
+  gap: 1rem;
+  min-width: 0;
+}
+
+.priority-section {
+  gap: 1.25rem;
+}
+
+.section-heading {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.section-heading h2 {
+  margin: 0;
+  color: var(--qova-text-primary);
+  font-size: 1.1rem;
+}
+
+.section-heading p {
+  margin: 0.25rem 0 0;
+  color: var(--qova-text-secondary);
+}
+
+.attention-list,
+.people-list,
+.compact-list {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.attention-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.9rem;
+  border: 1px solid var(--qova-border);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--qova-surface) 88%, var(--qova-background));
+}
+
+.people-list article,
+.compact-list article {
+  display: grid;
+  gap: 0.75rem;
+  min-width: 0;
+  padding: 0.9rem;
+  border: 1px solid var(--qova-border);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--qova-surface) 88%, var(--qova-background));
+}
+
+.people-list article {
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+}
+
+.compact-list article {
+  grid-template-columns: minmax(0, 1fr);
+  align-items: start;
+}
+
+.attention-card.missed {
+  border-color: color-mix(in srgb, var(--qova-danger) 42%, var(--qova-border));
+}
+
+.person {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-width: 0;
+}
+
+.person img,
+.people-list img {
+  width: 2.6rem;
+  height: 2.6rem;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  border: 1px solid var(--qova-border);
+  object-fit: cover;
+}
+
+.person div,
+.people-list article > div,
+.compact-list article > div:first-child {
+  min-width: 0;
+}
+
+.people-list article > div,
+.compact-list article > div:first-child {
+  display: grid;
+  gap: 0.25rem;
+}
+
+h3 {
+  margin: 0.35rem 0 0;
+  color: var(--qova-text-primary);
+  font-size: 0.98rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.people-list h3 {
+  margin-top: 0;
+}
+
+p,
+small {
+  color: var(--qova-text-secondary);
+}
+
+p {
+  margin: 0.2rem 0 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+small {
+  display: block;
+  margin-top: 0.35rem;
+}
+
+a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  flex: 0 0 auto;
+  color: var(--qova-primary);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+a:hover {
+  color: var(--qova-primary-hover);
+}
+
+.inline-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+:host ::ng-deep .p-card {
+  height: 100%;
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid var(--qova-border);
+  border-radius: 8px;
+  background: var(--qova-surface);
+}
+
+:host ::ng-deep .p-card-body {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-width: 0;
+  overflow: hidden;
+}
+
+:host ::ng-deep .p-card-content {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+}
+
+@media (max-width: 980px) {
+  .dashboard-summary,
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .attention-card,
+  .people-list article,
+  .compact-list article {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .inline-actions {
+    width: 100%;
+    justify-content: space-between;
+  }
 }

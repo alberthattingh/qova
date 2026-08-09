@@ -43,10 +43,7 @@ export const routes: Routes = [
       },
       {
         path: AppRoutePath.ManagerDashboard,
-        loadComponent: () =>
-          import(
-            './features/dashboard/manager-dashboard-page/manager-dashboard-page'
-          ).then((component) => component.ManagerDashboardPage),
+        redirectTo: AppRoutePath.UserDashboard,
       },
       {
         path: AppRoutePath.Managers,
