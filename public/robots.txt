@@ -1,0 +1,11 @@
+User-agent: *
+Allow: /
+Disallow: /dashboard
+Disallow: /manager-dashboard
+Disallow: /managers
+Disallow: /commitments
+Disallow: /check-ins
+Disallow: /review-queue
+Disallow: /settings
+
+Sitemap: https://app.qova.co.za/sitemap.xml
