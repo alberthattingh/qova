@@ -12,6 +12,7 @@ import { CHECK_IN_REVIEW_DECISION_LABELS } from '../../../constants/check-in-rev
 import { CheckInReviewDecision } from '../../../constants/check-in-review-decisions';
 import { CHECK_IN_STATUS_LABELS } from '../../../constants/check-in-status-labels';
 import { CheckInStatus } from '../../../constants/check-in-statuses';
+import { DATE_FORMATS } from '../../../constants/date-formats';
 import { CheckInReviewFormValue } from '../../../models/check-in-review-form-value.model';
 import { CheckIn } from '../../../models/check-in.model';
 import { NotificationService } from '../../../services/notifications/notification.service';
@@ -47,6 +48,7 @@ export class ReviewDetailsPage {
 
   protected readonly ABSOLUTE_ROUTES = ABSOLUTE_ROUTES;
   protected readonly claimedResultLabels = CHECK_IN_CLAIMED_RESULT_LABELS;
+  protected readonly DATE_FORMATS = DATE_FORMATS;
   protected readonly reviewDecisionLabels = CHECK_IN_REVIEW_DECISION_LABELS;
   protected readonly statusLabels = CHECK_IN_STATUS_LABELS;
   protected readonly checkInId =

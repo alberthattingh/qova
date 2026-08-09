@@ -18,12 +18,12 @@
   <div>
     <dt>Current deadline</dt>
     <dd>
-      {{ currentPeriodDeadline ? (currentPeriodDeadline | date: 'medium') : 'Not in period' }}
+      {{ currentPeriodDeadline ? (currentPeriodDeadline | date: DATE_FORMATS.dateTime) : 'Not in period' }}
     </dd>
   </div>
   <div>
     <dt>Next deadline</dt>
-    <dd>{{ nextCheckInDeadline ? (nextCheckInDeadline | date: 'medium') : 'None' }}</dd>
+    <dd>{{ nextCheckInDeadline ? (nextCheckInDeadline | date: DATE_FORMATS.dateTime) : 'None' }}</dd>
   </div>
   <div>
     <dt>Period state</dt>

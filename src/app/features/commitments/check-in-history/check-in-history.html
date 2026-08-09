@@ -50,14 +50,14 @@
               <div>
                 <dt>Reporting period</dt>
                 <dd>
-                  {{ checkIn.periodStartsAt | date: 'medium' }}
+                  {{ checkIn.periodStartsAt | date: DATE_FORMATS.dateTime }}
                   -
-                  {{ checkIn.periodEndsAt | date: 'medium' }}
+                  {{ checkIn.periodEndsAt | date: DATE_FORMATS.dateTime }}
                 </dd>
               </div>
               <div>
                 <dt>Due</dt>
-                <dd>{{ checkIn.dueAt | date: 'medium' }}</dd>
+                <dd>{{ checkIn.dueAt | date: DATE_FORMATS.dateTime }}</dd>
               </div>
               <div>
                 <dt>User admitted</dt>
@@ -76,7 +76,7 @@
                 <dt>{{ submittedOrMissedLabel(checkIn) }}</dt>
                 <dd>
                   @if (submittedOrMissedAt(checkIn); as activityAt) {
-                    {{ activityAt | date: 'medium' }}
+                    {{ activityAt | date: DATE_FORMATS.dateTime }}
                   } @else {
                     Not available
                   }
@@ -85,7 +85,7 @@
               @if (checkIn.wasMissed && checkIn.missedAt && checkIn.submittedAt) {
                 <div>
                   <dt>Original miss</dt>
-                  <dd>{{ checkIn.missedAt | date: 'medium' }}</dd>
+                  <dd>{{ checkIn.missedAt | date: DATE_FORMATS.dateTime }}</dd>
                 </div>
               }
               @if (checkIn.comment) {
@@ -111,7 +111,7 @@
                   <article>
                     <div>
                       <strong>{{ reviewDecisionLabel(review.decision) }}</strong>
-                      <p>{{ review.createdAt | date: 'medium' }}</p>
+                      <p>{{ review.createdAt | date: DATE_FORMATS.dateTime }}</p>
                     </div>
                     @if (review.comment) {
                       <p class="multiline">{{ review.comment }}</p>

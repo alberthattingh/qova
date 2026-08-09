@@ -54,7 +54,7 @@
             </div>
             <div>
               <dt>Due</dt>
-              <dd>{{ details.checkIn.dueAt | date: 'medium' }}</dd>
+              <dd>{{ details.checkIn.dueAt | date: DATE_FORMATS.dateTime }}</dd>
             </div>
             <div>
               <dt>{{ details.checkIn.wasMissed ? 'Missed' : 'Submitted' }}</dt>
@@ -62,14 +62,14 @@
                 {{
                   (details.checkIn.wasMissed
                     ? details.checkIn.missedAt
-                    : details.checkIn.submittedAt) | date: 'medium'
+                    : details.checkIn.submittedAt) | date: DATE_FORMATS.dateTime
                 }}
               </dd>
             </div>
             @if (details.checkIn.isLate) {
               <div>
                 <dt>Late submission</dt>
-                <dd>{{ details.checkIn.submittedAt | date: 'medium' }}</dd>
+                <dd>{{ details.checkIn.submittedAt | date: DATE_FORMATS.dateTime }}</dd>
               </div>
             }
           </dl>
@@ -131,7 +131,7 @@
                 <article>
                   <div>
                     <strong>{{ reviewDecisionLabel(review.decision) }}</strong>
-                    <p>{{ review.createdAt | date: 'medium' }}</p>
+                    <p>{{ review.createdAt | date: DATE_FORMATS.dateTime }}</p>
                   </div>
                   @if (review.comment) {
                     <p class="multiline">{{ review.comment }}</p>

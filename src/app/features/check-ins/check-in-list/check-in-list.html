@@ -35,7 +35,7 @@
           <dl>
             <div>
               <dt>Deadline</dt>
-              <dd>{{ checkIn.period.deadline | date: 'medium' }}</dd>
+              <dd>{{ checkIn.period.deadline | date: DATE_FORMATS.dateTime }}</dd>
             </div>
 
             @if (checkIn.persistedCheckIn) {
@@ -60,7 +60,7 @@
                   {{
                     (checkIn.persistedCheckIn.wasMissed
                       ? checkIn.persistedCheckIn.missedAt
-                      : checkIn.persistedCheckIn.submittedAt) | date: 'medium'
+                      : checkIn.persistedCheckIn.submittedAt) | date: DATE_FORMATS.dateTime
                   }}
                 </dd>
               </div>

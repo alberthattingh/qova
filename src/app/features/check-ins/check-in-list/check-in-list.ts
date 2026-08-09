@@ -7,6 +7,7 @@ import { CHECK_IN_CLAIMED_RESULT_LABELS } from '../../../constants/check-in-clai
 import { CheckInClaimedResult } from '../../../constants/check-in-claimed-results';
 import { CHECK_IN_STATUS_LABELS } from '../../../constants/check-in-status-labels';
 import { CheckInStatus } from '../../../constants/check-in-statuses';
+import { DATE_FORMATS } from '../../../constants/date-formats';
 import { DueCheckInStatus } from '../../../constants/due-check-in-statuses';
 import { CheckInFormValue } from '../../../models/check-in-form-value.model';
 import { DueCheckIn } from '../../../models/due-check-in.model';
@@ -42,6 +43,7 @@ export class CheckInList {
   protected readonly checkInStatus = CheckInStatus;
   protected readonly claimedResultLabels = CHECK_IN_CLAIMED_RESULT_LABELS;
   protected readonly checkInStatusLabels = CHECK_IN_STATUS_LABELS;
+  protected readonly DATE_FORMATS = DATE_FORMATS;
 
   protected statusLabel(checkIn: DueCheckIn): string {
     if (checkIn.status === DueCheckInStatus.AwaitingSubmission) {

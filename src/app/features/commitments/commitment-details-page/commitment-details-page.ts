@@ -8,6 +8,7 @@ import { TagModule } from 'primeng/tag';
 import { catchError, map, of, startWith } from 'rxjs';
 
 import { RouteParam } from '../../../constants/app-routes';
+import { DATE_FORMATS } from '../../../constants/date-formats';
 import { CommitmentStatus } from '../../../constants/commitment-statuses';
 import { CheckIn } from '../../../models/check-in.model';
 import { CheckInReviewFormValue } from '../../../models/check-in-review-form-value.model';
@@ -75,6 +76,7 @@ export class CommitmentDetailsPage {
   );
   protected readonly workspace$ = this.commitments.workspace$();
   protected readonly CommitmentStatus = CommitmentStatus;
+  protected readonly DATE_FORMATS = DATE_FORMATS;
   protected readonly isEditing = signal(false);
   protected readonly isWorking = signal(false);
   protected readonly isReviewing = signal(false);

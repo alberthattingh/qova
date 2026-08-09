@@ -55,7 +55,7 @@
                           <div>
                             <p-tag value="Due today" severity="warn" />
                             <h3>{{ checkIn.commitment.title }}</h3>
-                            <p>{{ checkIn.period.deadline | date: 'shortTime' }}</p>
+                            <p>{{ checkIn.period.deadline | date: DATE_FORMATS.time }}</p>
                           </div>
                           <a [routerLink]="ABSOLUTE_ROUTES.checkIns">
                             <i class="pi pi-send"></i>
@@ -114,7 +114,7 @@
                               }
                             </div>
                             <h3>{{ result.commitment.title }}</h3>
-                            <p>{{ result.review.createdAt | date: 'medium' }}</p>
+                            <p>{{ result.review.createdAt | date: DATE_FORMATS.dateTime }}</p>
                             @if (result.review.comment) {
                               <p class="comment">{{ result.review.comment }}</p>
                             }

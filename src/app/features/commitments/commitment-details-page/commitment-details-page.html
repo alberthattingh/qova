@@ -130,7 +130,7 @@
             <article>
               <div>
                 <strong>Version {{ version.versionNumber }}</strong>
-                <p>{{ version.createdAt | date: 'medium' }}</p>
+                <p>{{ version.createdAt | date: DATE_FORMATS.dateTime }}</p>
               </div>
               <p>{{ version.title }}</p>
               <app-commitment-schedule [commitment]="version" />

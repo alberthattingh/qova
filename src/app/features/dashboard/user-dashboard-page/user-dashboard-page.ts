@@ -11,6 +11,7 @@ import { ABSOLUTE_ROUTES } from '../../../constants/app-routes';
 import { CHECK_IN_REVIEW_DECISION_LABELS } from '../../../constants/check-in-review-decision-labels';
 import { CheckInReviewDecision } from '../../../constants/check-in-review-decisions';
 import { CheckInStatus } from '../../../constants/check-in-statuses';
+import { DATE_FORMATS } from '../../../constants/date-formats';
 import { UserDashboard } from '../../../models/user-dashboard.model';
 import { UserDashboardCommitmentProgress } from '../../../models/user-dashboard-commitment-progress.model';
 import { UserDashboardReviewResult } from '../../../models/user-dashboard-review-result.model';
@@ -42,6 +43,7 @@ export class UserDashboardPage {
   private readonly userDashboard = inject(UserDashboardService);
 
   protected readonly ABSOLUTE_ROUTES = ABSOLUTE_ROUTES;
+  protected readonly DATE_FORMATS = DATE_FORMATS;
   protected readonly dashboardState$ = this.userDashboard.dashboard$().pipe(
     map((dashboard) => ({ isLoading: false, dashboard, error: null })),
     startWith({ isLoading: true, dashboard: null, error: null }),

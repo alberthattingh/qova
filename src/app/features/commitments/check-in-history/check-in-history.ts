@@ -9,6 +9,7 @@ import { CHECK_IN_REVIEW_DECISION_LABELS } from '../../../constants/check-in-rev
 import { CHECK_IN_STATUS_LABELS } from '../../../constants/check-in-status-labels';
 import { CheckInReviewDecision } from '../../../constants/check-in-review-decisions';
 import { CheckInStatus } from '../../../constants/check-in-statuses';
+import { DATE_FORMATS } from '../../../constants/date-formats';
 import { CheckIn } from '../../../models/check-in.model';
 import { CheckInReviewFormValue } from '../../../models/check-in-review-form-value.model';
 import { EmptyState } from '../../../shared/components/empty-state/empty-state';
@@ -39,6 +40,7 @@ export class CheckInHistory {
   }>();
 
   protected readonly claimedResultLabels = CHECK_IN_CLAIMED_RESULT_LABELS;
+  protected readonly DATE_FORMATS = DATE_FORMATS;
   protected readonly reviewDecisionLabels = CHECK_IN_REVIEW_DECISION_LABELS;
   protected readonly statusLabels = CHECK_IN_STATUS_LABELS;
 
