@@ -32,6 +32,87 @@ h3 {
   gap: 0.75rem;
 }
 
+.chart-row {
+  display: grid;
+  grid-template-columns: minmax(8.5rem, 10rem) minmax(0, 1fr);
+  align-items: center;
+  gap: 1rem;
+}
+
+.donut-chart {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 9.5rem;
+  aspect-ratio: 1;
+  border: 1px solid var(--qova-border);
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--qova-surface) 65%, transparent);
+}
+
+.donut-chart::after {
+  content: '';
+  position: absolute;
+  inset: 1.15rem;
+  border: 1px solid var(--qova-border);
+  border-radius: 50%;
+  background: var(--qova-surface);
+}
+
+.donut-chart div {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  gap: 0.25rem;
+  place-items: center;
+  max-width: 6rem;
+  text-align: center;
+}
+
+.donut-chart strong {
+  font-size: 1.1rem;
+}
+
+.donut-chart span {
+  font-size: 0.78rem;
+}
+
+.legend {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+  gap: 0.55rem 0.75rem;
+}
+
+.legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.legend i {
+  width: 0.65rem;
+  height: 0.65rem;
+  border-radius: 50%;
+}
+
+.passed,
+.on-time {
+  background: var(--qova-success);
+}
+
+.failed,
+.missed {
+  background: var(--qova-danger);
+}
+
+.unresolved {
+  background: var(--qova-info);
+}
+
+.late {
+  background: var(--qova-warning);
+}
+
 article {
   display: grid;
   gap: 0.35rem;
@@ -50,4 +131,15 @@ strong {
   color: var(--qova-text-primary);
   font-size: 1.35rem;
   line-height: 1;
+}
+
+@media (max-width: 620px) {
+  .chart-row {
+    grid-template-columns: 1fr;
+    justify-items: center;
+  }
+
+  .legend {
+    width: 100%;
+  }
 }

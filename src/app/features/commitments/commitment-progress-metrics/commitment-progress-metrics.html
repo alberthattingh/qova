@@ -5,6 +5,25 @@
       <p-tag [value]="rateLabel(metrics.goal.passRate)" severity="success" />
     </div>
 
+    <div class="chart-row">
+      <div
+        class="donut-chart"
+        [ngStyle]="goalChartStyle()"
+        aria-label="Goal compliance chart"
+      >
+        <div>
+          <strong>{{ rateLabel(metrics.goal.passRate) }}</strong>
+          <span>Pass rate</span>
+        </div>
+      </div>
+
+      <div class="legend">
+        <span><i class="passed"></i> Passed</span>
+        <span><i class="failed"></i> Failed</span>
+        <span><i class="unresolved"></i> Unresolved</span>
+      </div>
+    </div>
+
     <div class="metric-grid">
       <article>
         <span>Passed</span>
@@ -36,6 +55,27 @@
         [value]="complianceLabel(metrics.reporting.reportingComplianceRate)"
         severity="info"
       />
+    </div>
+
+    <div class="chart-row">
+      <div
+        class="donut-chart"
+        [ngStyle]="reportingChartStyle()"
+        aria-label="Reporting compliance chart"
+      >
+        <div>
+          <strong>
+            {{ complianceLabel(metrics.reporting.reportingComplianceRate) }}
+          </strong>
+          <span>On time</span>
+        </div>
+      </div>
+
+      <div class="legend">
+        <span><i class="on-time"></i> Submitted on time</span>
+        <span><i class="late"></i> Submitted late</span>
+        <span><i class="missed"></i> Missed</span>
+      </div>
     </div>
 
     <div class="metric-grid">
