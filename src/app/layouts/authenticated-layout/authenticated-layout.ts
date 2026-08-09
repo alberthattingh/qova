@@ -3,6 +3,7 @@ import { Component, DestroyRef, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
+import { DrawerModule } from 'primeng/drawer';
 
 import { ABSOLUTE_ROUTES } from '../../constants/app-routes';
 import { AuthService } from '../../services/auth/auth.service';
@@ -16,6 +17,7 @@ import { LoadingState } from '../../shared/components/loading-state/loading-stat
   imports: [
     AsyncPipe,
     ButtonModule,
+    DrawerModule,
     LoadingState,
     RouterLink,
     RouterLinkActive,
@@ -34,7 +36,7 @@ export class AuthenticatedLayout {
   protected readonly isRouteLoading$ = inject(NavigationLoadingService).isLoading$;
   protected readonly navItems = inject(NavigationService).authenticatedNavItems;
   protected readonly ABSOLUTE_ROUTES = ABSOLUTE_ROUTES;
-  protected readonly isSidebarCollapsed = signal(false);
+  protected readonly isDrawerOpen = signal(false);
 
   constructor() {
     this.authService.currentAuthSession$.pipe(
@@ -50,7 +52,11 @@ export class AuthenticatedLayout {
     await this.authFlow.signOutAndRedirect();
   }
 
-  toggleSidebar(): void {
-    this.isSidebarCollapsed.update((isCollapsed) => !isCollapsed);
+  openDrawer(): void {
+    this.isDrawerOpen.set(true);
+  }
+
+  closeDrawer(): void {
+    this.isDrawerOpen.set(false);
   }
 }

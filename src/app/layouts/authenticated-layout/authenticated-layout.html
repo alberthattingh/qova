@@ -1,52 +1,80 @@
-<div class="layout" [class.sidebar-collapsed]="isSidebarCollapsed()">
-  <aside>
-    <div class="sidebar-top">
-      <a class="brand" [routerLink]="ABSOLUTE_ROUTES.userDashboard" title="qova">
-        <span>Q</span>
-        <strong>qova</strong>
-      </a>
-
-      <button
-        type="button"
-        class="sidebar-toggle"
-        [attr.aria-label]="isSidebarCollapsed() ? 'Expand sidebar' : 'Collapse sidebar'"
-        [attr.aria-expanded]="!isSidebarCollapsed()"
-        (click)="toggleSidebar()"
-      >
-        <i [class]="isSidebarCollapsed() ? 'pi pi-angle-right' : 'pi pi-angle-left'"></i>
-      </button>
-    </div>
+<p-drawer
+  styleClass="app-drawer"
+  position="left"
+  [visible]="isDrawerOpen()"
+  [modal]="true"
+  [blockScroll]="true"
+  (visibleChange)="isDrawerOpen.set($event)"
+>
+  <div class="drawer-content">
+    <a class="brand" [routerLink]="ABSOLUTE_ROUTES.userDashboard" (click)="closeDrawer()">
+      <span>Q</span>
+      <strong>qova</strong>
+    </a>
 
     <nav aria-label="Primary navigation">
       @for (item of navItems; track item.route) {
-        <a [routerLink]="item.route" routerLinkActive="active" [title]="item.label">
+        <a
+          [routerLink]="item.route"
+          routerLinkActive="active"
+          (click)="closeDrawer()"
+        >
           <i [class]="item.icon"></i>
           <span>{{ item.label }}</span>
         </a>
       }
     </nav>
-  </aside>
 
-  <section class="workspace">
-    <header>
+    <div class="drawer-footer">
       @if (currentUser$ | async; as user) {
-        <a class="dashboard-link" [routerLink]="ABSOLUTE_ROUTES.userDashboard">
+        <a
+          class="user-link"
+          [routerLink]="ABSOLUTE_ROUTES.settings"
+          (click)="closeDrawer()"
+        >
           <img [src]="user.profileImageUrl" [alt]="user.displayName" />
-          <span>{{ user.displayName }}</span>
+          <div>
+            <strong>{{ user.displayName }}</strong>
+            <span>{{ user.email }}</span>
+          </div>
         </a>
       }
 
-      <p-button label="Sign out" icon="pi pi-sign-out" severity="secondary" outlined (onClick)="signOut()" />
-    </header>
+      <p-button
+        label="Sign out"
+        icon="pi pi-sign-out"
+        severity="secondary"
+        outlined
+        (onClick)="signOut()"
+      />
+    </div>
+  </div>
+</p-drawer>
 
-    <main>
-      <router-outlet />
+<div class="layout">
+  <header>
+    <button
+      type="button"
+      class="menu-button"
+      aria-label="Open navigation"
+      (click)="openDrawer()"
+    >
+      <i class="pi pi-bars"></i>
+    </button>
 
-      @if (isRouteLoading$ | async) {
-        <div class="route-loading">
-          <app-loading-state message="Loading page" />
-        </div>
-      }
-    </main>
-  </section>
+    <a class="brand header-brand" [routerLink]="ABSOLUTE_ROUTES.userDashboard">
+      <span>Q</span>
+      <strong>qova</strong>
+    </a>
+  </header>
+
+  <main>
+    <router-outlet />
+
+    @if (isRouteLoading$ | async) {
+      <div class="route-loading">
+        <app-loading-state message="Loading page" />
+      </div>
+    }
+  </main>
 </div>
