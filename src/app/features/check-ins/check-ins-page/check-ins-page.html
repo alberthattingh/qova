@@ -38,24 +38,24 @@
 
     <section class="check-in-section">
       <div>
-        <h2>Managed check-ins</h2>
-        <p>Only submitted or missed current check-ins are shown to managers.</p>
+        <h2>Sponsored check-ins</h2>
+        <p>Only submitted or missed current check-ins are shown to sponsors.</p>
       </div>
 
       @if (managedQueueState$ | async; as managedState) {
         @if (managedState.isLoading) {
-          <app-loading-state message="Loading managed check-ins" />
+          <app-loading-state message="Loading sponsored check-ins" />
         } @else if (managedState.error) {
           <app-error-state
-            title="Unable to load managed check-ins"
+            title="Unable to load sponsored check-ins"
             [message]="managedState.error"
             [showAction]="false"
           />
         } @else if (managedState.queue; as queue) {
           <app-review-queue-list
             [items]="queue.items"
-            emptyTitle="No managed check-ins"
-            emptyMessage="Submitted and missed check-ins from people you manage will appear here."
+            emptyTitle="No sponsored check-ins"
+            emptyMessage="Submitted and missed check-ins from people you sponsor will appear here."
           />
         }
       }

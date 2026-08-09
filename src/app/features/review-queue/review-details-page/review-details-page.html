@@ -145,7 +145,7 @@
 
       <p-card>
         <section class="detail-section">
-          <h2>Manager action</h2>
+          <h2>Sponsor action</h2>
           @if (details.canReview) {
             <app-check-in-review-form
               [isSubmitting]="isReviewing()"
@@ -155,7 +155,7 @@
             <app-empty-state
               icon="pi pi-check-circle"
               title="No action required"
-              message="This check-in is not waiting for a manager review."
+              message="This check-in is not waiting for a sponsor review."
             />
           }
         </section>

@@ -64,10 +64,10 @@
     <p-divider />
 
     <app-managed-commitment-list
-      title="Commitments you manage"
+      title="Commitments you sponsor"
       [commitments]="workspace.managerCommitments"
       emptyTitle="No assigned commitments"
-      emptyMessage="Active commitments assigned to you as manager will appear here."
+      emptyMessage="Active commitments assigned to you as sponsor will appear here."
     />
   } @else {
     <app-loading-state message="Loading commitments" />

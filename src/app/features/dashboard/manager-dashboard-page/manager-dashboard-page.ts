@@ -45,10 +45,10 @@ export class ManagerDashboardPage {
       of({
         isLoading: false,
         dashboard: null,
-        error:
-          error instanceof Error
-            ? error.message
-            : 'Your manager dashboard could not be loaded.',
+          error:
+            error instanceof Error
+              ? error.message
+            : 'Your sponsor dashboard could not be loaded.',
       }),
     ),
   );

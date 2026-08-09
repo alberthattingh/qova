@@ -1,12 +1,12 @@
 <form [formGroup]="form" (ngSubmit)="submit()">
   <label>
-    <span>Managers</span>
+    <span>Sponsors</span>
     <p-multi-select
       formControlName="managerUserIds"
       [options]="availableManagers"
       optionLabel="managerDisplayName"
       optionValue="managerUserId"
-      placeholder="Select active managers"
+      placeholder="Select active sponsors"
       display="chip"
     />
   </label>

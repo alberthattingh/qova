@@ -409,7 +409,7 @@ export class CommitmentService {
     const managerUserIds = [...new Set(request.managerUserIds)];
 
     if (managerUserIds.length === 0) {
-      throw new Error('Select at least one active manager');
+      throw new Error('Select at least one active sponsor');
     }
 
     if (request.endDate && request.endDate < request.startDate) {
@@ -431,7 +431,7 @@ export class CommitmentService {
     );
 
     if (invalidManagerId) {
-      throw new Error('Commitments can only use active managers');
+      throw new Error('Commitments can only use active sponsors');
     }
 
     return {
@@ -621,7 +621,7 @@ export class CommitmentService {
     relationship: ManagerRelationship | undefined,
   ): CommitmentManager {
     if (!relationship) {
-      throw new Error('Commitment manager relationship not found');
+      throw new Error('Commitment sponsor relationship not found');
     }
 
     return {
@@ -804,12 +804,12 @@ export class CommitmentService {
 
   private toManagers(value: unknown): CommitmentManager[] {
     if (!Array.isArray(value)) {
-      throw new Error('Invalid commitment managers');
+      throw new Error('Invalid commitment sponsors');
     }
 
     return value.map((manager) => {
       if (!this.isRecord(manager)) {
-        throw new Error('Invalid commitment manager');
+        throw new Error('Invalid commitment sponsor');
       }
 
       return {
@@ -896,7 +896,7 @@ export class CommitmentService {
       return value;
     }
 
-    throw new Error('Invalid manager relationship status');
+    throw new Error('Invalid sponsor relationship status');
   }
 
   private toCheckInReviewDecision(value: unknown): CheckInReviewDecision {

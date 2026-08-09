@@ -1,7 +1,7 @@
 <section class="page">
   <div class="page-heading">
     <p>Review queue</p>
-    <h1>Manager reviews</h1>
+    <h1>Sponsor reviews</h1>
   </div>
 
   @if (queueState$ | async; as state) {
@@ -18,7 +18,7 @@
         <p-tag [value]="status" severity="warn" />
         <span>
           {{ queue.actionRequiredCount }} item{{ queue.actionRequiredCount === 1 ? '' : 's' }}
-          requiring manager action
+          requiring sponsor action
         </span>
       </div>
 

@@ -16,7 +16,7 @@ export class ManagerCard {
   @Input() relationships: ManagerRelationship[] = [];
   @Input() mode: 'manager' | 'managed-user' = 'manager';
   @Input() emptyTitle = 'No relationships';
-  @Input() emptyMessage = 'Active manager relationships will appear here.';
+  @Input() emptyMessage = 'Active sponsor relationships will appear here.';
 
   @Output() relationshipEnded = new EventEmitter<string>();
 }

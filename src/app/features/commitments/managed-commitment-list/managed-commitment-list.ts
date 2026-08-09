@@ -16,9 +16,9 @@ import { EmptyState } from '../../../shared/components/empty-state/empty-state';
 })
 export class ManagedCommitmentList {
   @Input() commitments: ManagedCommitment[] = [];
-  @Input() title = 'Commitments you manage';
+  @Input() title = 'Commitments you sponsor';
   @Input() emptyTitle = 'No assigned commitments';
-  @Input() emptyMessage = 'Commitments assigned to you as manager will appear here.';
+  @Input() emptyMessage = 'Commitments assigned to you as sponsor will appear here.';
 
   protected readonly ABSOLUTE_ROUTES = ABSOLUTE_ROUTES;
 }

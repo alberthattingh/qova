@@ -19,7 +19,7 @@ export class NavigationService {
       route: ABSOLUTE_ROUTES.commitments,
     },
     {
-      label: 'Managers',
+      label: 'Sponsors',
       icon: 'pi pi-users',
       route: ABSOLUTE_ROUTES.managers,
     },

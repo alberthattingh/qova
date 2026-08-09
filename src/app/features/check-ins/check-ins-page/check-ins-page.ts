@@ -52,7 +52,7 @@ export class CheckInsPage {
         queue: null,
         error: this.errorMessage(
           error,
-          'Managed check-ins could not be loaded.',
+          'Sponsored check-ins could not be loaded.',
         ),
       }),
     ),
@@ -92,7 +92,7 @@ export class CheckInsPage {
       }
       this.notifications.success(
         'Check-in submitted',
-        'Your update has been sent to your manager.',
+        'Your update has been sent to your sponsor.',
       );
     } catch {
       this.notifications.error(

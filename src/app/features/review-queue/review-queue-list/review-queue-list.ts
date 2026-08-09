@@ -29,7 +29,7 @@ export class ReviewQueueList {
   @Input() items: ReviewQueueItem[] = [];
   @Input() emptyTitle = 'No reviews waiting';
   @Input() emptyMessage =
-    'Submitted and missed check-ins from people you manage will appear here.';
+    'Submitted and missed check-ins from people you sponsor will appear here.';
 
   protected readonly ABSOLUTE_ROUTES = ABSOLUTE_ROUTES;
   protected readonly statusLabels = CHECK_IN_STATUS_LABELS;

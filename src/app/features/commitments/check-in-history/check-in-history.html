@@ -106,7 +106,7 @@
 
             @if (canReview(checkIn)) {
               <section class="review-section">
-                <h3>Manager review</h3>
+                <h3>Sponsor review</h3>
                 <app-check-in-review-form
                   [isSubmitting]="isReviewing"
                   (reviewed)="reviewed.emit({ checkIn, value: $event })"

@@ -1,17 +1,17 @@
 <section class="page">
   @if (showHeading) {
     <div class="page-heading">
-      <p>Manager dashboard</p>
+      <p>Sponsor dashboard</p>
       <h1>Team accountability</h1>
     </div>
   }
 
   @if (dashboardState$ | async; as state) {
     @if (state.isLoading) {
-      <app-loading-state message="Loading manager dashboard" />
+      <app-loading-state message="Loading sponsor dashboard" />
     } @else if (state.error) {
       <app-error-state
-        title="Unable to load manager dashboard"
+        title="Unable to load sponsor dashboard"
         [message]="state.error"
         [showAction]="false"
       />
@@ -23,7 +23,7 @@
         </div>
         <div>
           <strong>{{ dashboard.managedUsers.length }}</strong>
-          <span>people managed</span>
+          <span>people sponsored</span>
         </div>
         <div>
           <strong>{{ dashboard.awaitingReview.length }}</strong>
@@ -56,7 +56,7 @@
               <app-review-queue-list
                 [items]="dashboard.awaitingReview"
                 emptyTitle="No reviews waiting"
-                emptyMessage="Submitted check-ins from people you manage will appear here."
+                emptyMessage="Submitted check-ins from people you sponsor will appear here."
               />
             }
 
@@ -142,16 +142,16 @@
           <section class="dashboard-section">
             <div class="section-heading">
               <div>
-                <h2>People you manage</h2>
-                <p>Active accountability relationships.</p>
+                <h2>People you sponsor</h2>
+                <p>Active sponsorship relationships.</p>
               </div>
             </div>
 
             @if (dashboard.managedUsers.length === 0) {
               <app-empty-state
                 icon="pi pi-users"
-                title="No managed users"
-                message="Accepted manager relationships will appear here."
+                title="No sponsored users"
+                message="Accepted sponsor relationships will appear here."
               />
             } @else {
               <div class="people-list">

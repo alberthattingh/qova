@@ -15,7 +15,7 @@ import { EmptyState } from '../../../shared/components/empty-state/empty-state';
 export class ManagerInvitationList {
   @Input() invitations: ManagerInvitation[] = [];
   @Input() emptyTitle = 'No invitations';
-  @Input() emptyMessage = 'Manager invitations will appear here.';
+  @Input() emptyMessage = 'Sponsor invitations will appear here.';
   @Input() mode: 'received' | 'sent' = 'received';
 
   @Output() accepted = new EventEmitter<string>();

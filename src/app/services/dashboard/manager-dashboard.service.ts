@@ -331,12 +331,12 @@ export class ManagerDashboardService {
 
   private toManagers(value: unknown): CommitmentManager[] {
     if (!Array.isArray(value)) {
-      throw new Error('Invalid commitment managers');
+      throw new Error('Invalid commitment sponsors');
     }
 
     return value.map((manager) => {
       if (!this.isRecord(manager)) {
-        throw new Error('Invalid commitment manager');
+        throw new Error('Invalid commitment sponsor');
       }
 
       return {
@@ -425,7 +425,7 @@ export class ManagerDashboardService {
       return value;
     }
 
-    throw new Error('Invalid manager invitation status');
+    throw new Error('Invalid sponsor invitation status');
   }
 
   private toManagerRelationshipStatus(value: unknown): ManagerRelationshipStatus {
@@ -436,7 +436,7 @@ export class ManagerDashboardService {
       return value;
     }
 
-    throw new Error('Invalid manager relationship status');
+    throw new Error('Invalid sponsor relationship status');
   }
 
   private toStringField(value: Record<string, unknown>, fieldName: string): string {

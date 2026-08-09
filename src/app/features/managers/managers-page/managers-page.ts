@@ -63,14 +63,14 @@ export class ManagersPage {
   async removeManager(relationshipId: string): Promise<void> {
     await this.runAction(() =>
       this.managerRelationships.removeManager(relationshipId),
-      'Manager removed',
+      'Sponsor removed',
     );
   }
 
   async stopManaging(relationshipId: string): Promise<void> {
     await this.runAction(() =>
       this.managerRelationships.stopManaging(relationshipId),
-      'Management stopped',
+      'Sponsorship stopped',
     );
   }
 
@@ -82,11 +82,11 @@ export class ManagersPage {
 
     try {
       await action();
-      this.notifications.success(successSummary, 'Manager relationships updated.');
+      this.notifications.success(successSummary, 'Sponsor relationships updated.');
     } catch (error) {
       this.notifications.error(
-        'Manager action failed',
-        error instanceof Error ? error.message : 'The manager action failed.',
+        'Sponsor action failed',
+        error instanceof Error ? error.message : 'The sponsor action failed.',
       );
     } finally {
       this.isWorking.set(false);

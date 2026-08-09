@@ -28,7 +28,7 @@ export class CheckInReviewService {
     const checkIn = await this.checkInSnapshot(request.checkInId);
 
     if (!checkIn.managerUserIds.includes(reviewerUserId)) {
-      throw new Error('Only an assigned manager may review this check-in');
+      throw new Error('Only an assigned sponsor may review this check-in');
     }
 
     if (checkIn.status !== CheckInStatus.Submitted) {

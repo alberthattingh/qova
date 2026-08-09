@@ -91,11 +91,11 @@ export class ManagerRelationshipService {
     const manager = await this.users.profileByEmail(managerEmail);
 
     if (!manager) {
-      throw new Error('Manager must be a registered user');
+      throw new Error('Sponsor must be a registered user');
     }
 
     if (manager.id === managedUser.id) {
-      throw new Error('Users cannot invite themselves as a manager');
+      throw new Error('Users cannot invite themselves as a sponsor');
     }
 
     await this.assertNoDuplicateActiveOrPendingRelationship(
@@ -196,7 +196,7 @@ export class ManagerRelationshipService {
     const relationship = await this.relationshipSnapshot(relationshipId);
 
     if (relationship.managedUserId !== currentUserId) {
-      throw new Error('Only the managed user can remove this manager');
+      throw new Error('Only the sponsored user can remove this sponsor');
     }
 
     await this.endRelationship(relationship, currentUserId);
@@ -207,7 +207,7 @@ export class ManagerRelationshipService {
     const relationship = await this.relationshipSnapshot(relationshipId);
 
     if (relationship.managerUserId !== currentUserId) {
-      throw new Error('Only the manager can stop managing this user');
+      throw new Error('Only the sponsor can stop sponsoring this user');
     }
 
     await this.endRelationship(relationship, currentUserId);
@@ -295,7 +295,7 @@ export class ManagerRelationshipService {
     ]);
 
     if (pendingInvitations.size > 0 || activeRelationships.size > 0) {
-      throw new Error('A pending or active manager relationship already exists');
+      throw new Error('A pending or active sponsor relationship already exists');
     }
   }
 
@@ -309,7 +309,7 @@ export class ManagerRelationshipService {
     );
 
     if (activeRelationships.size > 0) {
-      throw new Error('An active manager relationship already exists');
+      throw new Error('An active sponsor relationship already exists');
     }
   }
 
@@ -345,7 +345,7 @@ export class ManagerRelationshipService {
     const snapshot = await getDoc(this.invitationRef(invitationId));
 
     if (!snapshot.exists()) {
-      throw new Error('Manager invitation not found');
+      throw new Error('Sponsor invitation not found');
     }
 
     return this.toManagerInvitation(snapshot.data() as Record<string, unknown>);
@@ -357,7 +357,7 @@ export class ManagerRelationshipService {
     const snapshot = await getDoc(this.relationshipRef(relationshipId));
 
     if (!snapshot.exists()) {
-      throw new Error('Manager relationship not found');
+      throw new Error('Sponsor relationship not found');
     }
 
     return this.toManagerRelationship(snapshot.data() as Record<string, unknown>);
@@ -371,7 +371,7 @@ export class ManagerRelationshipService {
       invitation.managerUserId !== currentUserId ||
       invitation.status !== ManagerInvitationStatus.Pending
     ) {
-      throw new Error('Only the invited manager can act on this invitation');
+      throw new Error('Only the invited sponsor can act on this invitation');
     }
   }
 
@@ -479,7 +479,7 @@ export class ManagerRelationshipService {
       return value;
     }
 
-    throw new Error('Invalid manager invitation status');
+    throw new Error('Invalid sponsor invitation status');
   }
 
   private toRelationshipStatus(value: unknown): ManagerRelationshipStatus {
@@ -490,7 +490,7 @@ export class ManagerRelationshipService {
       return value;
     }
 
-    throw new Error('Invalid manager relationship status');
+    throw new Error('Invalid sponsor relationship status');
   }
 
   private toStringField(
@@ -503,7 +503,7 @@ export class ManagerRelationshipService {
       return fieldValue;
     }
 
-    throw new Error(`Invalid manager relationship field ${fieldName}`);
+    throw new Error(`Invalid sponsor relationship field ${fieldName}`);
   }
 
   private toNullableString(value: unknown): string | null {
@@ -515,7 +515,7 @@ export class ManagerRelationshipService {
       return value;
     }
 
-    throw new Error('Invalid nullable manager relationship field');
+    throw new Error('Invalid nullable sponsor relationship field');
   }
 
   private toDate(value: unknown): Date {
@@ -523,7 +523,7 @@ export class ManagerRelationshipService {
       return value.toDate();
     }
 
-    throw new Error('Invalid manager relationship timestamp');
+    throw new Error('Invalid sponsor relationship timestamp');
   }
 
   private toNullableDate(value: unknown): Date | null {
