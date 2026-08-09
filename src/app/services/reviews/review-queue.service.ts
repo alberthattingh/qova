@@ -71,38 +71,46 @@ export class ReviewQueueService {
 
         return this.checkIn$(checkInId).pipe(
           switchMap((checkIn) => {
-            if (!checkIn || !checkIn.managerUserIds.includes(session.id)) {
+            if (!checkIn || !this.canViewCheckIn(checkIn, session.id)) {
               return of(null);
             }
 
             return combineLatest({
               commitment: this.commitment$(checkIn.commitmentId),
-              evidence: this.evidence.evidenceForManager$(session.id),
-              reviews: this.reviewsForCommitmentForManager$(
-                checkIn.commitmentId,
-                session.id,
-              ),
               user: this.userProfile$(checkIn.ownerUserId),
             }).pipe(
-              map(({ commitment, evidence, reviews, user }) => {
+              switchMap(({ commitment, user }) => {
                 if (!commitment || !user) {
-                  return null;
+                  return of(null);
                 }
 
-                return {
-                  checkIn: {
-                    ...checkIn,
-                    evidence: evidence.filter(
-                      (item) => item.checkInId === checkIn.id,
-                    ),
-                    reviews: reviews.filter(
-                      (review) => review.checkInId === checkIn.id,
-                    ),
-                  },
-                  commitment,
-                  user,
-                  canReview: checkIn.status === CheckInStatus.Submitted,
-                };
+                return combineLatest({
+                  evidence: this.evidence.evidenceForCommitmentForViewer$(
+                    commitment,
+                    session.id,
+                  ),
+                  reviews: this.reviewsForCommitmentForViewer$(
+                    commitment,
+                    session.id,
+                  ),
+                }).pipe(
+                  map(({ evidence, reviews }) => ({
+                    checkIn: {
+                      ...checkIn,
+                      evidence: evidence.filter(
+                        (item) => item.checkInId === checkIn.id,
+                      ),
+                      reviews: reviews.filter(
+                        (review) => review.checkInId === checkIn.id,
+                      ),
+                    },
+                    commitment,
+                    user,
+                    canReview:
+                      checkIn.status === CheckInStatus.Submitted &&
+                      checkIn.managerUserIds.includes(session.id),
+                  })),
+                );
               }),
             );
           }),
@@ -181,14 +189,18 @@ export class ReviewQueueService {
     );
   }
 
-  private reviewsForCommitmentForManager$(
-    commitmentId: string,
-    managerUserId: string,
+  private reviewsForCommitmentForViewer$(
+    commitment: Commitment,
+    userId: string,
   ): Observable<CheckInReview[]> {
+    const accessFilter =
+      commitment.ownerUserId === userId
+        ? where('ownerUserId', '==', userId)
+        : where('managerUserIds', 'array-contains', userId);
     const reviewsQuery = query(
       collection(this.firestore, FirebaseCollection.Reviews),
-      where('commitmentId', '==', commitmentId),
-      where('managerUserIds', 'array-contains', managerUserId),
+      where('commitmentId', '==', commitment.id),
+      accessFilter,
     );
 
     return collectionData(reviewsQuery).pipe(
@@ -200,6 +212,10 @@ export class ReviewQueueService {
           .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime()),
       ),
     );
+  }
+
+  private canViewCheckIn(checkIn: CheckIn, userId: string): boolean {
+    return checkIn.ownerUserId === userId || checkIn.managerUserIds.includes(userId);
   }
 
   private queueFromRecords(
